@@ -1,0 +1,53 @@
+ledger_schema:
+  version: 1
+  fields:
+    - claim_id
+    - claim_text
+    - standard_or_source
+    - citation_pointer
+    - applies_to
+    - confidence
+    - decision_impact
+    - notes
+
+confidence_scale:
+  - id: CONF-001
+    value: high
+    definition: Direct normative statement or primary method text with clear applicability.
+  - id: CONF-002
+    value: medium
+    definition: Relevant statement requiring local interpretation.
+  - id: CONF-003
+    value: low
+    definition: Proxy or indirect evidence pending stronger source support.
+
+entries:
+  - claim_id: CLM-001
+    claim_text: "SCI baseline uses ((E * I) + M) / R."
+    standard_or_source: "DHLCO2-4"
+    citation_pointer: "Offer para 44"
+    applies_to:
+      - BLD-001
+      - RUN-001
+    confidence: medium
+    decision_impact: "Defines formula field in KPI catalog."
+    notes: "Needs final confirmation against selected standards."
+  - claim_id: CLM-002
+    claim_text: "Build and run phases require separate KPI treatment."
+    standard_or_source: "DHLCO2-10 and DHLCO2-11"
+    citation_pointer: "Offer para 43, para 45, para 46"
+    applies_to:
+      - BLD-001
+      - RUN-004
+    confidence: medium
+    decision_impact: "Defines boundary split in decisions pack."
+    notes: "Deployment edge allocation remains partly TBD."
+  - claim_id: CLM-003
+    claim_text: "KPI catalog must include formula, source, unit, and ISO reference."
+    standard_or_source: "DHLCO2-7"
+    citation_pointer: "Offer para 62"
+    applies_to:
+      - DEL-001
+    confidence: medium
+    decision_impact: "Defines export columns and schema obligations."
+    notes: "ISO field values still TBD."

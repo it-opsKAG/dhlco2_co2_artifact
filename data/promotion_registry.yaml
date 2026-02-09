@@ -1,2 +1,32 @@
 version: 1
-promotions: []
+promotions:
+- id: PROMO-0001
+  source_run_dir: outputs/dhlco2_phase1/phase1_initial
+  staging_repo: C:\Users\emanu\Documents\workspace\staging
+  staging_head: 260adc6ade1df82260e809ef43150ca7fc0a28c7
+  approval_mode: committed_head
+  files:
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/decisions.md
+    destination_rel: docs/decision_packs/phase1_initial/decisions.md
+    source_sha256: 316ac4663ec64620de47ce90ef950b23b855f123dff2a12c4181e2d5a8402c11
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/decisions.yaml
+    destination_rel: docs/decision_packs/phase1_initial/decisions.yaml
+    source_sha256: 3d331eb37c4cdb34214f42e37d51dc2413f9795f9ab26aa596408718f0bc93df
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/manifest.md
+    destination_rel: docs/decision_packs/phase1_initial/manifest.md
+    source_sha256: c40cb054e8bdbeac536baadeb87a8607e5b82f49797a67090d02d97983a3a74b
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/slr/evidence_ledger.yaml
+    destination_rel: docs/slr/phase1_initial/evidence_ledger.yaml
+    source_sha256: 781724770ba0b8caad71354644ed7aa04779585083101f90e78e39018e636899
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/slr/exclusion_criteria.md
+    destination_rel: docs/slr/phase1_initial/exclusion_criteria.md
+    source_sha256: 3b07e656f345ac2e45af2ed1a8dba51c67bfb67d62e652c8b50bfa53d75715c8
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/slr/inclusion_criteria.md
+    destination_rel: docs/slr/phase1_initial/inclusion_criteria.md
+    source_sha256: 36125749b092d8eba42c54773952a2c83152515b5b069330b16508647a8521e0
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/slr/query_pack.yaml
+    destination_rel: docs/slr/phase1_initial/query_pack.yaml
+    source_sha256: 2dab29dc9d384a4c656c50850d68c70cddf93b82e4ab438297223dff24a6acc6
+  - source_rel: outputs/dhlco2_phase1/phase1_initial/slr/standards_map.md
+    destination_rel: docs/slr/phase1_initial/standards_map.md
+    source_sha256: f3e50bf7e54fd904f8acd76e14e31373a4fe635ec76137f8b20557119eeef92f

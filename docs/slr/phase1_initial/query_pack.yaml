@@ -1,0 +1,89 @@
+themes:
+  - id: THM-001
+    name: GHG Protocol
+    queries:
+      - id: Q-001
+        text: "GHG Protocol scope accounting software services data centers"
+      - id: Q-002
+        text: "GHG Protocol allocation shared infrastructure methodology"
+      - id: Q-003
+        text: "GHG Protocol activity data quality requirements"
+      - id: Q-004
+        text: "GHG Protocol operational boundary product-level reporting"
+  - id: THM-002
+    name: ISO 14040 and ISO 14044
+    queries:
+      - id: Q-005
+        text: "ISO 14040 functional unit definition digital service"
+      - id: Q-006
+        text: "ISO 14044 allocation procedures multi-output systems"
+      - id: Q-007
+        text: "ISO 14040 system boundary criteria software lifecycle"
+      - id: Q-008
+        text: "ISO 14044 data quality indicators uncertainty treatment"
+  - id: THM-003
+    name: ISO 14067
+    queries:
+      - id: Q-009
+        text: "ISO 14067 product carbon footprint service transactions"
+      - id: Q-010
+        text: "ISO 14067 communication requirements for carbon footprint"
+      - id: Q-011
+        text: "ISO 14067 temporal representativeness electricity factors"
+      - id: Q-012
+        text: "ISO 14067 treatment of biogenic and embodied emissions"
+  - id: THM-004
+    name: ISO 14064
+    queries:
+      - id: Q-013
+        text: "ISO 14064 greenhouse gas inventory organizational boundary"
+      - id: Q-014
+        text: "ISO 14064 quantification methods direct indirect emissions"
+      - id: Q-015
+        text: "ISO 14064 verification evidence trail controls"
+      - id: Q-016
+        text: "ISO 14064 uncertainty management and reporting"
+  - id: THM-005
+    name: Software Carbon Intensity
+    queries:
+      - id: Q-017
+        text: "software carbon intensity SCI formula E I M R interpretation"
+      - id: Q-018
+        text: "SCI functional unit selection examples cloud services"
+      - id: Q-019
+        text: "SCI build versus run boundary practical guidance"
+      - id: Q-020
+        text: "SCI embodied carbon amortization approaches"
+  - id: THM-006
+    name: CI/CD Emissions
+    queries:
+      - id: Q-021
+        text: "CI/CD pipeline energy measurement methods"
+      - id: Q-022
+        text: "test environment emissions measurement telemetry"
+      - id: Q-023
+        text: "ML training emissions accounting in software development"
+      - id: Q-024
+        text: "quality gates for sustainability metrics in CI pipelines"
+  - id: THM-007
+    name: Cloud Footprint and Operations
+    queries:
+      - id: Q-025
+        text: "cloud region carbon intensity APIs reliability comparison"
+      - id: Q-026
+        text: "energy proportionality KPI cloud workloads"
+      - id: Q-027
+        text: "data transfer emissions factors network traffic"
+      - id: Q-028
+        text: "demand shaping carbon-aware scheduling workloads"
+  - id: THM-008
+    name: Functional Units and Data Quality
+    queries:
+      - id: Q-029
+        text: "functional unit options logistics software transaction event"
+      - id: Q-030
+        text: "counting rules for API calls versus business transactions"
+      - id: Q-031
+        text: "proxy metrics governance for missing telemetry"
+      - id: Q-032
+        text: "data quality scoring for emissions KPIs confidence levels"

@@ -1,0 +1,149 @@
+phase_id: PHASE1
+canonical_artifact_home: repo
+
+build_vs_run_boundary:
+  id: BVR-001
+  source_refs:
+    - DHLCO2-4
+    - DHLCO2-10
+    - DHLCO2-11
+    - "Offer para 43"
+    - "Offer para 45"
+    - "Offer para 46"
+  build_in_scope:
+    - CI/CD pipeline runs
+    - Test environments
+    - Build minutes per artifact
+    - ML training in development
+    - Embodied carbon amortization in development context
+  build_out_of_scope:
+    - Full hardware validation measurements (TBD future phase)
+    - Non-DHL systems outside agreed telemetry boundary
+  run_in_scope:
+    - Inference and operational service requests
+    - Data transfer in operation
+    - Energy proportionality in operation
+    - Region/time carbon-intensity weighting
+  run_out_of_scope:
+    - Business domains without mapped telemetry
+    - Historical backfill before data owner assignment
+  deployment_boundary:
+    id: DEP-001
+    decision_rule: Release and deploy activities are treated as run-adjacent unless executed only inside CI/CD.
+    edge_cases:
+      - id: EDGE-001
+        case: Pre-production load test in CI
+        assignment: build
+        rationale: Executed inside pipeline and used to gate release quality.
+      - id: EDGE-002
+        case: Canary deployment in production
+        assignment: run
+        rationale: Uses production infrastructure and operational traffic.
+      - id: EDGE-003
+        case: Shared artifact registry traffic
+        assignment: TBD
+        rationale: Requires allocation policy across build and run consumers.
+
+functional_units:
+  - id: R1
+    label: "1 CI/CD pipeline run"
+    status: decided
+    source_refs:
+      - user_decision
+      - DHLCO2-10
+  - id: R2
+    label: candidate
+    status: tbd
+    source_refs:
+      - user_decision
+      - DHLCO2-8
+      - DHLCO2-11
+
+deliverables:
+  - id: DEL-001
+    name: KPI Catalog
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/exports/KPI_Catalog.csv
+      - Projects/dhlco2_co2_artifact/exports/KPI_Catalog.md
+    source_refs:
+      - DHLCO2-7
+      - "Offer para 61"
+      - "Offer para 62"
+  - id: DEL-002
+    name: Lifecycle Mapping
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/exports/Lifecycle_Mapping.md
+    source_refs:
+      - DHLCO2-7
+      - "Offer para 64"
+      - "Offer para 147"
+  - id: DEL-003
+    name: Gap Report
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/exports/Gap_Report.md
+    source_refs:
+      - DHLCO2-6
+      - DHLCO2-7
+      - "Offer para 49"
+
+dod:
+  - id: DOD-001
+    criterion: Deliverable drafted
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-5
+      - DHLCO2-6
+      - DHLCO2-7
+      - DHLCO2-8
+      - DHLCO2-10
+      - DHLCO2-11
+  - id: DOD-002
+    criterion: Reviewed against offer scope and deliverables
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-5
+      - DHLCO2-6
+      - DHLCO2-7
+      - DHLCO2-8
+      - DHLCO2-10
+      - DHLCO2-11
+  - id: DOD-003
+    criterion: Jira updated with notes and next actions
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-5
+      - DHLCO2-6
+      - DHLCO2-7
+      - DHLCO2-8
+      - DHLCO2-10
+      - DHLCO2-11
+
+promotion_policy:
+  id: PROMO-001
+  flow:
+    - repo
+    - vault
+    - jira
+  rules:
+    - id: RULE-001
+      statement: Repo artifacts are canonical and versioned first.
+    - id: RULE-002
+      statement: Vault receives promoted summary artifacts only.
+    - id: RULE-003
+      statement: Jira mirrors status and links to promoted summaries.
+    - id: RULE-004
+      statement: Promotion requires passing local validation and export generation.
+
+source_inputs:
+  - Vault_ES/05 Projects/DHLCO2/_Project_Index.md
+  - Vault_ES/05 Projects/DHLCO2/Notes/Jira_Update_Runbook.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-10.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-11.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-4.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-5.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-6.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-7.md
+  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-8.md
+  - Vault_ES/05 Projects/DHLCO2/Artifacts/Inputs/20230504 cleanIT Study.pdf
+  - Vault_ES/05 Projects/DHLCO2/Artifacts/Inputs/Projektangebot DHL V4.docx
+  - Projects/adaptive_agent_os/scripts/dhlco2_enrich_tasks.py
