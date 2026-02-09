@@ -15,28 +15,10 @@ Canonical artifact home for DHLCO2 Phase 1.
 python ci/validate_and_export.py
 ```
 
-## Promote From Staging
+## Staging Transfer
 
-Preview pending promotions (default gate: committed files only):
+Promotion and archive automation is centralized in `system/tools` and profile-driven via:
 
-```bash
-python ci/promote_from_staging.py
-```
-
-Apply promotions and update registry:
-
-```bash
-python ci/promote_from_staging.py --apply
-```
-
-Override approval gate (for explicit worktree-driven review):
-
-```bash
-python ci/promote_from_staging.py --approval-mode worktree
-```
-
-Scan all run folders for untransferred committed content:
-
-```bash
-python ci/promote_from_staging.py --source-run-dir outputs/dhlco2_phase1
-```
+- `system/tools/staging_promote_cli.py`
+- `system/tools/staging_archive_cli.py`
+- `system/registry/staging_transfer_profiles.v1.yaml`
