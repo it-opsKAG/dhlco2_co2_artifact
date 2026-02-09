@@ -1,0 +1,223 @@
+kpis:
+  - id: BLD-001
+    phase: build
+    name: CI/CD pipeline emissions per run
+    description: Candidate KPI for build-phase pipeline runs.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/run
+    functional_unit: "R1: 1 CI/CD pipeline run"
+    lifecycle_steps:
+      - Build
+    emission_type: direct
+    data_sources:
+      - CI logs (TBD system name)
+      - Runner metrics (TBD metric ids)
+      - Cloud billing/usage (TBD account scope)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Carbon intensity source is TBD.
+      - Shared runner allocation rule is TBD.
+  - id: BLD-002
+    phase: build
+    name: Test environment emissions per test-hour
+    description: Candidate KPI for test environment operation.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/test-hour
+    functional_unit: "R1: 1 CI/CD pipeline run"
+    lifecycle_steps:
+      - Test
+    emission_type: direct
+    data_sources:
+      - Test environment telemetry (TBD provider)
+      - Infrastructure metrics (TBD metric ids)
+      - Cloud billing/usage (TBD account scope)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Test environment boundary is TBD.
+      - Allocation across teams is TBD.
+  - id: BLD-003
+    phase: build
+    name: Build minutes per artifact
+    description: Candidate KPI for build effort and energy proxy.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/artifact
+    functional_unit: "R1: 1 CI/CD pipeline run"
+    lifecycle_steps:
+      - Build
+      - Release
+    emission_type: mixed
+    data_sources:
+      - CI logs (TBD build stage granularity)
+      - Artifact registry metrics (TBD source)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Artifact granularity is TBD.
+      - Energy conversion from build minutes is TBD.
+  - id: BLD-004
+    phase: build
+    name: ML training emissions per run
+    description: Candidate KPI for model training in development.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/training-run
+    functional_unit: "R1: 1 CI/CD pipeline run"
+    lifecycle_steps:
+      - Build
+      - Test
+    emission_type: mixed
+    data_sources:
+      - Training telemetry (TBD platform)
+      - GPU/CPU metrics (TBD metric ids)
+      - Cloud billing/usage (TBD account scope)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Training boundary and attribution are TBD.
+      - Embodied carbon treatment for hardware is TBD.
+  - id: BLD-005
+    phase: build
+    name: Embodied carbon amortization per story point
+    description: Candidate KPI for indirect build emissions.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/story-point
+    functional_unit: "R1: 1 CI/CD pipeline run"
+    lifecycle_steps:
+      - Plan
+      - Build
+    emission_type: indirect
+    data_sources:
+      - Hardware inventory (TBD source)
+      - Lifecycle amortization table (TBD method)
+      - Planning system story points (TBD source)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-10
+      - DHLCO2-4
+      - "Offer para 45"
+      - "Offer para 64"
+    status: candidate
+    unknowns:
+      - Amortization method is TBD.
+      - Story-point normalization is TBD.
+  - id: RUN-001
+    phase: run
+    name: Emissions per transaction
+    description: Candidate KPI for run-phase SCI rate using operational R.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/transaction
+    functional_unit: "R2: candidate (TBD)"
+    lifecycle_steps:
+      - Operate
+      - Monitor
+    emission_type: mixed
+    data_sources:
+      - APM traces (TBD source)
+      - Operational logs (TBD source)
+      - Carbon intensity feed (TBD provider)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-11
+      - DHLCO2-8
+      - "Offer para 46"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Functional unit R2 is TBD.
+      - Transaction definition is TBD.
+  - id: RUN-002
+    phase: run
+    name: Energy per request
+    description: Candidate KPI for request-level operational energy.
+    formula: "((E * I) + M) / R"
+    unit: Wh/request
+    functional_unit: "R2: candidate (TBD)"
+    lifecycle_steps:
+      - Operate
+    emission_type: direct
+    data_sources:
+      - Service metrics (TBD source)
+      - Infrastructure metrics (TBD metric ids)
+      - Carbon intensity feed (TBD provider)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Request denominator and boundary are TBD.
+      - Carbon intensity sampling strategy is TBD.
+  - id: RUN-003
+    phase: run
+    name: Data transfer emissions per GB
+    description: Candidate KPI for network transfer in operations.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/GB
+    functional_unit: "R2: candidate (TBD)"
+    lifecycle_steps:
+      - Deploy
+      - Operate
+    emission_type: direct
+    data_sources:
+      - Network metrics (TBD source)
+      - Data egress billing (TBD source)
+      - Carbon intensity feed (TBD provider)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Service boundary for transfer accounting is TBD.
+      - Internal vs external traffic split is TBD.
+  - id: RUN-004
+    phase: run
+    name: Energy proportionality index
+    description: Candidate KPI for inefficiency detection at low utilization.
+    formula: "((E * I) + M) / R"
+    unit: ratio
+    functional_unit: "R2: candidate (TBD)"
+    lifecycle_steps:
+      - Operate
+      - Monitor
+    emission_type: direct
+    data_sources:
+      - Utilization metrics (TBD source)
+      - Power draw metrics (TBD source)
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 62"
+    status: candidate
+    unknowns:
+      - Threshold definition is TBD.
+      - Measurement interval is TBD.

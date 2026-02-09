@@ -1,0 +1,99 @@
+assumptions:
+  - id: ASM-001
+    topic: SCI baseline
+    statement: All KPI candidates use SCI baseline formula ((E * I) + M) / R.
+    source_refs:
+      - DHLCO2-4
+      - "Offer para 44"
+  - id: ASM-002
+    topic: Build versus run split
+    statement: Build and run emissions are separated as required by the offer.
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-10
+      - DHLCO2-11
+      - "Offer para 43"
+      - "Offer para 45"
+      - "Offer para 46"
+  - id: ASM-003
+    topic: Canonical storage
+    statement: Repo is SSOT, Vault receives promoted summaries, Jira mirrors status.
+    source_refs:
+      - user_decision
+
+gaps:
+  - id: GAP-001
+    title: Carbon intensity provider undefined
+    description: Source and refresh interval for carbon intensity are not fixed.
+    impact: SCI outputs cannot be finalized for build or run KPIs.
+    required_input: Select provider, granularity, and fallback policy.
+    status: open
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-11
+  - id: GAP-002
+    title: Functional unit R2 undefined
+    description: Operational functional unit candidate is not chosen.
+    impact: Run KPI denominators remain provisional.
+    required_input: Decide R2 and counting method.
+    status: open
+    source_refs:
+      - DHLCO2-8
+      - DHLCO2-11
+  - id: GAP-003
+    title: Embodied carbon amortization method undefined
+    description: Method for amortizing hardware embodied carbon is not specified.
+    impact: Indirect emission KPIs cannot move past candidate state.
+    required_input: Define amortization model and inventory source.
+    status: open
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-10
+  - id: GAP-004
+    title: Data ownership and source systems undefined
+    description: Data owners and authoritative systems are missing for KPI ingestion.
+    impact: No deterministic production pipeline can be connected.
+    required_input: Assign owner and system per KPI candidate.
+    status: open
+    source_refs:
+      - DHLCO2-6
+      - DHLCO2-10
+      - DHLCO2-11
+  - id: GAP-005
+    title: ISO reference mapping incomplete
+    description: KPI-level ISO references are marked TBD in ticket drafts.
+    impact: Normative traceability is incomplete.
+    required_input: Complete mapping to agreed standards per KPI.
+    status: open
+    source_refs:
+      - DHLCO2-6
+      - DHLCO2-7
+      - "Offer para 62"
+
+proxies:
+  - id: PRX-001
+    gap_id: GAP-001
+    proxy: Use region-level average grid intensity feed until source is fixed.
+    quality: low
+    source_refs:
+      - DHLCO2-11
+  - id: PRX-002
+    gap_id: GAP-002
+    proxy: Use request count as temporary denominator for RUN-001 to RUN-004.
+    quality: low
+    source_refs:
+      - DHLCO2-8
+      - DHLCO2-11
+  - id: PRX-003
+    gap_id: GAP-003
+    proxy: Use linear amortization over fixed service life.
+    quality: low
+    source_refs:
+      - DHLCO2-4
+      - DHLCO2-10
+  - id: PRX-004
+    gap_id: GAP-004
+    proxy: Use ticket assignee as temporary owner until RACI is defined.
+    quality: low
+    source_refs:
+      - DHLCO2-6

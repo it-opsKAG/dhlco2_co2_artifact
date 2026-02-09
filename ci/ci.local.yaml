@@ -1,0 +1,6 @@
+pipeline:
+  id: LOCAL-CI-001
+  steps:
+    - id: STEP-001
+      command: "python ci/validate_and_export.py"
+      purpose: "Validate schema and regenerate deterministic exports."

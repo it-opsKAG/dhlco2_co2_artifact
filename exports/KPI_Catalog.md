@@ -1,0 +1,13 @@
+# KPI Catalog
+
+| ID | Phase | Name | Unit | Functional Unit | Lifecycle Steps | Emission Type | Data Sources | ISO Refs | Status | Source Refs |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| BLD-001 | build | CI/CD pipeline emissions per run | gCO2e/run | R1: 1 CI/CD pipeline run | Build | direct | CI logs (TBD system name); Runner metrics (TBD metric ids); Cloud billing/usage (TBD account scope) | TBD | candidate | DHLCO2-10; Offer para 45; Offer para 62 |
+| BLD-002 | build | Test environment emissions per test-hour | gCO2e/test-hour | R1: 1 CI/CD pipeline run | Test | direct | Test environment telemetry (TBD provider); Infrastructure metrics (TBD metric ids); Cloud billing/usage (TBD account scope) | TBD | candidate | DHLCO2-10; Offer para 45; Offer para 62 |
+| BLD-003 | build | Build minutes per artifact | gCO2e/artifact | R1: 1 CI/CD pipeline run | Build; Release | mixed | CI logs (TBD build stage granularity); Artifact registry metrics (TBD source) | TBD | candidate | DHLCO2-10; Offer para 45; Offer para 62 |
+| BLD-004 | build | ML training emissions per run | gCO2e/training-run | R1: 1 CI/CD pipeline run | Build; Test | mixed | Training telemetry (TBD platform); GPU/CPU metrics (TBD metric ids); Cloud billing/usage (TBD account scope) | TBD | candidate | DHLCO2-10; Offer para 45; Offer para 62 |
+| BLD-005 | build | Embodied carbon amortization per story point | gCO2e/story-point | R1: 1 CI/CD pipeline run | Plan; Build | indirect | Hardware inventory (TBD source); Lifecycle amortization table (TBD method); Planning system story points (TBD source) | TBD | candidate | DHLCO2-10; DHLCO2-4; Offer para 45; Offer para 64 |
+| RUN-001 | run | Emissions per transaction | gCO2e/transaction | R2: candidate (TBD) | Operate; Monitor | mixed | APM traces (TBD source); Operational logs (TBD source); Carbon intensity feed (TBD provider) | TBD | candidate | DHLCO2-11; DHLCO2-8; Offer para 46; Offer para 62 |
+| RUN-002 | run | Energy per request | Wh/request | R2: candidate (TBD) | Operate | direct | Service metrics (TBD source); Infrastructure metrics (TBD metric ids); Carbon intensity feed (TBD provider) | TBD | candidate | DHLCO2-11; Offer para 46; Offer para 62 |
+| RUN-003 | run | Data transfer emissions per GB | gCO2e/GB | R2: candidate (TBD) | Deploy; Operate | direct | Network metrics (TBD source); Data egress billing (TBD source); Carbon intensity feed (TBD provider) | TBD | candidate | DHLCO2-11; Offer para 46; Offer para 62 |
+| RUN-004 | run | Energy proportionality index | ratio | R2: candidate (TBD) | Operate; Monitor | direct | Utilization metrics (TBD source); Power draw metrics (TBD source) | TBD | candidate | DHLCO2-11; Offer para 46; Offer para 62 |

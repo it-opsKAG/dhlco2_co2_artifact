@@ -1,0 +1,110 @@
+lifecycle_steps:
+  - id: STEP-01
+    name: Plan
+  - id: STEP-02
+    name: Code
+  - id: STEP-03
+    name: Build
+  - id: STEP-04
+    name: Test
+  - id: STEP-05
+    name: Release
+  - id: STEP-06
+    name: Deploy
+  - id: STEP-07
+    name: Operate
+  - id: STEP-08
+    name: Monitor
+
+kpi_mappings:
+  - id: MAP-001
+    kpi_id: BLD-001
+    primary_step: Build
+    secondary_steps:
+      - Test
+    direct_or_indirect: direct
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 64"
+  - id: MAP-002
+    kpi_id: BLD-002
+    primary_step: Test
+    secondary_steps:
+      - Build
+    direct_or_indirect: direct
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 64"
+  - id: MAP-003
+    kpi_id: BLD-003
+    primary_step: Build
+    secondary_steps:
+      - Release
+    direct_or_indirect: mixed
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 64"
+  - id: MAP-004
+    kpi_id: BLD-004
+    primary_step: Build
+    secondary_steps:
+      - Test
+    direct_or_indirect: mixed
+    source_refs:
+      - DHLCO2-10
+      - "Offer para 45"
+      - "Offer para 64"
+  - id: MAP-005
+    kpi_id: BLD-005
+    primary_step: Plan
+    secondary_steps:
+      - Build
+    direct_or_indirect: indirect
+    source_refs:
+      - DHLCO2-10
+      - DHLCO2-4
+      - "Offer para 45"
+      - "Offer para 64"
+  - id: MAP-006
+    kpi_id: RUN-001
+    primary_step: Operate
+    secondary_steps:
+      - Monitor
+    direct_or_indirect: mixed
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 64"
+  - id: MAP-007
+    kpi_id: RUN-002
+    primary_step: Operate
+    secondary_steps:
+      - Monitor
+    direct_or_indirect: direct
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 64"
+  - id: MAP-008
+    kpi_id: RUN-003
+    primary_step: Deploy
+    secondary_steps:
+      - Operate
+    direct_or_indirect: direct
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 64"
+  - id: MAP-009
+    kpi_id: RUN-004
+    primary_step: Monitor
+    secondary_steps:
+      - Operate
+    direct_or_indirect: direct
+    source_refs:
+      - DHLCO2-11
+      - "Offer para 46"
+      - "Offer para 64"
