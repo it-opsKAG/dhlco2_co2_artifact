@@ -85,6 +85,31 @@ deliverables:
       - DHLCO2-6
       - DHLCO2-7
       - "Offer para 49"
+  - id: DEL-004
+    name: SCI One-Pager (draft)
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/docs/sci_deep_dive_onepager.md
+    source_refs:
+      - DHLCO2-4
+  - id: DEL-005
+    name: Functional Units (R candidates) (draft)
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/docs/functional_units_r_candidates.md
+    source_refs:
+      - DHLCO2-8
+  - id: DEL-006
+    name: KPI Measurement Approach Notes (draft)
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/docs/kpi_measurement_approach_notes.md
+    source_refs:
+      - DHLCO2-10
+      - DHLCO2-11
+  - id: DEL-007
+    name: Project One-Pager (draft)
+    artifact_paths:
+      - Projects/dhlco2_co2_artifact/docs/project_one_pager.md
+    source_refs:
+      - DHLCO2-9
 
 dod:
   - id: DOD-001
