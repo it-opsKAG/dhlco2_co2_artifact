@@ -9,6 +9,11 @@ Canonical artifact home for DHLCO2 Phase 1.
 - Generate deterministic exports with `generators/build_exports.py`.
 - Run local CI flow with `ci/validate_and_export.py`.
 
+## Current reference notes
+
+- Normative scope positioning for the DHL study: `docs/slr/phase1_initial/iso_14064_14083_scope_positioning.md`
+- Phase-1 standards overview: `docs/slr/phase1_initial/standards_map.md`
+
 ## Local Run
 
 ```bash
