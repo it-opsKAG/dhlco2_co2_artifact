@@ -24,6 +24,12 @@
           "lifecycle_steps",
           "emission_type",
           "data_sources",
+          "authoritative_system",
+          "provisional_owner",
+          "measurement_mode",
+          "granularity",
+          "proxy_refs",
+          "gap_refs",
           "iso_refs",
           "source_refs",
           "status",
@@ -91,6 +97,36 @@
             "minItems": 1,
             "items": {
               "type": "string"
+            }
+          },
+          "authoritative_system": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provisional_owner": {
+            "type": "string",
+            "minLength": 1
+          },
+          "measurement_mode": {
+            "type": "string",
+            "minLength": 1
+          },
+          "granularity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "proxy_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^PRX-[0-9]{3}$"
+            }
+          },
+          "gap_refs": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^GAP-[0-9]{3}$"
             }
           },
           "iso_refs": {

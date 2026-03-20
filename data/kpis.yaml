@@ -13,6 +13,17 @@ kpis:
       - CI logs (TBD system name)
       - Runner metrics (TBD metric ids)
       - Cloud billing/usage (TBD account scope)
+    authoritative_system: "CI platform + runner telemetry + cloud billing scope (temporary placeholders)"
+    provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI from telemetry, billing, and carbon-intensity weighting"
+    granularity: "per pipeline run"
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -37,6 +48,17 @@ kpis:
       - Test environment telemetry (TBD provider)
       - Infrastructure metrics (TBD metric ids)
       - Cloud billing/usage (TBD account scope)
+    authoritative_system: "Test environment telemetry + infrastructure metrics + cloud billing scope (temporary placeholders)"
+    provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI from environment telemetry, billing, and carbon-intensity weighting"
+    granularity: "per test-hour"
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -61,6 +83,17 @@ kpis:
     data_sources:
       - CI logs (TBD build stage granularity)
       - Artifact registry metrics (TBD source)
+    authoritative_system: "CI platform + artifact registry metrics (temporary placeholders)"
+    provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI with build-time telemetry and artifact allocation logic"
+    granularity: "per artifact or release event"
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -86,6 +119,19 @@ kpis:
       - Training telemetry (TBD platform)
       - GPU/CPU metrics (TBD metric ids)
       - Cloud billing/usage (TBD account scope)
+    authoritative_system: "Training telemetry + GPU/CPU metrics + cloud billing scope (temporary placeholders)"
+    provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI with workload telemetry and amortized hardware contribution"
+    granularity: "per training run"
+    proxy_refs:
+      - PRX-001
+      - PRX-003
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-003
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -111,6 +157,17 @@ kpis:
       - Hardware inventory (TBD source)
       - Lifecycle amortization table (TBD method)
       - Planning system story points (TBD source)
+    authoritative_system: "Hardware inventory + amortization table + planning system (temporary placeholders)"
+    provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "estimated amortized emissions model"
+    granularity: "per story point or planning increment"
+    proxy_refs:
+      - PRX-003
+      - PRX-004
+    gap_refs:
+      - GAP-003
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -137,6 +194,19 @@ kpis:
       - APM traces (TBD source)
       - Operational logs (TBD source)
       - Carbon intensity feed (TBD provider)
+    authoritative_system: "APM traces + operational logs (temporary placeholders)"
+    provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI with proxy denominator until R2 is fixed"
+    granularity: "per business transaction or proxy request count"
+    proxy_refs:
+      - PRX-001
+      - PRX-002
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-002
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -162,6 +232,19 @@ kpis:
       - Service metrics (TBD source)
       - Infrastructure metrics (TBD metric ids)
       - Carbon intensity feed (TBD provider)
+    authoritative_system: "Service metrics + infrastructure metrics (temporary placeholders)"
+    provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "observed energy metric with carbon-intensity weighting"
+    granularity: "per request"
+    proxy_refs:
+      - PRX-001
+      - PRX-002
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-002
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -187,6 +270,19 @@ kpis:
       - Network metrics (TBD source)
       - Data egress billing (TBD source)
       - Carbon intensity feed (TBD provider)
+    authoritative_system: "Network metrics + data egress billing (temporary placeholders)"
+    provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI from transfer volumes and carbon-intensity weighting"
+    granularity: "per transferred GB"
+    proxy_refs:
+      - PRX-001
+      - PRX-002
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-002
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:
@@ -211,6 +307,19 @@ kpis:
     data_sources:
       - Utilization metrics (TBD source)
       - Power draw metrics (TBD source)
+    authoritative_system: "Utilization metrics + power draw metrics (temporary placeholders)"
+    provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "observed efficiency ratio with operational telemetry context"
+    granularity: "per observation window or service slice"
+    proxy_refs:
+      - PRX-001
+      - PRX-002
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-002
+      - GAP-004
+      - GAP-005
     iso_refs:
       - "TBD"
     source_refs:

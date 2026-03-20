@@ -96,6 +96,120 @@ def _render_kpi_catalog_md(kpis: Sequence[Dict[str, Any]]) -> str:
     return "\n".join(lines)
 
 
+def _render_framework_overview_md(
+    decisions_doc: Dict[str, Any],
+    kpis: Sequence[Dict[str, Any]],
+    gaps: Sequence[Dict[str, Any]],
+) -> str:
+    functional_units = _sort_by_id(list(decisions_doc.get("functional_units", [])))
+    open_gaps = [gap for gap in gaps if str(gap.get("status", "")).strip().lower() != "closed"]
+    build_count = sum(1 for kpi in kpis if kpi.get("phase") == "build")
+    run_count = sum(1 for kpi in kpis if kpi.get("phase") == "run")
+    lines = [
+        "# Framework Overview",
+        "",
+        "## Contribution of the framework",
+        "",
+        "- Establishes one auditable method backbone for build and run emissions instead of isolated point metrics.",
+        "- Separates what is decided, what is proxied, and what is still open so customer review can focus on the real blockers.",
+        "- Keeps customer-facing deliverables derivable from the same SSOT that later feeds operationalization and simulation.",
+        "",
+        "## Phase-1 artifact structure",
+        "",
+        "```text",
+        "Offer / scope / standards",
+        "          |",
+        "          v",
+        "Boundary + functional units + assumptions",
+        "          |",
+        "          +--> KPI Catalog",
+        "          +--> Lifecycle Mapping",
+        "          +--> Measurement Matrix",
+        "          +--> Gap Report",
+        "          +--> SCI / Standards / One-Pager summaries",
+        "          |",
+        "          v",
+        "Decision-ready customer artifact vNext",
+        "```",
+        "",
+        "## Core modules",
+        "",
+        "| Module | Purpose | Current anchor |",
+        "| --- | --- | --- |",
+        "| Framework Overview | Explain the artifact architecture and how the modules fit together. | `exports/Framework_Overview.md` |",
+        "| KPI Catalog | Canonical KPI candidate set for build and run. | `exports/KPI_Catalog.md` |",
+        "| Functional Units | Lock denominator logic for build (`R1`) and run (`R2` / proxy). | `docs/functional_units_r_candidates.md` |",
+        "| Measurement Matrix | Make data sources, owners, measurement mode, granularity, gaps, and proxies reviewable per KPI. | `exports/Measurement_Matrix.md` |",
+        "| Lifecycle Mapping | Show where each KPI sits in the software lifecycle. | `exports/Lifecycle_Mapping.md` |",
+        "| Gap Report | Surface remaining blockers and active proxies explicitly. | `exports/Gap_Report.md` |",
+        "| Standards / SCI Notes | Keep the normative and methodological rationale attached to the KPI layer. | `docs/sci_deep_dive_onepager.md` + `docs/slr/phase1_initial/iso_14064_14083_scope_positioning.md` |",
+        "",
+        "## Current phase-1 posture",
+        "",
+        f"- KPI candidates: `{build_count}` build + `{run_count}` run",
+    ]
+    for item in functional_units:
+        lines.append(
+            "- Functional unit `{id}`: `{label}` ({status})".format(
+                id=_md_escape(item.get("id", "")),
+                label=_md_escape(item.get("label", "")),
+                status=_md_escape(item.get("status", "")),
+            )
+        )
+    if open_gaps:
+        lines.append("- Open blockers: " + ", ".join(f"`{gap['id']}`" for gap in open_gaps))
+    lines.extend(
+        [
+            "",
+            "## Customer-feedback alignment",
+            "",
+            "- Artifact structure: addressed by this overview and the explicit module split.",
+            "- KPI catalog concreteness: addressed by `KPI_Catalog` plus KPI-level measurement metadata.",
+            "- Functional unit clarity: addressed by `R1` decision and explicit `R2` / proxy handling.",
+            "- Data sources and measurement logic: addressed by `Measurement_Matrix`.",
+            "- Short framework value statement: addressed by the contribution section above and the updated project one-pager.",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _render_measurement_matrix_md(kpis: Sequence[Dict[str, Any]]) -> str:
+    lines = [
+        "# Measurement Matrix",
+        "",
+        "Compact review matrix for customer feedback: each KPI is mapped to owner, system, measurement mode, granularity, active proxies, and open gaps.",
+        "",
+        "| ID | Phase | KPI | Functional Unit | Owner (temp) | Authoritative System | Measurement Mode | Granularity | Data Sources | Proxy Refs | Gap Refs | Status |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for kpi in kpis:
+        row = [
+            _md_escape(kpi["id"]),
+            _md_escape(kpi["phase"]),
+            _md_escape(kpi["name"]),
+            _md_escape(kpi["functional_unit"]),
+            _md_escape(kpi["provisional_owner"]),
+            _md_escape(kpi["authoritative_system"]),
+            _md_escape(kpi["measurement_mode"]),
+            _md_escape(kpi["granularity"]),
+            _md_escape(_csv_join(kpi["data_sources"])),
+            _md_escape(_csv_join(kpi.get("proxy_refs", []))),
+            _md_escape(_csv_join(kpi.get("gap_refs", []))),
+            _md_escape(kpi["status"]),
+        ]
+        lines.append("| " + " | ".join(row) + " |")
+    lines.extend(
+        [
+            "",
+            "## Notes",
+            "",
+            "- `Owner (temp)` follows the current project proxy until formal RACI / source-system ownership is fixed.",
+            "- `Proxy Refs` and `Gap Refs` point back to `exports/Gap_Report.md` for explicit review and governance.",
+        ]
+    )
+    return "\n".join(lines)
+
+
 def _write_kpi_catalog_csv(path: Path, kpis: Sequence[Dict[str, Any]]) -> None:
     headers = [
         "id",
@@ -231,6 +345,9 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     kpis_doc = _load_yaml(data_dir / "kpis.yaml")
     lifecycle_doc = _load_yaml(data_dir / "lifecycle_mapping.yaml")
     assumptions_doc = _load_yaml(data_dir / "assumptions_proxies.yaml")
+    decisions_doc = _load_yaml(
+        data_dir.parent / "docs" / "decision_packs" / "phase1_initial" / "decisions.yaml"
+    )
 
     _validate_kpis_schema(kpis_doc, schema_path)
 
@@ -255,6 +372,14 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     _ensure_export_dir(export_dir)
     _write_text(export_dir / "KPI_Catalog.md", _render_kpi_catalog_md(kpis))
     _write_kpi_catalog_csv(export_dir / "KPI_Catalog.csv", kpis)
+    _write_text(
+        export_dir / "Framework_Overview.md",
+        _render_framework_overview_md(decisions_doc=decisions_doc, kpis=kpis, gaps=gaps),
+    )
+    _write_text(
+        export_dir / "Measurement_Matrix.md",
+        _render_measurement_matrix_md(kpis),
+    )
     _write_text(
         export_dir / "Lifecycle_Mapping.md",
         _render_lifecycle_md(steps=steps, mappings=mappings),

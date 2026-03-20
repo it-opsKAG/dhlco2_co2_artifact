@@ -12,10 +12,13 @@ Stable run id: `phase1_initial`
 - `Projects/dhlco2_co2_artifact/data/kpis.yaml` - Canonical Phase 1 KPI candidate dataset.
 - `Projects/dhlco2_co2_artifact/data/lifecycle_mapping.yaml` - Canonical lifecycle and KPI-step mapping.
 - `Projects/dhlco2_co2_artifact/docs/phase1_scope.md` - SSOT scope and promotion stance for Phase 1.
+- `Projects/dhlco2_co2_artifact/docs/project_one_pager.md` - Compact customer-facing framing with current blockers and next steps.
 - `Projects/dhlco2_co2_artifact/exports/Gap_Report.md` - Deterministic gap and TBD consolidation.
+- `Projects/dhlco2_co2_artifact/exports/Framework_Overview.md` - Human-readable artifact architecture and framework contribution summary.
 - `Projects/dhlco2_co2_artifact/exports/KPI_Catalog.csv` - Machine-readable KPI export.
 - `Projects/dhlco2_co2_artifact/exports/KPI_Catalog.md` - Human-readable KPI catalog export.
 - `Projects/dhlco2_co2_artifact/exports/Lifecycle_Mapping.md` - Human-readable lifecycle mapping export.
+- `Projects/dhlco2_co2_artifact/exports/Measurement_Matrix.md` - Human-readable KPI-by-KPI review matrix for sources, owners, proxies, and gaps.
 - `Projects/dhlco2_co2_artifact/generators/build_exports.py` - Deterministic export generator.
 - `Projects/dhlco2_co2_artifact/schema/kpis.schema.json` - JSON schema for KPI dataset validation.
 

@@ -12,8 +12,10 @@ def main() -> None:
     subprocess.run(cmd, cwd=str(root), check=True)
 
     required = [
+        root / "exports" / "Framework_Overview.md",
         root / "exports" / "KPI_Catalog.md",
         root / "exports" / "KPI_Catalog.csv",
+        root / "exports" / "Measurement_Matrix.md",
         root / "exports" / "Lifecycle_Mapping.md",
         root / "exports" / "Gap_Report.md",
     ]

@@ -14,6 +14,15 @@ Canonical artifact home for DHLCO2 Phase 1.
 - Normative scope positioning for the DHL study: `docs/slr/phase1_initial/iso_14064_14083_scope_positioning.md`
 - Phase-1 standards overview: `docs/slr/phase1_initial/standards_map.md`
 
+## Current exports
+
+- `exports/Framework_Overview.md`
+- `exports/KPI_Catalog.md`
+- `exports/KPI_Catalog.csv`
+- `exports/Measurement_Matrix.md`
+- `exports/Lifecycle_Mapping.md`
+- `exports/Gap_Report.md`
+
 ## Local Run
 
 ```bash
