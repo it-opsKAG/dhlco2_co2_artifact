@@ -163,32 +163,7 @@ dod:
       - DHLCO2-10
       - DHLCO2-11
 
-promotion_policy:
-  id: PROMO-001
-  flow:
-    - repo
-    - vault
-    - jira
-  rules:
-    - id: RULE-001
-      statement: Repo artifacts are canonical and versioned first.
-    - id: RULE-002
-      statement: Vault receives promoted summary artifacts only.
-    - id: RULE-003
-      statement: Jira mirrors status and links to promoted summaries.
-    - id: RULE-004
-      statement: Promotion requires passing local validation and export generation.
-
 source_inputs:
-  - Vault_ES/05 Projects/DHLCO2/_Project_Index.md
-  - Vault_ES/05 Projects/DHLCO2/Notes/Jira_Update_Runbook.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-10.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-11.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-4.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-5.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-6.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-7.md
-  - Vault_ES/05 Projects/DHLCO2/Tasks/Jira/DHLCO2-8.md
-  - Vault_ES/05 Projects/DHLCO2/Artifacts/Inputs/20230504 cleanIT Study.pdf
-  - Vault_ES/05 Projects/DHLCO2/Artifacts/Inputs/Projektangebot DHL V4.docx
-  - Projects/adaptive_agent_os/scripts/dhlco2_enrich_tasks.py
+  - "DHL Express Briefing: CO2-Emissions-Monitoring-Artefakt (2026-01-19)"
+  - "Projektangebot DHL V4"
+  - "CleanIT Study (2023)"

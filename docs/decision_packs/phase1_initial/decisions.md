@@ -2,18 +2,18 @@
 
 ## Summary
 
-- Canonical artifact home is `repo`.
-- Promotion policy is `repo -> vault -> jira`.
-- Functional units are `R1: 1 CI/CD pipeline run` (decided) and `R2: candidate (TBD)`.
-- Build and run are separated per ticket evidence and offer references.
+- Canonical artifact home is this repository.
+- Functional units: `R1: 1 CI/CD pipeline run` (decided) and `R2: 1 service request` (decided 2026-03-26, with extension path to business-level units).
+- Build and run are separated per offer references and documented boundary decision (BVR-001).
+- CO₂ intensity data: three-stage integration model defined (national averages → IEA/EMBER → Electricity Maps).
 
 ## Rationale
 
-1. Ticket `DHLCO2-10` defines build KPI candidates with CI/CD, test, and training focus.
-2. Ticket `DHLCO2-11` defines run KPI candidates with operational workload focus.
-3. Ticket `DHLCO2-4` states SCI baseline and the need to decide boundaries and allocation.
-4. Ticket `DHLCO2-6` states explicit gap handling and proxy requirements.
-5. Ticket `DHLCO2-7` states the three required deliverables for Phase 1.
+1. Build KPI candidates (BLD-001 to BLD-005) cover CI/CD, test environments, ML training, and embodied carbon.
+2. Run KPI candidates (RUN-001 to RUN-004) cover operational workloads, energy proportionality, and data transfer.
+3. SCI baseline formula ((E × I) + M) / R is applied consistently across all KPIs.
+4. Gaps and proxies are explicitly tracked with quality ratings.
+5. Phase 1 deliverables: KPI Catalog, Lifecycle Mapping, Framework Overview, Measurement Matrix, Standards Positioning.
 
 ## Deployment Boundary Edge Cases
 
@@ -23,10 +23,9 @@
 | EDGE-002 | Canary deployment in production | run | Runs on production infrastructure with operational traffic. |
 | EDGE-003 | Shared artifact registry traffic | TBD | Requires formal allocation policy across build/run consumers. |
 
-## Open Items
+## Open Items (deferred to Phase 2)
 
-- `R2` is not selected yet and blocks finalized run KPI denominators.
-- Carbon intensity provider and refresh policy are not selected.
-- Embodied carbon amortization method is not fixed.
-- ISO clause mapping remains `TBD` at KPI level.
+- Embodied carbon amortization method is not fixed (GAP-003).
+- Data ownership and source systems require stakeholder alignment (GAP-004).
+- ISO clause mapping remains to be completed at KPI level (GAP-005).
 
