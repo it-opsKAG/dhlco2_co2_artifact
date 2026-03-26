@@ -185,7 +185,7 @@ kpis:
     description: Candidate KPI for run-phase SCI rate using operational R.
     formula: "((E * I) + M) / R"
     unit: gCO2e/transaction
-    functional_unit: "R2: candidate (TBD)"
+    functional_unit: "R2: 1 service request (Phase 1 decision; extension path to business-level units planned)"
     lifecycle_steps:
       - Operate
       - Monitor
@@ -193,11 +193,11 @@ kpis:
     data_sources:
       - APM traces (TBD source)
       - Operational logs (TBD source)
-      - Carbon intensity feed (TBD provider)
+      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
     authoritative_system: "APM traces + operational logs (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
-    measurement_mode: "derived SCI with proxy denominator until R2 is fixed"
-    granularity: "per business transaction or proxy request count"
+    measurement_mode: "derived SCI with service-request denominator (R2a)"
+    granularity: "per business transaction or service request count"
     proxy_refs:
       - PRX-001
       - PRX-002
@@ -216,25 +216,25 @@ kpis:
       - "Offer para 62"
     status: candidate
     unknowns:
-      - Functional unit R2 is TBD.
-      - Transaction definition is TBD.
+      - Transaction definition boundary is TBD (R2a service-request decided for Phase 1; extension to business-level units planned).
+      - Operative data source for request counting is TBD (requires stakeholder alignment on monitoring system).
   - id: RUN-002
     phase: run
     name: Energy per request
     description: Candidate KPI for request-level operational energy.
     formula: "((E * I) + M) / R"
     unit: Wh/request
-    functional_unit: "R2: candidate (TBD)"
+    functional_unit: "R2: 1 service request (Phase 1 decision; extension path to business-level units planned)"
     lifecycle_steps:
       - Operate
     emission_type: direct
     data_sources:
       - Service metrics (TBD source)
       - Infrastructure metrics (TBD metric ids)
-      - Carbon intensity feed (TBD provider)
+      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
     authoritative_system: "Service metrics + infrastructure metrics (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
-    measurement_mode: "observed energy metric with carbon-intensity weighting"
+    measurement_mode: "observed energy metric with carbon-intensity weighting; R2a service-request denominator"
     granularity: "per request"
     proxy_refs:
       - PRX-001
@@ -253,15 +253,15 @@ kpis:
       - "Offer para 62"
     status: candidate
     unknowns:
-      - Request denominator and boundary are TBD.
-      - Carbon intensity sampling strategy is TBD.
+      - Request boundary definition is TBD (R2a decided; operative system TBD).
+      - Carbon intensity: Phase 1 uses national averages; sampling strategy for Phase 2+ is TBD.
   - id: RUN-003
     phase: run
     name: Data transfer emissions per GB
     description: Candidate KPI for network transfer in operations.
     formula: "((E * I) + M) / R"
     unit: gCO2e/GB
-    functional_unit: "R2: candidate (TBD)"
+    functional_unit: "R2: 1 service request (Phase 1 decision; extension path to business-level units planned)"
     lifecycle_steps:
       - Deploy
       - Operate
@@ -269,7 +269,7 @@ kpis:
     data_sources:
       - Network metrics (TBD source)
       - Data egress billing (TBD source)
-      - Carbon intensity feed (TBD provider)
+      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
     authoritative_system: "Network metrics + data egress billing (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI from transfer volumes and carbon-intensity weighting"
@@ -291,7 +291,7 @@ kpis:
       - "Offer para 62"
     status: candidate
     unknowns:
-      - Service boundary for transfer accounting is TBD.
+      - Service boundary for transfer accounting is TBD (R2a decided; operative system TBD).
       - Internal vs external traffic split is TBD.
   - id: RUN-004
     phase: run
@@ -299,7 +299,7 @@ kpis:
     description: Candidate KPI for inefficiency detection at low utilization.
     formula: "((E * I) + M) / R"
     unit: ratio
-    functional_unit: "R2: candidate (TBD)"
+    functional_unit: "R2: 1 service request (Phase 1 decision; extension path to business-level units planned)"
     lifecycle_steps:
       - Operate
       - Monitor
@@ -328,5 +328,5 @@ kpis:
       - "Offer para 62"
     status: candidate
     unknowns:
-      - Threshold definition is TBD.
+      - Threshold definition is TBD (R2a decided; operative calibration TBD).
       - Measurement interval is TBD.

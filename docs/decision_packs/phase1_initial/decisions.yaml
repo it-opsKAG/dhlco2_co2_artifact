@@ -52,8 +52,16 @@ functional_units:
       - user_decision
       - DHLCO2-10
   - id: R2
-    label: candidate
-    status: tbd
+    label: "1 service request (Phase 1 decision)"
+    status: decided_phase1
+    decision_date: "2026-03-26"
+    definition: |
+      One user-facing or system-boundary API request as counted at the service edge.
+      This is the SCI-recommended standard functional unit for software systems.
+      The framework treats R as an exchangeable parameter — calculation logic is
+      identical regardless of the chosen unit. Extension path:
+        Phase 2: business transaction (R2b)
+        Implementation: shipment-based (R2c), once operative data is available.
     source_refs:
       - user_decision
       - DHLCO2-8

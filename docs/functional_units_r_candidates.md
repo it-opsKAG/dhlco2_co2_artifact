@@ -1,6 +1,6 @@
-# Functional Units (R) – Phase 1 Candidates
+# Functional Units (R) – Phase 1
 
-Status: draft (decision‑ready)
+Status: R1 decided, R2 decided (2026-03-26)
 
 Canonical Phase‑1 decision pack: `Projects/dhlco2_co2_artifact/docs/decision_packs/phase1_initial/decisions.yaml` (`functional_units`).
 
@@ -11,7 +11,15 @@ Canonical Phase‑1 decision pack: `Projects/dhlco2_co2_artifact/docs/decision_p
 - Counting method (Phase‑1): count pipeline executions from CI system run logs; optionally segment by pipeline/job type.
 - Primary use: Build KPIs (`BLD-*` in `Projects/dhlco2_co2_artifact/data/kpis.yaml`).
 
-## R2 (Run) – candidates (TBD decision)
+## R2 (Run) – decided: 1 service request (R2a)
+
+**Decision (2026-03-26):** R2 = 1 service request (R2a) as Phase 1 reference functional unit.
+
+**Rationale:** Service-request is the SCI-recommended standard, infrastructure-agnostic, and universally countable. The framework treats R as an exchangeable parameter — calculation logic remains identical regardless of the chosen unit. This allows the project to proceed without dependency on the client's internal operational data.
+
+**Extension path:**
+- Phase 2: Business transaction (R2b) — requires transaction boundary definition with client
+- Implementation phase: Shipment-based (R2c) — requires access to operative shipment data
 
 Phase‑1 principle: pick an `R2` that is (a) observable deterministically from telemetry and (b) meaningful enough as a denominator for run‑phase KPI candidates.
 
@@ -32,9 +40,9 @@ Until `R2` is decided, use the existing project proxy (`PRX-002` in `Projects/dh
 - Proxy: request count as temporary denominator for `RUN-001..RUN-004`
 - Quality: low (explicitly marked)
 
-## Decision checklist (what to lock next)
+## Decision checklist
 
-1. Select `R2` (or formally accept proxy for Phase‑1 demo).
-2. Define boundary: which requests/transactions count, and what is excluded (retries, internal calls).
-3. Assign data owner + authoritative source system for the counter (`GAP-004`).
+1. ~~Select `R2` (or formally accept proxy for Phase‑1 demo).~~ **Done (2026-03-26): R2a selected.**
+2. Define boundary: which requests/transactions count, and what is excluded (retries, internal calls). → Phase 2
+3. Assign data owner + authoritative source system for the counter (`GAP-004`). → Phase 2 (requires stakeholder input)
 

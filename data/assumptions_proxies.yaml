@@ -23,20 +23,29 @@ assumptions:
 
 gaps:
   - id: GAP-001
-    title: Carbon intensity provider undefined
-    description: Source and refresh interval for carbon intensity are not fixed.
-    impact: SCI outputs cannot be finalized for build or run KPIs.
-    required_input: Select provider, granularity, and fallback policy.
-    status: open
+    title: Carbon intensity provider — phased integration model defined
+    description: >
+      Phase 1 uses national average grid intensity (e.g. UBA Germany).
+      Phase 2 targets IEA/EMBER (quarterly, national/regional).
+      Target state: Electricity Maps API (hourly, regional real-time).
+    impact: Phase 1 calculations use documented simplified values; precision increases with each integration step.
+    required_input: Standort-/Regionsinformationen des Auftraggebers für Phase-2-Integration.
+    status: addressed
+    decision_date: "2026-03-26"
     source_refs:
       - DHLCO2-4
       - DHLCO2-11
   - id: GAP-002
-    title: Functional unit R2 undefined
-    description: Operational functional unit candidate is not chosen.
-    impact: Run KPI denominators remain provisional.
-    required_input: Decide R2 and counting method.
-    status: open
+    title: Functional unit R2 — decided (service request)
+    description: >
+      R2 = 1 service request (R2a) as Phase 1 reference functional unit.
+      Extension path defined: Phase 2 → business transaction (R2b),
+      implementation phase → shipment-based (R2c) once operative data is available.
+      Framework treats R as exchangeable parameter; calculation logic remains identical.
+    impact: Run KPI denominators are now methodically defined; operative data binding is subject of implementation phase.
+    required_input: Stakeholder alignment on monitoring system for request counting (Phase 2).
+    status: addressed
+    decision_date: "2026-03-26"
     source_refs:
       - DHLCO2-8
       - DHLCO2-11
@@ -45,7 +54,7 @@ gaps:
     description: Method for amortizing hardware embodied carbon is not specified.
     impact: Indirect emission KPIs cannot move past candidate state.
     required_input: Define amortization model and inventory source.
-    status: open
+    status: open_phase2
     source_refs:
       - DHLCO2-4
       - DHLCO2-10
@@ -53,8 +62,8 @@ gaps:
     title: Data ownership and source systems undefined
     description: Data owners and authoritative systems are missing for KPI ingestion.
     impact: No deterministic production pipeline can be connected.
-    required_input: Assign owner and system per KPI candidate.
-    status: open
+    required_input: Assign owner and system per KPI candidate (requires stakeholder input).
+    status: open_phase2
     source_refs:
       - DHLCO2-6
       - DHLCO2-10
@@ -64,7 +73,7 @@ gaps:
     description: KPI-level ISO references are marked TBD in ticket drafts.
     impact: Normative traceability is incomplete.
     required_input: Complete mapping to agreed standards per KPI.
-    status: open
+    status: open_phase2
     source_refs:
       - DHLCO2-6
       - DHLCO2-7
