@@ -17,6 +17,11 @@ kpis:
     provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI from telemetry, billing, and carbon-intensity weighting"
     granularity: "per pipeline run"
+    accounting_boundary: "Candidate boundary: one CI/CD pipeline run including runner compute and allocated cloud usage; shared-runner allocation remains TBD."
+    representation_risk: "Proxy use; shared-runner allocation uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until source-system bindings and reporting cadence are fixed."
+    decision_lever: "Pipeline scheduling, runner selection, and shared-runner allocation policy."
     proxy_refs:
       - PRX-001
       - PRX-004
@@ -52,6 +57,11 @@ kpis:
     provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI from environment telemetry, billing, and carbon-intensity weighting"
     granularity: "per test-hour"
+    accounting_boundary: "Candidate boundary: test environment operation window allocated to test-hours; cross-team allocation remains TBD."
+    representation_risk: "Proxy use; boundary uncertainty; cross-team allocation uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until environment telemetry bindings and reporting cadence are fixed."
+    decision_lever: "Test environment runtime, sizing, and shutdown policy."
     proxy_refs:
       - PRX-001
       - PRX-004
@@ -87,6 +97,11 @@ kpis:
     provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI with build-time telemetry and artifact allocation logic"
     granularity: "per artifact or release event"
+    accounting_boundary: "Candidate boundary: build and release activity per artifact or release event; artifact granularity remains TBD."
+    representation_risk: "Proxy use; artifact granularity uncertainty; energy-conversion uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until build-stage bindings and release-event cadence are fixed."
+    decision_lever: "Build-stage optimization, artifact packaging, and release frequency."
     proxy_refs:
       - PRX-001
       - PRX-004
@@ -123,6 +138,11 @@ kpis:
     provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI with workload telemetry and amortized hardware contribution"
     granularity: "per training run"
+    accounting_boundary: "Candidate boundary: one training run including workload telemetry and allocated hardware contribution; attribution remains TBD."
+    representation_risk: "Proxy use; hardware amortization uncertainty; training attribution uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until training telemetry bindings and reporting cadence are fixed."
+    decision_lever: "Training frequency, hardware selection, and run-gating policy."
     proxy_refs:
       - PRX-001
       - PRX-003
@@ -161,6 +181,11 @@ kpis:
     provisional_owner: "Build KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "estimated amortized emissions model"
     granularity: "per story point or planning increment"
+    accounting_boundary: "Candidate boundary: hardware embodied emissions allocated to planning increments or story points; amortization method remains TBD."
+    representation_risk: "Amortization uncertainty; normalization uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until inventory source, planning binding, and refresh cadence are fixed."
+    decision_lever: "Hardware refresh policy, amortization policy, and planning normalization."
     proxy_refs:
       - PRX-003
       - PRX-004
@@ -193,11 +218,16 @@ kpis:
     data_sources:
       - APM traces (TBD source)
       - Operational logs (TBD source)
-      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
+      - "Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)"
     authoritative_system: "APM traces + operational logs (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI with service-request denominator (R2a)"
     granularity: "per business transaction or service request count"
+    accounting_boundary: "Candidate boundary: operational service-request scope in Phase 1 with extension path to business transaction."
+    representation_risk: "Proxy use; transaction taxonomy uncertainty; operative request-count binding TBD; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until APM/log bindings and reporting cadence are fixed."
+    decision_lever: "Transaction design, service optimization, and boundary selection."
     proxy_refs:
       - PRX-001
       - PRX-002
@@ -231,11 +261,16 @@ kpis:
     data_sources:
       - Service metrics (TBD source)
       - Infrastructure metrics (TBD metric ids)
-      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
+      - "Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)"
     authoritative_system: "Service metrics + infrastructure metrics (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "observed energy metric with carbon-intensity weighting; R2a service-request denominator"
     granularity: "per request"
+    accounting_boundary: "Candidate boundary: request-level system boundary per service request; operative counter system remains TBD."
+    representation_risk: "Proxy use; request-boundary uncertainty; operative denominator binding TBD; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until service/infrastructure bindings and reporting cadence are fixed."
+    decision_lever: "Request efficiency, autoscaling, and infrastructure right-sizing."
     proxy_refs:
       - PRX-001
       - PRX-002
@@ -254,7 +289,7 @@ kpis:
     status: candidate
     unknowns:
       - Request boundary definition is TBD (R2a decided; operative system TBD).
-      - Carbon intensity: Phase 1 uses national averages; sampling strategy for Phase 2+ is TBD.
+      - "Carbon intensity: Phase 1 uses national averages; sampling strategy for Phase 2+ is TBD."
   - id: RUN-003
     phase: run
     name: Data transfer emissions per GB
@@ -269,11 +304,16 @@ kpis:
     data_sources:
       - Network metrics (TBD source)
       - Data egress billing (TBD source)
-      - Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)
+      - "Carbon intensity feed (Phase 1: national averages via UBA; Phase 2: IEA/EMBER; target: Electricity Maps)"
     authoritative_system: "Network metrics + data egress billing (temporary placeholders)"
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "derived SCI from transfer volumes and carbon-intensity weighting"
     granularity: "per transferred GB"
+    accounting_boundary: "Candidate boundary: data transfer within a defined service boundary per GB; internal versus external split remains TBD."
+    representation_risk: "Proxy use; service-boundary uncertainty; traffic-split uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until network and billing bindings plus reporting cadence are fixed."
+    decision_lever: "Payload size, egress routing, and caching strategy."
     proxy_refs:
       - PRX-001
       - PRX-002
@@ -311,6 +351,11 @@ kpis:
     provisional_owner: "Run KPI workstream owner (temporary via PRX-004)"
     measurement_mode: "observed efficiency ratio with operational telemetry context"
     granularity: "per observation window or service slice"
+    accounting_boundary: "Candidate boundary: observation window or service slice for utilization-versus-power comparison."
+    representation_risk: "Proxy use; threshold-definition uncertainty; interval-definition uncertainty; source-system identifiers TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until observation windows, thresholds, and reporting cadence are fixed."
+    decision_lever: "Capacity right-sizing, utilization targets, and workload placement."
     proxy_refs:
       - PRX-001
       - PRX-002

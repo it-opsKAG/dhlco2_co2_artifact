@@ -28,6 +28,11 @@
           "provisional_owner",
           "measurement_mode",
           "granularity",
+          "accounting_boundary",
+          "representation_risk",
+          "data_coverage",
+          "feedback_latency",
+          "decision_lever",
           "proxy_refs",
           "gap_refs",
           "iso_refs",
@@ -112,6 +117,26 @@
             "minLength": 1
           },
           "granularity": {
+            "type": "string",
+            "minLength": 1
+          },
+          "accounting_boundary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "representation_risk": {
+            "type": "string",
+            "minLength": 1
+          },
+          "data_coverage": {
+            "type": "string",
+            "minLength": 1
+          },
+          "feedback_latency": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision_lever": {
             "type": "string",
             "minLength": 1
           },

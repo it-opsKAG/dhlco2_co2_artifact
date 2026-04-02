@@ -71,6 +71,19 @@ def _md_escape(text: str) -> str:
     return str(text).replace("|", "\\|").replace("\n", " ").strip()
 
 
+def _proxy_status(proxy_refs: Sequence[str], proxies_by_id: Dict[str, Dict[str, Any]]) -> str:
+    refs = [str(ref).strip() for ref in proxy_refs if str(ref).strip()]
+    if not refs:
+        return "none"
+    qualities = sorted(
+        {
+            str(proxies_by_id.get(ref, {}).get("quality", "unknown")).strip() or "unknown"
+            for ref in refs
+        }
+    )
+    return f"active ({', '.join(qualities)})"
+
+
 def _render_kpi_catalog_md(kpis: Sequence[Dict[str, Any]]) -> str:
     lines = [
         "# KPI Catalog",
@@ -173,14 +186,17 @@ def _render_framework_overview_md(
     return "\n".join(lines)
 
 
-def _render_measurement_matrix_md(kpis: Sequence[Dict[str, Any]]) -> str:
+def _render_measurement_matrix_md(
+    kpis: Sequence[Dict[str, Any]],
+    proxies_by_id: Dict[str, Dict[str, Any]],
+) -> str:
     lines = [
         "# Measurement Matrix",
         "",
-        "Compact review matrix for customer feedback: each KPI is mapped to owner, system, measurement mode, granularity, active proxies, and open gaps.",
+        "Compact review matrix for customer feedback: each KPI is mapped to owner, system, measurement mode, boundary, representation risk, proxy posture, and open gaps.",
         "",
-        "| ID | Phase | KPI | Functional Unit | Owner (temp) | Authoritative System | Measurement Mode | Granularity | Data Sources | Proxy Refs | Gap Refs | Status |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| ID | Phase | KPI | Functional Unit | Owner (temp) | Authoritative System | Measurement Mode | Granularity | Accounting Boundary | Representation Risk | Data Coverage | Feedback Latency | Proxy Status | Decision Lever | Data Sources | Proxy Refs | Gap Refs | Status |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for kpi in kpis:
         row = [
@@ -192,6 +208,12 @@ def _render_measurement_matrix_md(kpis: Sequence[Dict[str, Any]]) -> str:
             _md_escape(kpi["authoritative_system"]),
             _md_escape(kpi["measurement_mode"]),
             _md_escape(kpi["granularity"]),
+            _md_escape(kpi["accounting_boundary"]),
+            _md_escape(kpi["representation_risk"]),
+            _md_escape(kpi["data_coverage"]),
+            _md_escape(kpi["feedback_latency"]),
+            _md_escape(_proxy_status(kpi.get("proxy_refs", []), proxies_by_id)),
+            _md_escape(kpi["decision_lever"]),
             _md_escape(_csv_join(kpi["data_sources"])),
             _md_escape(_csv_join(kpi.get("proxy_refs", []))),
             _md_escape(_csv_join(kpi.get("gap_refs", []))),
@@ -204,6 +226,8 @@ def _render_measurement_matrix_md(kpis: Sequence[Dict[str, Any]]) -> str:
             "## Notes",
             "",
             "- `Owner (temp)` follows the current project proxy until formal RACI / source-system ownership is fixed.",
+            "- `Accounting Boundary`, `Representation Risk`, `Data Coverage`, `Feedback Latency`, and `Decision Lever` make the KPI more explicitly reviewable as a measurement-and-control artifact, not only as a formula.",
+            "- `Proxy Status` is derived from the active proxy references and their declared quality in `data/assumptions_proxies.yaml`.",
             "- `Proxy Refs` and `Gap Refs` point back to `exports/Gap_Report.md` for explicit review and governance.",
         ]
     )
@@ -356,6 +380,7 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     mappings = _sort_by_id(list(lifecycle_doc.get("kpi_mappings", [])))
     gaps = _sort_by_id(list(assumptions_doc.get("gaps", [])))
     proxies = _sort_by_id(list(assumptions_doc.get("proxies", [])))
+    proxies_by_id = {str(proxy["id"]): proxy for proxy in proxies}
 
     _require_unique_ids(kpis, "kpis")
     _require_unique_ids(steps, "lifecycle_steps")
@@ -378,7 +403,7 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     )
     _write_text(
         export_dir / "Measurement_Matrix.md",
-        _render_measurement_matrix_md(kpis),
+        _render_measurement_matrix_md(kpis, proxies_by_id),
     )
     _write_text(
         export_dir / "Lifecycle_Mapping.md",
