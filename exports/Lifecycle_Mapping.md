@@ -26,3 +26,11 @@
 | MAP-007 | RUN-002 | Operate | Monitor | direct | DHLCO2-11; Offer para 46; Offer para 64 |
 | MAP-008 | RUN-003 | Deploy | Operate | direct | DHLCO2-11; Offer para 46; Offer para 64 |
 | MAP-009 | RUN-004 | Monitor | Operate | direct | DHLCO2-11; Offer para 46; Offer para 64 |
+| MAP-010 | SCI-001 | Monitor | Plan; Build; Operate | mixed | DOCX section 5.1; DOCX table 9 |
+| MAP-011 | SCI-002 | Monitor | Plan; Operate | mixed | DOCX section 5.2; DOCX table 9 |
+| MAP-012 | INF-001 | Operate | Monitor | direct | DOCX table 3; DOCX table 9 |
+| MAP-013 | INF-002 | Operate | Monitor | direct | DOCX table 3; DOCX table 9 |
+| MAP-014 | INF-003 | Monitor | Operate | direct | DOCX table 3; DOCX table 9 |
+| MAP-015 | GOV-001 | Monitor | Plan | indirect | DOCX section 8.6; DOCX table 9 |
+| MAP-016 | GOV-002 | Monitor | Plan | indirect | DOCX section 8.6; DOCX section 9.1 |
+| MAP-017 | GOV-003 | Monitor | Plan; Operate | indirect | DOCX section 8.5; DOCX section 9.3 |

@@ -16,6 +16,8 @@
         "required": [
           "id",
           "phase",
+          "group",
+          "component",
           "name",
           "description",
           "formula",
@@ -43,14 +45,31 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^(BLD|RUN)-[0-9]{3}$"
+            "pattern": "^(SCI|BLD|RUN|INF|GOV)-[0-9]{3}$"
           },
           "phase": {
             "type": "string",
             "enum": [
+              "cross-cutting",
               "build",
-              "run"
+              "run",
+              "infrastructure",
+              "governance"
             ]
+          },
+          "group": {
+            "type": "string",
+            "enum": [
+              "Core SCI",
+              "Build Phase",
+              "Run Phase",
+              "Infrastructure Context",
+              "Data Quality & Governance"
+            ]
+          },
+          "component": {
+            "type": "string",
+            "minLength": 1
           },
           "name": {
             "type": "string",

@@ -31,6 +31,35 @@
 - `kpis_doc.kpis[0].representation_risk`: Proxy use; shared-runner allocation uncertainty; source-system identifiers TBD; ISO mapping incomplete.
 - `kpis_doc.kpis[0].unknowns[0]`: Carbon intensity source is TBD.
 - `kpis_doc.kpis[0].unknowns[1]`: Shared runner allocation rule is TBD.
+- `kpis_doc.kpis[10].authoritative_system`: Reporting data mart + SCI calculation service (Phase 2 binding TBD)
+- `kpis_doc.kpis[10].feedback_latency`: TBD until reporting cadence and activity-volume feed are fixed.
+- `kpis_doc.kpis[10].unknowns[0]`: Reporting boundary and consolidation rules are TBD.
+- `kpis_doc.kpis[10].unknowns[1]`: Compatibility checks for aggregation are TBD.
+- `kpis_doc.kpis[11].authoritative_system`: Facility telemetry or provider reporting portal (Phase 2 binding TBD)
+- `kpis_doc.kpis[11].data_sources[0]`: Data-center telemetry (TBD source)
+- `kpis_doc.kpis[11].feedback_latency`: TBD until provider/facility reporting cadence is fixed.
+- `kpis_doc.kpis[11].unknowns[0]`: DHL-relevant facility/provider PUE source is TBD.
+- `kpis_doc.kpis[11].unknowns[1]`: Allocation from facility level to service boundary is TBD.
+- `kpis_doc.kpis[12].authoritative_system`: Facility telemetry + carbon-intensity provider + provider reporting portal (Phase 2 binding TBD)
+- `kpis_doc.kpis[12].feedback_latency`: TBD until carbon-intensity and facility reporting cadence is fixed.
+- `kpis_doc.kpis[12].unknowns[0]`: Carbon-intensity provider policy is TBD beyond Phase-1 baseline.
+- `kpis_doc.kpis[12].unknowns[1]`: Facility-to-service allocation key is TBD.
+- `kpis_doc.kpis[13].authoritative_system`: Observability platform + capacity management system (Phase 2 binding TBD)
+- `kpis_doc.kpis[13].feedback_latency`: TBD until observability bindings and sampling windows are fixed.
+- `kpis_doc.kpis[13].unknowns[0]`: Utilization metric IDs and sampling interval are TBD.
+- `kpis_doc.kpis[13].unknowns[1]`: Idle-capacity allocation rule is TBD.
+- `kpis_doc.kpis[14].authoritative_system`: Data dictionary + lineage registry + calculation logs (Phase 2 binding TBD)
+- `kpis_doc.kpis[14].feedback_latency`: TBD until calculation-log and lineage capture are fixed.
+- `kpis_doc.kpis[14].unknowns[0]`: Required field list and lineage registry implementation are TBD.
+- `kpis_doc.kpis[14].unknowns[1]`: Threshold for publication readiness is TBD.
+- `kpis_doc.kpis[15].authoritative_system`: Measurement governance register + proxy catalog (Phase 2 binding TBD)
+- `kpis_doc.kpis[15].feedback_latency`: TBD until quality review cadence is fixed.
+- `kpis_doc.kpis[15].unknowns[0]`: Formal maturity gate policy is TBD.
+- `kpis_doc.kpis[15].unknowns[1]`: Owner for periodic maturity review is TBD.
+- `kpis_doc.kpis[16].authoritative_system`: Allocation policy registry + calculation metadata store (Phase 2 binding TBD)
+- `kpis_doc.kpis[16].feedback_latency`: TBD until allocation metadata is captured in calculation output.
+- `kpis_doc.kpis[16].unknowns[0]`: Approved allocation-policy registry is TBD.
+- `kpis_doc.kpis[16].unknowns[1]`: Evidence requirements for allocation-key validity are TBD.
 - `kpis_doc.kpis[1].accounting_boundary`: Candidate boundary: test environment operation window allocated to test-hours; cross-team allocation remains TBD.
 - `kpis_doc.kpis[1].data_sources[0]`: Test environment telemetry (TBD provider)
 - `kpis_doc.kpis[1].data_sources[1]`: Infrastructure metrics (TBD metric ids)
@@ -96,3 +125,7 @@
 - `kpis_doc.kpis[8].representation_risk`: Proxy use; threshold-definition uncertainty; interval-definition uncertainty; source-system identifiers TBD; ISO mapping incomplete.
 - `kpis_doc.kpis[8].unknowns[0]`: Threshold definition is TBD (R2a decided; operative calibration TBD).
 - `kpis_doc.kpis[8].unknowns[1]`: Measurement interval is TBD.
+- `kpis_doc.kpis[9].authoritative_system`: SCI calculation service + telemetry warehouse + functional-unit registry (Phase 2 binding TBD)
+- `kpis_doc.kpis[9].feedback_latency`: TBD until SCI calculation cadence and authoritative component feeds are fixed.
+- `kpis_doc.kpis[9].unknowns[0]`: Final source-system bindings for E, I, M, and R are TBD.
+- `kpis_doc.kpis[9].unknowns[1]`: BoundaryVersionID governance is TBD.

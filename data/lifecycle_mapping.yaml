@@ -108,3 +108,79 @@ kpi_mappings:
       - DHLCO2-11
       - "Offer para 46"
       - "Offer para 64"
+  - id: MAP-010
+    kpi_id: SCI-001
+    primary_step: Monitor
+    secondary_steps:
+      - Plan
+      - Build
+      - Operate
+    direct_or_indirect: mixed
+    source_refs:
+      - "DOCX section 5.1"
+      - "DOCX table 9"
+  - id: MAP-011
+    kpi_id: SCI-002
+    primary_step: Monitor
+    secondary_steps:
+      - Plan
+      - Operate
+    direct_or_indirect: mixed
+    source_refs:
+      - "DOCX section 5.2"
+      - "DOCX table 9"
+  - id: MAP-012
+    kpi_id: INF-001
+    primary_step: Operate
+    secondary_steps:
+      - Monitor
+    direct_or_indirect: direct
+    source_refs:
+      - "DOCX table 3"
+      - "DOCX table 9"
+  - id: MAP-013
+    kpi_id: INF-002
+    primary_step: Operate
+    secondary_steps:
+      - Monitor
+    direct_or_indirect: direct
+    source_refs:
+      - "DOCX table 3"
+      - "DOCX table 9"
+  - id: MAP-014
+    kpi_id: INF-003
+    primary_step: Monitor
+    secondary_steps:
+      - Operate
+    direct_or_indirect: direct
+    source_refs:
+      - "DOCX table 3"
+      - "DOCX table 9"
+  - id: MAP-015
+    kpi_id: GOV-001
+    primary_step: Monitor
+    secondary_steps:
+      - Plan
+    direct_or_indirect: indirect
+    source_refs:
+      - "DOCX section 8.6"
+      - "DOCX table 9"
+  - id: MAP-016
+    kpi_id: GOV-002
+    primary_step: Monitor
+    secondary_steps:
+      - Plan
+    direct_or_indirect: indirect
+    source_refs:
+      - "DOCX section 8.6"
+      - "DOCX section 9.1"
+  - id: MAP-017
+    kpi_id: GOV-003
+    primary_step: Monitor
+    secondary_steps:
+      - Plan
+      - Operate
+    direct_or_indirect: indirect
+    source_refs:
+      - "DOCX section 8.5"
+      - "DOCX section 9.3"

@@ -3,7 +3,9 @@
 Status: draft (implementation-ready notes; assumptions explicit)
 
 This document sharpens the "measurement approach" layer of the KPI catalog for
-Phase 1. Canonical KPI definitions remain in:
+Phase 1. It covers the review dimensions that apply across the five KPI groups
+now maintained in the canonical catalog: Core SCI, Build, Run, Infrastructure
+Context, and Data Quality/Governance. Canonical KPI definitions remain in:
 
 - `Projects/dhlco2_co2_artifact/data/kpis.yaml`
 - `Projects/dhlco2_co2_artifact/exports/KPI_Catalog.csv`

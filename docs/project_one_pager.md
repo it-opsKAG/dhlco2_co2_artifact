@@ -2,11 +2,11 @@
 
 ## Objective
 
-Create a scientifically grounded Phase-1 CO2 emissions monitoring artifact for the software lifecycle (Build and Run) that is comparable, traceable, and decision-ready, without pretending Phase 1 is already a production tool rollout.
+Create a scientifically grounded Phase-1 CO2 emissions monitoring artifact for the software lifecycle (SCI core, Build, Run, Infrastructure Context, and Data Quality/Governance) that is comparable, traceable, and decision-ready, without pretending Phase 1 is already a production tool rollout.
 
 ## Contribution of the framework
 
-- Gives DHL one consistent method backbone across build and run instead of isolated metric fragments.
+- Gives DHL one consistent method backbone across SCI rate logic, build/run emissions, infrastructure context, and governance controls instead of isolated metric fragments.
 - Separates decided content, temporary proxies, and real blockers so review can focus on the right decisions.
 - Keeps customer-facing outputs tied to the same SSOT that later enables operational rollout and simulation.
 
@@ -27,15 +27,15 @@ Supporting drafts:
 ## Customer-feedback fold-in for artifact vNext
 
 1. Artifact structure is now made explicit via `Framework_Overview.md`.
-2. KPI concreteness is made more reviewable via `KPI_Catalog.md` plus KPI-level measurement metadata.
+2. KPI concreteness is made more reviewable via `KPI_Catalog.md` plus KPI-level measurement metadata across five KPI groups.
 3. Functional-unit clarity remains explicit: `R1` is fixed, `R2` stays open but governed via proxy and decision path.
 4. Data sources and measurement logic are consolidated in `Measurement_Matrix.md`.
 5. The framework value statement is surfaced here instead of being scattered across status reports.
 
-## Current status (as of 2026-03-20)
+## Current status (as of 2026-05-13)
 
 - Canonical data model and exports exist and validate.
-- Build and run KPI candidates are structured enough for a customer-facing vNext artifact.
+- The KPI catalog now contains 17 candidates: 2 Core SCI, 5 Build, 4 Run, 3 Infrastructure Context, and 3 Data Quality/Governance.
 - The remaining blockers are explicit and narrow enough to drive focused review instead of broad rework.
 
 ## Open decisions / blockers (explicit)
@@ -50,4 +50,4 @@ Supporting drafts:
 
 1. Review `Framework_Overview.md` and `Measurement_Matrix.md` against customer feedback.
 2. Decide `R2` or formally accept the current proxy and document owner plus counting rule.
-3. Shortlist carbon-intensity provider options and lock the policy boundary for build and run KPIs.
+3. Shortlist carbon-intensity provider options and lock the policy boundary for SCI, build, run, and infrastructure-context KPIs.

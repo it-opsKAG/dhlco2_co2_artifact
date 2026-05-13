@@ -1,6 +1,8 @@
 kpis:
   - id: BLD-001
     phase: build
+    group: "Build Phase"
+    component: "Derived"
     name: CI/CD pipeline emissions per run
     description: Candidate KPI for build-phase pipeline runs.
     formula: "((E * I) + M) / R"
@@ -41,6 +43,8 @@ kpis:
       - Shared runner allocation rule is TBD.
   - id: BLD-002
     phase: build
+    group: "Build Phase"
+    component: "Derived"
     name: Test environment emissions per test-hour
     description: Candidate KPI for test environment operation.
     formula: "((E * I) + M) / R"
@@ -81,6 +85,8 @@ kpis:
       - Allocation across teams is TBD.
   - id: BLD-003
     phase: build
+    group: "Build Phase"
+    component: "Energy"
     name: Build minutes per artifact
     description: Candidate KPI for build effort and energy proxy.
     formula: "((E * I) + M) / R"
@@ -121,6 +127,8 @@ kpis:
       - Energy conversion from build minutes is TBD.
   - id: BLD-004
     phase: build
+    group: "Build Phase"
+    component: "Derived"
     name: ML training emissions per run
     description: Candidate KPI for model training in development.
     formula: "((E * I) + M) / R"
@@ -164,6 +172,8 @@ kpis:
       - Embodied carbon treatment for hardware is TBD.
   - id: BLD-005
     phase: build
+    group: "Build Phase"
+    component: "Embodied"
     name: Embodied carbon amortization per story point
     description: Candidate KPI for indirect build emissions.
     formula: "((E * I) + M) / R"
@@ -206,6 +216,8 @@ kpis:
       - Story-point normalization is TBD.
   - id: RUN-001
     phase: run
+    group: "Run Phase"
+    component: "Derived"
     name: Emissions per transaction
     description: Candidate KPI for run-phase SCI rate using operational R.
     formula: "((E * I) + M) / R"
@@ -250,6 +262,8 @@ kpis:
       - Operative data source for request counting is TBD (requires stakeholder alignment on monitoring system).
   - id: RUN-002
     phase: run
+    group: "Run Phase"
+    component: "Energy"
     name: Energy per request
     description: Candidate KPI for request-level operational energy.
     formula: "((E * I) + M) / R"
@@ -292,6 +306,8 @@ kpis:
       - "Carbon intensity: Phase 1 uses national averages; sampling strategy for Phase 2+ is TBD."
   - id: RUN-003
     phase: run
+    group: "Run Phase"
+    component: "Derived"
     name: Data transfer emissions per GB
     description: Candidate KPI for network transfer in operations.
     formula: "((E * I) + M) / R"
@@ -335,6 +351,8 @@ kpis:
       - Internal vs external traffic split is TBD.
   - id: RUN-004
     phase: run
+    group: "Run Phase"
+    component: "Efficiency"
     name: Energy proportionality index
     description: Candidate KPI for inefficiency detection at low utilization.
     formula: "((E * I) + M) / R"
@@ -375,3 +393,362 @@ kpis:
     unknowns:
       - Threshold definition is TBD (R2a decided; operative calibration TBD).
       - Measurement interval is TBD.
+  - id: SCI-001
+    phase: cross-cutting
+    group: "Core SCI"
+    component: "Derived"
+    name: Overall Software Carbon Intensity
+    description: Core SCI rate across the defined software boundary and functional unit.
+    formula: "((E * I) + M) / R"
+    unit: gCO2e/functional-unit
+    functional_unit: "R: versioned functional unit from Functional Unit Registry"
+    lifecycle_steps:
+      - Plan
+      - Build
+      - Operate
+      - Monitor
+    emission_type: mixed
+    data_sources:
+      - Energy telemetry or modeled energy demand
+      - Carbon intensity factor with time and region attributes
+      - Embodied emissions allocation table
+      - Functional unit count
+    authoritative_system: "SCI calculation service + telemetry warehouse + functional-unit registry (Phase 2 binding TBD)"
+    provisional_owner: "Measurement governance owner (temporary via PRX-004)"
+    measurement_mode: "derived SCI rate from E, I, M, and R components"
+    granularity: "per functional unit and reporting boundary version"
+    accounting_boundary: "Versioned software boundary including compute, storage, network, and allocated embodied hardware effects."
+    representation_risk: "Boundary version drift; missing source-system bindings; component-level data quality varies by KPI."
+    data_coverage: "partial"
+    feedback_latency: "TBD until SCI calculation cadence and authoritative component feeds are fixed."
+    decision_lever: "Architecture trade-offs, release gates, workload placement, and software-carbon reduction targets."
+    proxy_refs:
+      - PRX-001
+      - PRX-002
+      - PRX-003
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-003
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO/IEC 21031:2024"
+      - "SCI Specification 2024"
+    source_refs:
+      - DHLCO2-8
+      - DHLCO2-10
+      - DHLCO2-11
+      - "DOCX section 5.1"
+      - "DOCX table 9"
+    status: candidate
+    unknowns:
+      - Final source-system bindings for E, I, M, and R are TBD.
+      - BoundaryVersionID governance is TBD.
+  - id: SCI-002
+    phase: cross-cutting
+    group: "Core SCI"
+    component: "Derived"
+    name: Total software emissions for reporting period
+    description: Absolute emissions derived from SCI rate multiplied by activity volume for a defined period.
+    formula: "TotalEmissions_t = SCI_t * R_t"
+    unit: tCO2e/period
+    functional_unit: "R total: functional-unit volume for the reporting period"
+    lifecycle_steps:
+      - Plan
+      - Operate
+      - Monitor
+    emission_type: mixed
+    data_sources:
+      - SCI calculation output
+      - Activity volume counters
+      - Reporting period calendar and boundary version
+    authoritative_system: "Reporting data mart + SCI calculation service (Phase 2 binding TBD)"
+    provisional_owner: "Sustainability reporting owner (temporary via PRX-004)"
+    measurement_mode: "aggregation from rate metric and activity volume"
+    granularity: "per reporting period, service boundary, and functional unit"
+    accounting_boundary: "Same versioned boundary as SCI-001; totals may only aggregate compatible functional units and boundary versions."
+    representation_risk: "Aggregation risk if functional units, periods, or boundaries are mixed; reporting use requires maturity gate."
+    data_coverage: "partial"
+    feedback_latency: "TBD until reporting cadence and activity-volume feed are fixed."
+    decision_lever: "Portfolio baselining, reporting reconciliation, and prioritization of reduction initiatives."
+    proxy_refs:
+      - PRX-002
+      - PRX-004
+    gap_refs:
+      - GAP-002
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "GHG Protocol Scope 2 Guidance"
+      - "GHG Protocol Scope 3 Standard"
+      - "ISO 14064-1:2018"
+    source_refs:
+      - DHLCO2-8
+      - "DOCX section 5.2"
+      - "DOCX table 9"
+    status: candidate
+    unknowns:
+      - Reporting boundary and consolidation rules are TBD.
+      - Compatibility checks for aggregation are TBD.
+  - id: INF-001
+    phase: infrastructure
+    group: "Infrastructure Context"
+    component: "Facility"
+    name: Power Usage Effectiveness
+    description: Infrastructure overhead factor used to contextualize IT energy demand.
+    formula: "PUE = Total facility energy / IT equipment energy"
+    unit: ratio
+    functional_unit: "Facility or platform observation window"
+    lifecycle_steps:
+      - Operate
+      - Monitor
+    emission_type: direct
+    data_sources:
+      - Data-center telemetry (TBD source)
+      - Cloud or colocation provider sustainability reports
+      - Facility energy metering
+    authoritative_system: "Facility telemetry or provider reporting portal (Phase 2 binding TBD)"
+    provisional_owner: "Infrastructure/platform owner (temporary via PRX-004)"
+    measurement_mode: "observed or provider-reported infrastructure efficiency metric"
+    granularity: "per facility, region, provider, or platform slice"
+    accounting_boundary: "Facility-level overhead associated with the software boundary through allocation policy."
+    representation_risk: "Provider aggregation and allocation uncertainty; may not be service-specific in Phase 1."
+    data_coverage: "partial"
+    feedback_latency: "TBD until provider/facility reporting cadence is fixed."
+    decision_lever: "Facility/provider selection, workload placement, and infrastructure efficiency improvement."
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO/IEC 30134-2:2016"
+      - "EU Regulation 2024/1364"
+    source_refs:
+      - "DOCX section 3.2.4"
+      - "DOCX table 3"
+      - "DOCX table 9"
+    status: candidate
+    unknowns:
+      - DHL-relevant facility/provider PUE source is TBD.
+      - Allocation from facility level to service boundary is TBD.
+  - id: INF-002
+    phase: infrastructure
+    group: "Infrastructure Context"
+    component: "Facility"
+    name: Carbon Usage Effectiveness
+    description: Facility or platform carbon efficiency context for operational emissions.
+    formula: "CUE = Total CO2e emissions / IT equipment energy"
+    unit: kgCO2e/kWh
+    functional_unit: "Facility or platform observation window"
+    lifecycle_steps:
+      - Operate
+      - Monitor
+    emission_type: direct
+    data_sources:
+      - Facility emissions data
+      - Grid carbon-intensity factors
+      - Provider sustainability reports
+    authoritative_system: "Facility telemetry + carbon-intensity provider + provider reporting portal (Phase 2 binding TBD)"
+    provisional_owner: "Infrastructure/platform owner (temporary via PRX-004)"
+    measurement_mode: "derived infrastructure carbon-efficiency metric"
+    granularity: "per facility, region, provider, or platform slice"
+    accounting_boundary: "Facility or provider boundary mapped to the software boundary through versioned allocation policy."
+    representation_risk: "Carbon-factor source and provider aggregation uncertainty; location-based versus market-based interpretation must remain explicit."
+    data_coverage: "partial"
+    feedback_latency: "TBD until carbon-intensity and facility reporting cadence is fixed."
+    decision_lever: "Regional placement, provider comparison, and carbon-aware scheduling."
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO/IEC 30134-8:2022"
+      - "GHG Protocol Scope 2 Guidance"
+    source_refs:
+      - "DOCX section 3.2.4"
+      - "DOCX table 3"
+      - "DOCX table 9"
+    status: candidate
+    unknowns:
+      - Carbon-intensity provider policy is TBD beyond Phase-1 baseline.
+      - Facility-to-service allocation key is TBD.
+  - id: INF-003
+    phase: infrastructure
+    group: "Infrastructure Context"
+    component: "Utilization"
+    name: Average infrastructure utilization
+    description: Utilization context for interpreting energy proportionality and idle capacity.
+    formula: "AverageUtilization = used capacity / available capacity"
+    unit: percent
+    functional_unit: "Observation window for platform or service slice"
+    lifecycle_steps:
+      - Operate
+      - Monitor
+    emission_type: direct
+    data_sources:
+      - Host metrics
+      - Container or cluster metrics
+      - Capacity management data
+    authoritative_system: "Observability platform + capacity management system (Phase 2 binding TBD)"
+    provisional_owner: "SRE/platform owner (temporary via PRX-004)"
+    measurement_mode: "observed utilization metric with service-boundary allocation"
+    granularity: "per host, cluster, namespace, service slice, or observation window"
+    accounting_boundary: "Infrastructure slice that supports the measured service boundary, including idle-capacity treatment."
+    representation_risk: "Shared-infrastructure attribution and idle-capacity allocation uncertainty."
+    data_coverage: "partial"
+    feedback_latency: "TBD until observability bindings and sampling windows are fixed."
+    decision_lever: "Right-sizing, autoscaling, scheduling, and energy-proportionality improvement."
+    proxy_refs:
+      - PRX-001
+      - PRX-004
+    gap_refs:
+      - GAP-001
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO/IEC 30134-5:2017"
+      - "ISO/IEC 30134-4:2017"
+    source_refs:
+      - "DOCX section 3.2.4"
+      - "DOCX table 3"
+      - "DOCX table 9"
+    status: candidate
+    unknowns:
+      - Utilization metric IDs and sampling interval are TBD.
+      - Idle-capacity allocation rule is TBD.
+  - id: GOV-001
+    phase: governance
+    group: "Data Quality & Governance"
+    component: "Quality"
+    name: KPI data completeness
+    description: Share of required KPI input fields populated from documented source classes.
+    formula: "Complete required fields / total required fields"
+    unit: percent
+    functional_unit: "KPI definition and reporting period"
+    lifecycle_steps:
+      - Plan
+      - Monitor
+    emission_type: indirect
+    data_sources:
+      - Data dictionary
+      - Field-level lineage registry
+      - KPI calculation logs
+    authoritative_system: "Data dictionary + lineage registry + calculation logs (Phase 2 binding TBD)"
+    provisional_owner: "Measurement governance owner (temporary via PRX-004)"
+    measurement_mode: "metadata quality check"
+    granularity: "per KPI, source field, and reporting period"
+    accounting_boundary: "Metadata and source-field completeness for the KPI boundary under review."
+    representation_risk: "Completeness can be overstated if placeholder fields are counted as authoritative."
+    data_coverage: "partial"
+    feedback_latency: "TBD until calculation-log and lineage capture are fixed."
+    decision_lever: "Readiness gate for dashboard publication, reporting use, and Phase-2 instrumentation backlog."
+    proxy_refs:
+      - PRX-004
+    gap_refs:
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO 14064-1:2018"
+      - "ISO 14044:2006"
+    source_refs:
+      - "DOCX section 8.6"
+      - "DOCX table 9"
+      - "DOCX appendix design principles"
+    status: candidate
+    unknowns:
+      - Required field list and lineage registry implementation are TBD.
+      - Threshold for publication readiness is TBD.
+  - id: GOV-002
+    phase: governance
+    group: "Data Quality & Governance"
+    component: "Maturity"
+    name: Measurement maturity level
+    description: Maturity score indicating whether a KPI is conceptual, proxy-estimated, telemetry-derived, or component-attributed.
+    formula: "MaturityLevel in {M0, M1, M2, M3}"
+    unit: maturity level
+    functional_unit: "KPI value and reporting period"
+    lifecycle_steps:
+      - Plan
+      - Monitor
+    emission_type: indirect
+    data_sources:
+      - Data quality assessment
+      - Source-system binding registry
+      - Proxy register
+    authoritative_system: "Measurement governance register + proxy catalog (Phase 2 binding TBD)"
+    provisional_owner: "Measurement governance owner (temporary via PRX-004)"
+    measurement_mode: "governance classification"
+    granularity: "per KPI value, reporting period, and source-system binding"
+    accounting_boundary: "Trust classification attached to each generated KPI value."
+    representation_risk: "Maturity labels become misleading if not versioned with source bindings and proxy retirement."
+    data_coverage: "partial"
+    feedback_latency: "TBD until quality review cadence is fixed."
+    decision_lever: "Controls whether KPI values are used for exploratory insight, operational steering, or official totals."
+    proxy_refs:
+      - PRX-004
+    gap_refs:
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO 14064-1:2018"
+      - "GHG Protocol Corporate Standard"
+    source_refs:
+      - "DOCX section 8.6"
+      - "DOCX section 9.1"
+      - "DOCX appendix design principles"
+    status: candidate
+    unknowns:
+      - Formal maturity gate policy is TBD.
+      - Owner for periodic maturity review is TBD.
+  - id: GOV-003
+    phase: governance
+    group: "Data Quality & Governance"
+    component: "Governance"
+    name: Allocation policy compliance
+    description: Share of KPI calculations that reference an approved allocation policy where shared infrastructure is involved.
+    formula: "Compliant KPI calculations / KPI calculations requiring allocation"
+    unit: percent
+    functional_unit: "KPI calculation batch"
+    lifecycle_steps:
+      - Plan
+      - Operate
+      - Monitor
+    emission_type: indirect
+    data_sources:
+      - Allocation policy registry
+      - KPI calculation metadata
+      - Boundary version registry
+    authoritative_system: "Allocation policy registry + calculation metadata store (Phase 2 binding TBD)"
+    provisional_owner: "Measurement governance owner (temporary via PRX-004)"
+    measurement_mode: "governance control check"
+    granularity: "per KPI calculation, boundary version, and allocation policy"
+    accounting_boundary: "All KPI calculations using shared infrastructure or shared embodied-carbon pools."
+    representation_risk: "Policy references may exist without sufficient evidence that the allocation key matches the actual usage pattern."
+    data_coverage: "partial"
+    feedback_latency: "TBD until allocation metadata is captured in calculation output."
+    decision_lever: "Audit readiness, shared-infrastructure attribution, and prevention of double counting."
+    proxy_refs:
+      - PRX-003
+      - PRX-004
+    gap_refs:
+      - GAP-003
+      - GAP-004
+      - GAP-005
+    iso_refs:
+      - "ISO 14044:2006"
+      - "GHG Protocol Scope 3 Standard"
+    source_refs:
+      - "DOCX section 8.5"
+      - "DOCX section 9.3"
+      - "DOCX appendix design principles"
+    status: candidate
+    unknowns:
+      - Approved allocation-policy registry is TBD.
+      - Evidence requirements for allocation-key validity are TBD.

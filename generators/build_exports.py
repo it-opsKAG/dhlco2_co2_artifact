@@ -17,7 +17,14 @@ def _load_yaml(path: Path) -> Dict[str, Any]:
 
 
 def _sort_by_id(items: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    return sorted(items, key=lambda record: str(record.get("id", "")))
+    prefix_order = {"SCI": 0, "BLD": 1, "RUN": 2, "INF": 3, "GOV": 4}
+
+    def sort_key(record: Dict[str, Any]) -> Tuple[int, str]:
+        item_id = str(record.get("id", ""))
+        prefix = item_id.split("-", 1)[0]
+        return (prefix_order.get(prefix, 99), item_id)
+
+    return sorted(items, key=sort_key)
 
 
 def _require_unique_ids(items: Sequence[Dict[str, Any]], label: str) -> None:
@@ -84,24 +91,53 @@ def _proxy_status(proxy_refs: Sequence[str], proxies_by_id: Dict[str, Dict[str, 
     return f"active ({', '.join(qualities)})"
 
 
+def _group_counts_summary(kpis: Sequence[Dict[str, Any]]) -> str:
+    group_order = [
+        "Core SCI",
+        "Build Phase",
+        "Run Phase",
+        "Infrastructure Context",
+        "Data Quality & Governance",
+    ]
+    group_counts: Dict[str, int] = {}
+    for kpi in kpis:
+        group = str(kpi.get("group", "unknown"))
+        group_counts[group] = group_counts.get(group, 0) + 1
+    ordered_groups = [group for group in group_order if group in group_counts]
+    ordered_groups.extend(sorted(group for group in group_counts if group not in group_order))
+    return ", ".join(f"`{group}` {group_counts[group]}" for group in ordered_groups)
+
+
 def _render_kpi_catalog_md(kpis: Sequence[Dict[str, Any]]) -> str:
     lines = [
         "# KPI Catalog",
         "",
-        "| ID | Phase | Name | Unit | Functional Unit | Lifecycle Steps | Emission Type | Data Sources | ISO Refs | Status | Source Refs |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| ID | Group | Phase | Component | Name | Description | Formula | Unit | Functional Unit | Lifecycle Steps | Emission Type | Authoritative System | Measurement Mode | Granularity | Accounting Boundary | Data Coverage | Decision Lever | Data Sources | ISO Refs | Proxy Refs | Gap Refs | Status | Source Refs |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for kpi in kpis:
         row = [
             _md_escape(kpi["id"]),
+            _md_escape(kpi["group"]),
             _md_escape(kpi["phase"]),
+            _md_escape(kpi["component"]),
             _md_escape(kpi["name"]),
+            _md_escape(kpi["description"]),
+            _md_escape(kpi["formula"]),
             _md_escape(kpi["unit"]),
             _md_escape(kpi["functional_unit"]),
             _md_escape(_csv_join(kpi["lifecycle_steps"])),
             _md_escape(kpi["emission_type"]),
+            _md_escape(kpi["authoritative_system"]),
+            _md_escape(kpi["measurement_mode"]),
+            _md_escape(kpi["granularity"]),
+            _md_escape(kpi["accounting_boundary"]),
+            _md_escape(kpi["data_coverage"]),
+            _md_escape(kpi["decision_lever"]),
             _md_escape(_csv_join(kpi["data_sources"])),
             _md_escape(_csv_join(kpi["iso_refs"])),
+            _md_escape(_csv_join(kpi.get("proxy_refs", []))),
+            _md_escape(_csv_join(kpi.get("gap_refs", []))),
             _md_escape(kpi["status"]),
             _md_escape(_csv_join(kpi["source_refs"])),
         ]
@@ -116,14 +152,12 @@ def _render_framework_overview_md(
 ) -> str:
     functional_units = _sort_by_id(list(decisions_doc.get("functional_units", [])))
     open_gaps = [gap for gap in gaps if str(gap.get("status", "")).strip().lower() != "closed"]
-    build_count = sum(1 for kpi in kpis if kpi.get("phase") == "build")
-    run_count = sum(1 for kpi in kpis if kpi.get("phase") == "run")
     lines = [
         "# Framework Overview",
         "",
         "## Contribution of the framework",
         "",
-        "- Establishes one auditable method backbone for build and run emissions instead of isolated point metrics.",
+        "- Establishes one auditable method backbone for SCI rates, build/run emissions, infrastructure context, and governance controls instead of isolated point metrics.",
         "- Separates what is decided, what is proxied, and what is still open so customer review can focus on the real blockers.",
         "- Keeps customer-facing deliverables derivable from the same SSOT that later feeds operationalization and simulation.",
         "",
@@ -150,7 +184,7 @@ def _render_framework_overview_md(
         "| Module | Purpose | Current anchor |",
         "| --- | --- | --- |",
         "| Framework Overview | Explain the artifact architecture and how the modules fit together. | `exports/Framework_Overview.md` |",
-        "| KPI Catalog | Canonical KPI candidate set for build and run. | `exports/KPI_Catalog.md` |",
+        "| KPI Catalog | Canonical KPI candidate set across SCI core, build, run, infrastructure context, and governance/data quality. | `exports/KPI_Catalog.md` |",
         "| Functional Units | Lock denominator logic for build (`R1`) and run (`R2` / proxy). | `docs/functional_units_r_candidates.md` |",
         "| Measurement Matrix | Make data sources, owners, measurement mode, granularity, gaps, and proxies reviewable per KPI. | `exports/Measurement_Matrix.md` |",
         "| Lifecycle Mapping | Show where each KPI sits in the software lifecycle. | `exports/Lifecycle_Mapping.md` |",
@@ -159,7 +193,7 @@ def _render_framework_overview_md(
         "",
         "## Current phase-1 posture",
         "",
-        f"- KPI candidates: `{build_count}` build + `{run_count}` run",
+        "- KPI candidates by group: " + _group_counts_summary(kpis),
     ]
     for item in functional_units:
         lines.append(
@@ -177,7 +211,7 @@ def _render_framework_overview_md(
             "## Customer-feedback alignment",
             "",
             "- Artifact structure: addressed by this overview and the explicit module split.",
-            "- KPI catalog concreteness: addressed by `KPI_Catalog` plus KPI-level measurement metadata.",
+            "- KPI catalog completeness: addressed by five explicit KPI groups plus KPI-level measurement metadata in `KPI_Catalog`.",
             "- Functional unit clarity: addressed by `R1` decision and explicit `R2` / proxy handling.",
             "- Data sources and measurement logic: addressed by `Measurement_Matrix`.",
             "- Short framework value statement: addressed by the contribution section above and the updated project one-pager.",
@@ -195,13 +229,15 @@ def _render_measurement_matrix_md(
         "",
         "Compact review matrix for customer feedback: each KPI is mapped to owner, system, measurement mode, boundary, representation risk, proxy posture, and open gaps.",
         "",
-        "| ID | Phase | KPI | Functional Unit | Owner (temp) | Authoritative System | Measurement Mode | Granularity | Accounting Boundary | Representation Risk | Data Coverage | Feedback Latency | Proxy Status | Decision Lever | Data Sources | Proxy Refs | Gap Refs | Status |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| ID | Group | Phase | Component | KPI | Functional Unit | Owner (temp) | Authoritative System | Measurement Mode | Granularity | Accounting Boundary | Representation Risk | Data Coverage | Feedback Latency | Proxy Status | Decision Lever | Data Sources | Proxy Refs | Gap Refs | Status |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for kpi in kpis:
         row = [
             _md_escape(kpi["id"]),
+            _md_escape(kpi["group"]),
             _md_escape(kpi["phase"]),
+            _md_escape(kpi["component"]),
             _md_escape(kpi["name"]),
             _md_escape(kpi["functional_unit"]),
             _md_escape(kpi["provisional_owner"]),
@@ -237,7 +273,9 @@ def _render_measurement_matrix_md(
 def _write_kpi_catalog_csv(path: Path, kpis: Sequence[Dict[str, Any]]) -> None:
     headers = [
         "id",
+        "group",
         "phase",
+        "component",
         "name",
         "description",
         "formula",
@@ -245,7 +283,18 @@ def _write_kpi_catalog_csv(path: Path, kpis: Sequence[Dict[str, Any]]) -> None:
         "functional_unit",
         "lifecycle_steps",
         "emission_type",
+        "authoritative_system",
+        "provisional_owner",
+        "measurement_mode",
+        "granularity",
+        "accounting_boundary",
+        "representation_risk",
+        "data_coverage",
+        "feedback_latency",
+        "decision_lever",
         "data_sources",
+        "proxy_refs",
+        "gap_refs",
         "iso_refs",
         "status",
         "source_refs",
@@ -258,7 +307,9 @@ def _write_kpi_catalog_csv(path: Path, kpis: Sequence[Dict[str, Any]]) -> None:
             writer.writerow(
                 {
                     "id": kpi["id"],
+                    "group": kpi["group"],
                     "phase": kpi["phase"],
+                    "component": kpi["component"],
                     "name": kpi["name"],
                     "description": kpi["description"],
                     "formula": kpi["formula"],
@@ -266,7 +317,18 @@ def _write_kpi_catalog_csv(path: Path, kpis: Sequence[Dict[str, Any]]) -> None:
                     "functional_unit": kpi["functional_unit"],
                     "lifecycle_steps": _csv_join(kpi["lifecycle_steps"]),
                     "emission_type": kpi["emission_type"],
+                    "authoritative_system": kpi["authoritative_system"],
+                    "provisional_owner": kpi["provisional_owner"],
+                    "measurement_mode": kpi["measurement_mode"],
+                    "granularity": kpi["granularity"],
+                    "accounting_boundary": kpi["accounting_boundary"],
+                    "representation_risk": kpi["representation_risk"],
+                    "data_coverage": kpi["data_coverage"],
+                    "feedback_latency": kpi["feedback_latency"],
+                    "decision_lever": kpi["decision_lever"],
                     "data_sources": _csv_join(kpi["data_sources"]),
+                    "proxy_refs": _csv_join(kpi["proxy_refs"]),
+                    "gap_refs": _csv_join(kpi["gap_refs"]),
                     "iso_refs": _csv_join(kpi["iso_refs"]),
                     "status": kpi["status"],
                     "source_refs": _csv_join(kpi["source_refs"]),
