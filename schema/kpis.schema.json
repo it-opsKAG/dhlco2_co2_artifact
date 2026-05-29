@@ -45,7 +45,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "pattern": "^(SCI|BLD|RUN|INF|GOV)-[0-9]{3}$"
+            "pattern": "^(SCI|BLD|RUN|INF|GOV|HW)-[0-9]{3}$"
           },
           "phase": {
             "type": "string",
@@ -54,7 +54,8 @@
               "build",
               "run",
               "infrastructure",
-              "governance"
+              "governance",
+              "hardware"
             ]
           },
           "group": {
@@ -64,7 +65,8 @@
               "Build Phase",
               "Run Phase",
               "Infrastructure Context",
-              "Data Quality & Governance"
+              "Data Quality & Governance",
+              "Hardware & Embodied"
             ]
           },
           "component": {

@@ -50,14 +50,22 @@ gaps:
       - DHLCO2-8
       - DHLCO2-11
   - id: GAP-003
-    title: Embodied carbon amortization method undefined
-    description: Method for amortizing hardware embodied carbon is not specified.
-    impact: Indirect emission KPIs cannot move past candidate state.
-    required_input: Define amortization model and inventory source.
-    status: open_phase2
+    title: Embodied carbon amortization method — method defined, inventory sourcing open
+    description: >
+      Amortization method resolved in Phase 2 (linear, inventory-fed).
+      Formula: EmbodiedCO2_per_request = EmbodiedCO2_hardware_kg * 1000 / (LifetimeMonths * RequestsPerMonth).
+      Annualized: EmbodiedCO2_ann_gCO2e = EmbodiedCO2_hardware_kg * 1000 / LifetimeYears.
+      Inventory source priority: (1) vendor PCF datasheet (e.g. NVIDIA PCF) > (2) Ecoinvent database >
+      (3) generic proxy: 0.5 kg CO2e/W TDP (uncertainty ±50%).
+      Multi-GPU clusters: sum over all nodes, η_parallel correction applied to LifetimeOutputs.
+    impact: BLD-004, BLD-005, HW-001 can progress past candidate state once inventory source is confirmed.
+    required_input: Confirm hardware inventory source (PCF datasheet preferred) per pilot infrastructure.
+    status: addressed_phase2
+    decision_date: "2026-05-29"
     source_refs:
       - DHLCO2-4
       - DHLCO2-10
+      - phase2_rdc_gap_analysis
   - id: GAP-004
     title: Data ownership and source systems undefined
     description: Data owners and authoritative systems are missing for KPI ingestion.
@@ -95,11 +103,15 @@ proxies:
       - DHLCO2-11
   - id: PRX-003
     gap_id: GAP-003
-    proxy: Use linear amortization over fixed service life.
-    quality: low
+    proxy: >
+      Linear amortization over fixed service life with inventory-fed embodied CO2 input.
+      Formula: EmbodiedCO2_per_request = EmbodiedCO2_kg * 1000 / (LifetimeMonths * RequestsPerMonth).
+      Fallback when no vendor PCF available: 0.5 kg CO2e/W TDP (uncertainty ±50%).
+    quality: medium
     source_refs:
       - DHLCO2-4
       - DHLCO2-10
+      - phase2_rdc_gap_analysis
   - id: PRX-004
     gap_id: GAP-004
     proxy: Use ticket assignee as temporary owner until RACI is defined.

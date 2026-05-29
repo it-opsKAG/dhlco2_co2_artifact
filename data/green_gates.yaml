@@ -1,0 +1,235 @@
+# Green Gates — Threshold logic per KPI
+#
+# PURPOSE: Defines green/amber/red decision thresholds for each KPI candidate.
+# These are KRALLMANN default values with documented reasoning.
+# Adopt DHL internal model if available; override any threshold with organisation-specific values.
+#
+# Used by: Phase-2 process integration, future dashboard (Phase 3)
+# Source: Vorgehensvorschlag 2026-05-07 §4.3
+#
+# Escalation logic:
+#   green  → no action required
+#   amber  → alert; investigate within 5 business days
+#   red    → escalate; block release if sustained (see sustained_rule per gate)
+#
+# sustained_rule: condition under which a red gate triggers a release block
+#   e.g. "3 consecutive runs OR 7-day rolling average"
+#
+# threshold_basis: what the numeric values are based on
+#   - krallmann_default: KRALLMANN derived from SCI benchmarks and CleanIT study
+#   - dhl_internal: to be provided by DHL stakeholders (replaces default when available)
+#   - tbd: not yet defined; awaiting pilot data
+
+green_gates:
+
+  # --- BUILD PHASE ---
+
+  - kpi_id: BLD-001
+    kpi_name: CI/CD pipeline emissions per run
+    unit: gCO2e/run
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 100,  label: "green",  action: "none" }
+      amber:  { max: 250,  label: "amber",  action: "alert — investigate pipeline config" }
+      red:    { min: 250,  label: "red",    action: "escalate to Build KPI Owner" }
+    sustained_rule: "3 consecutive pipeline runs red, OR 7-day rolling average > 250 gCO2e/run"
+    sensitivity_note: >
+      Values are illustrative pending pilot baseline. Derived from: SCI Spec v1.1.0 + CleanIT 2023
+      typical build footprint of 50–200 gCO2e/run for mid-size CI pipelines.
+
+  - kpi_id: BLD-002
+    kpi_name: Test environment emissions per test-hour
+    unit: gCO2e/test-hour
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 50,   label: "green",  action: "none" }
+      amber:  { max: 150,  label: "amber",  action: "alert — review test environment sizing" }
+      red:    { min: 150,  label: "red",    action: "escalate to Build KPI Owner" }
+    sustained_rule: "7-day rolling average > 150 gCO2e/test-hour"
+    sensitivity_note: "Threshold depends heavily on test environment size. Calibrate after Tier-0 baseline."
+
+  - kpi_id: BLD-003
+    kpi_name: Build minutes per artifact
+    unit: gCO2e/artifact
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 30,   label: "green",  action: "none" }
+      amber:  { max: 80,   label: "amber",  action: "alert — investigate build time regression" }
+      red:    { min: 80,   label: "red",    action: "escalate to Build KPI Owner" }
+    sustained_rule: "3 consecutive artifact builds red"
+    sensitivity_note: "TBD — calibrate against actual build-time baseline from Tier-0 instrumentation."
+
+  - kpi_id: BLD-004
+    kpi_name: ML training emissions per run
+    unit: gCO2e/training-run
+    threshold_basis: tbd
+    thresholds:
+      green:  { max: null,  label: "TBD",  action: "TBD — pending Tier-0 baseline" }
+      amber:  { max: null,  label: "TBD",  action: "TBD" }
+      red:    { min: null,  label: "TBD",  action: "TBD" }
+    sustained_rule: "TBD"
+    sensitivity_note: >
+      ML training emissions vary orders of magnitude by model size and hardware.
+      Define gate after first training run is instrumented (Tier-2 T2-05).
+
+  - kpi_id: BLD-005
+    kpi_name: Embodied carbon amortization per story point
+    unit: gCO2e/story-point
+    threshold_basis: tbd
+    thresholds:
+      green:  { max: null,  label: "TBD",  action: "TBD — pending hardware inventory" }
+      amber:  { max: null,  label: "TBD",  action: "TBD" }
+      red:    { min: null,  label: "TBD",  action: "TBD" }
+    sustained_rule: "TBD"
+    sensitivity_note: "Depends on hardware inventory (HW-001). Define after Tier-0 T0-05."
+
+  # --- RUN PHASE ---
+
+  - kpi_id: RUN-001
+    kpi_name: Emissions per transaction
+    unit: gCO2e/transaction
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 0.10,  label: "green",  action: "none" }
+      amber:  { max: 0.25,  label: "amber",  action: "alert — investigate service or carbon intensity" }
+      red:    { min: 0.25,  label: "red",    action: "escalate to Run KPI Owner" }
+    sustained_rule: "3 consecutive release deployments red OR 7-day rolling average > 0.25 gCO2e/transaction"
+    sensitivity_note: >
+      Derived from SCI Spec + typical web-service footprint.
+      0.10 gCO2e = roughly 0.2 Wh/request at 485 gCO2e/kWh (German grid).
+      Revise for actual emission factor once Tier-0 T0-03 is operational.
+
+  - kpi_id: RUN-002
+    kpi_name: Energy per request
+    unit: Wh/request
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 0.20,  label: "green",  action: "none" }
+      amber:  { max: 0.50,  label: "amber",  action: "alert — service efficiency review" }
+      red:    { min: 0.50,  label: "red",    action: "escalate to Run KPI Owner" }
+    sustained_rule: "7-day rolling average > 0.50 Wh/request"
+    sensitivity_note: "Energy-only gate — emission-factor-independent. Use alongside RUN-001."
+
+  - kpi_id: RUN-003
+    kpi_name: Data transfer emissions per GB
+    unit: gCO2e/GB
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 5.0,   label: "green",  action: "none" }
+      amber:  { max: 15.0,  label: "amber",  action: "alert — review data transfer patterns" }
+      red:    { min: 15.0,  label: "red",    action: "escalate to Run KPI Owner" }
+    sustained_rule: "7-day rolling average > 15.0 gCO2e/GB"
+    sensitivity_note: >
+      Based on IEA network energy benchmarks (0.06 kWh/GB ×DE grid 485 gCO2e/kWh ≈ 29 gCO2e/GB upper bound).
+      Green threshold targets CDN-optimised traffic.
+
+  - kpi_id: RUN-004
+    kpi_name: Energy proportionality index
+    unit: ratio
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { min: 0.70,  label: "green",  action: "none" }
+      amber:  { min: 0.40,  label: "amber",  action: "alert — idle resource waste" }
+      red:    { max: 0.40,  label: "red",    action: "escalate — consider resource right-sizing" }
+    sustained_rule: "30-day rolling average < 0.40"
+    sensitivity_note: "Higher ratio = better proportionality. Targets: data center best practice ≥ 0.70."
+
+  # --- INFRASTRUCTURE CONTEXT ---
+
+  - kpi_id: INF-001
+    kpi_name: Power Usage Effectiveness (PUE)
+    unit: ratio
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 1.3,   label: "green",  action: "none" }
+      amber:  { max: 1.6,   label: "amber",  action: "alert — datacenter efficiency below industry avg" }
+      red:    { min: 1.6,   label: "red",    action: "escalate to Platform Owner" }
+    sustained_rule: "Quarterly PUE report exceeds 1.6"
+    sensitivity_note: "Industry average 2024: ~1.5 (Uptime Institute). Green Cloud target: ≤1.2."
+
+  - kpi_id: INF-002
+    kpi_name: Carbon Usage Effectiveness (CUE)
+    unit: kgCO2e/kWh
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { max: 0.30,  label: "green",  action: "none" }
+      amber:  { max: 0.60,  label: "amber",  action: "alert — carbon intensity above target" }
+      red:    { min: 0.60,  label: "red",    action: "escalate to Platform Owner" }
+    sustained_rule: "Monthly CUE > 0.60 for 3 consecutive months"
+    sensitivity_note: "Depends on grid mix; DE grid 2024 = 0.485 kgCO2e/kWh. Adjust for actual location."
+
+  - kpi_id: INF-003
+    kpi_name: Average infrastructure utilization
+    unit: percent
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { min: 60,   label: "green",  action: "none" }
+      amber:  { min: 30,   label: "amber",  action: "alert — idle waste, consider right-sizing" }
+      red:    { max: 30,   label: "red",    action: "escalate to Platform Owner" }
+    sustained_rule: "30-day rolling average < 30%"
+    sensitivity_note: "Industry guidance: ≥60% for energy proportionality. Serverless workloads may differ."
+
+  # --- HARDWARE & EMBODIED ---
+
+  - kpi_id: HW-001
+    kpi_name: Embodied carbon per request
+    unit: gCO2e/request
+    threshold_basis: tbd
+    thresholds:
+      green:  { max: null,  label: "TBD",  action: "TBD — pending hardware inventory + request baseline" }
+      amber:  { max: null,  label: "TBD",  action: "TBD" }
+      red:    { min: null,  label: "TBD",  action: "TBD" }
+    sustained_rule: "TBD — define after Tier-0 T0-05 baseline"
+    sensitivity_note: >
+      Relative gate: flag if HW-001 > RUN-001 × 2 (embodied dominates operational).
+      Absolute threshold depends on hardware refresh cycle and traffic volume.
+
+  - kpi_id: HW-002
+    kpi_name: CAPEX amortized per request
+    unit: EUR/request
+    threshold_basis: tbd
+    thresholds:
+      green:  { max: null,  label: "TBD",  action: "TBD — pending finance data" }
+      amber:  { max: null,  label: "TBD",  action: "TBD" }
+      red:    { min: null,  label: "TBD",  action: "TBD" }
+    sustained_rule: "TBD"
+    sensitivity_note: >
+      Cost metric — gate depends on organisation's cost targets.
+      Reference from model: Tier-3 48 GB single GPU at 10k req/mo ≈ 0.008 EUR/req.
+
+  # --- DATA QUALITY & GOVERNANCE ---
+
+  - kpi_id: GOV-001
+    kpi_name: KPI data completeness
+    unit: percent
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { min: 80,   label: "green",  action: "none" }
+      amber:  { min: 50,   label: "amber",  action: "alert — data gaps affecting audit readiness" }
+      red:    { max: 50,   label: "red",    action: "escalate to Measurement Governance Owner" }
+    sustained_rule: "Completeness < 50% for 2 consecutive reporting periods"
+    sensitivity_note: "Phase 1 baseline expected ~20% (all proxy). Target: 80% by Phase 3."
+
+  - kpi_id: GOV-002
+    kpi_name: Measurement maturity level
+    unit: M0-M3 (ordinal)
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { min: "M2",  label: "green",  action: "none" }
+      amber:  { min: "M1",  label: "amber",  action: "alert — below target maturity" }
+      red:    { max: "M0",  label: "red",    action: "escalate — no measurement in place" }
+    sustained_rule: "Any KPI remains at M0 after Phase 2 completion"
+    sensitivity_note: >
+      M0 = ad-hoc/none, M1 = manual/proxy, M2 = automated/observed, M3 = audit-capable.
+      Phase 2 target: all pilot KPIs ≥ M1.
+
+  - kpi_id: GOV-003
+    kpi_name: Allocation policy compliance
+    unit: percent
+    threshold_basis: krallmann_default
+    thresholds:
+      green:  { min: 90,   label: "green",  action: "none" }
+      amber:  { min: 70,   label: "amber",  action: "alert — some allocations undocumented" }
+      red:    { max: 70,   label: "red",    action: "escalate to Measurement Governance Owner" }
+    sustained_rule: "Compliance < 70% at any audit checkpoint"
+    sensitivity_note: "Requires allocation policy registry (Tier-2 T2-03). Phase 2 target: 70%."

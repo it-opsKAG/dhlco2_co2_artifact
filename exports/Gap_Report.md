@@ -6,7 +6,7 @@
 | --- | --- | --- | --- | --- | --- |
 | GAP-001 | Carbon intensity provider — phased integration model defined | Phase 1 calculations use documented simplified values; precision increases with each integration step. | Standort-/Regionsinformationen des Auftraggebers für Phase-2-Integration. | addressed | DHLCO2-4; DHLCO2-11 |
 | GAP-002 | Functional unit R2 — decided (service request) | Run KPI denominators are now methodically defined; operative data binding is subject of implementation phase. | Stakeholder alignment on monitoring system for request counting (Phase 2). | addressed | DHLCO2-8; DHLCO2-11 |
-| GAP-003 | Embodied carbon amortization method undefined | Indirect emission KPIs cannot move past candidate state. | Define amortization model and inventory source. | open_phase2 | DHLCO2-4; DHLCO2-10 |
+| GAP-003 | Embodied carbon amortization method — method defined, inventory sourcing open | BLD-004, BLD-005, HW-001 can progress past candidate state once inventory source is confirmed. | Confirm hardware inventory source (PCF datasheet preferred) per pilot infrastructure. | addressed_phase2 | DHLCO2-4; DHLCO2-10; phase2_rdc_gap_analysis |
 | GAP-004 | Data ownership and source systems undefined | No deterministic production pipeline can be connected. | Assign owner and system per KPI candidate (requires stakeholder input). | open_phase2 | DHLCO2-6; DHLCO2-10; DHLCO2-11 |
 | GAP-005 | ISO reference mapping incomplete | Normative traceability is incomplete. | Complete mapping to agreed standards per KPI. | open_phase2 | DHLCO2-6; DHLCO2-7; Offer para 62 |
 
@@ -16,7 +16,7 @@
 | --- | --- | --- | --- | --- |
 | PRX-001 | GAP-001 | Use region-level average grid intensity feed until source is fixed. | low | DHLCO2-11 |
 | PRX-002 | GAP-002 | Use request count as temporary denominator for RUN-001 to RUN-004. | low | DHLCO2-8; DHLCO2-11 |
-| PRX-003 | GAP-003 | Use linear amortization over fixed service life. | low | DHLCO2-4; DHLCO2-10 |
+| PRX-003 | GAP-003 | Linear amortization over fixed service life with inventory-fed embodied CO2 input. Formula: EmbodiedCO2_per_request = EmbodiedCO2_kg * 1000 / (LifetimeMonths * RequestsPerMonth). Fallback when no vendor PCF available: 0.5 kg CO2e/W TDP (uncertainty ±50%). | medium | DHLCO2-4; DHLCO2-10; phase2_rdc_gap_analysis |
 | PRX-004 | GAP-004 | Use ticket assignee as temporary owner until RACI is defined. | low | DHLCO2-6 |
 
 ## Derived TBD Entries
@@ -60,6 +60,20 @@
 - `kpis_doc.kpis[16].feedback_latency`: TBD until allocation metadata is captured in calculation output.
 - `kpis_doc.kpis[16].unknowns[0]`: Approved allocation-policy registry is TBD.
 - `kpis_doc.kpis[16].unknowns[1]`: Evidence requirements for allocation-key validity are TBD.
+- `kpis_doc.kpis[17].data_sources[1]`: Asset lifetime records (TBD asset management system)
+- `kpis_doc.kpis[17].data_sources[2]`: Request volume (TBD monitoring system)
+- `kpis_doc.kpis[17].feedback_latency`: TBD until hardware inventory source and request monitoring binding are fixed.
+- `kpis_doc.kpis[17].iso_refs[0]`: TBD
+- `kpis_doc.kpis[17].representation_risk`: Proxy use; inventory source uncertainty (±50% without vendor PCF); amortization period uncertainty; η_parallel is empirical; request count binding TBD; ISO mapping incomplete.
+- `kpis_doc.kpis[17].unknowns[0]`: Vendor PCF datasheet availability per hardware asset is TBD.
+- `kpis_doc.kpis[17].unknowns[2]`: Request count binding and monitoring system are TBD.
+- `kpis_doc.kpis[18].data_sources[0]`: Hardware procurement records (TBD finance system)
+- `kpis_doc.kpis[18].data_sources[1]`: Asset lifetime records (TBD asset management system)
+- `kpis_doc.kpis[18].data_sources[2]`: Request volume (TBD monitoring system)
+- `kpis_doc.kpis[18].feedback_latency`: TBD until finance system and request monitoring binding are fixed.
+- `kpis_doc.kpis[18].representation_risk`: Finance data access TBD; amortization period uncertainty; CAPEX vs. OPEX boundary for hybrid or cloud scenarios TBD; no direct ISO CO2 normative reference (cost metric).
+- `kpis_doc.kpis[18].unknowns[0]`: Finance system data access and procurement record format are TBD.
+- `kpis_doc.kpis[18].unknowns[1]`: CAPEX vs. OPEX boundary for hybrid and cloud scenarios is TBD.
 - `kpis_doc.kpis[1].accounting_boundary`: Candidate boundary: test environment operation window allocated to test-hours; cross-team allocation remains TBD.
 - `kpis_doc.kpis[1].data_sources[0]`: Test environment telemetry (TBD provider)
 - `kpis_doc.kpis[1].data_sources[1]`: Infrastructure metrics (TBD metric ids)

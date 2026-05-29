@@ -1,0 +1,191 @@
+# HardwareConfig — Generic reference tiers for CO2 build/run model
+#
+# PURPOSE: These are generic tier definitions, NOT product recommendations.
+# They serve as parameterizable reference configurations for the simulation model.
+# Replace any entry with your actual hardware specs to get organisation-specific results.
+#
+# Schema: Each entry defines a deployable infrastructure tier.
+# Used by: generators/hardware_model.py
+# Consumed by: HW-001 (embodied CO2/request), HW-002 (CAPEX/request), EfficiencyScore, rdc_rank()
+#
+# How to use:
+#   1. Copy the relevant tier entry.
+#   2. Replace placeholder values (label, gpu_type, capex_eur, power_load_w, etc.)
+#      with your actual hardware specs.
+#   3. Set embodied_co2_kg from vendor PCF datasheet when available.
+#   4. Re-run: PYTHONUTF8=1 python generators/hardware_model.py
+#
+# embodied_co2_kg: source priority = vendor PCF datasheet > Ecoinvent database >
+#                  proxy fallback (0.5 kg CO2e/W TDP) — see PRX-003
+# vram_effective_gb: accounts for η_parallel multi-GPU efficiency loss
+# η_parallel: empirical correction for multi-GPU VRAM pooling (range: 0.75–0.95)
+# exclude_from_ranking: true = reference/baseline only, excluded from EfficiencyScore ranking
+
+hardware_configs:
+
+  # --- SINGLE-GPU TIERS ---
+
+  - id: HW-CFG-T1-16GB
+    label: "Tier 1 — 16 GB VRAM (entry workstation / consumer)"
+    gpu_type: "Generic 16 GB GPU"
+    gpu_count: 1
+    vram_per_gpu_gb: 16.0
+    vram_effective_gb: 16.0
+    eta_parallel: 1.0
+    power_idle_w: 30
+    power_load_w: 150        # typical for 16 GB workstation class
+    capex_eur: 800           # replace with actual procurement price
+    expected_lifetime_months: 48
+    maintenance_risk: 0.15
+    software_maturity: 0.85
+    embodied_co2_kg: null    # set from vendor PCF; proxy fallback: 0.5 * 150 = 75 kg
+    embodied_co2_source: proxy_tdp
+    notes: "Suitable for 7B–14B INT4 models. Not viable for 30B+ without quantization."
+
+  - id: HW-CFG-T2-24GB
+    label: "Tier 2 — 24 GB VRAM (consumer high-end)"
+    gpu_type: "Generic 24 GB GPU"
+    gpu_count: 1
+    vram_per_gpu_gb: 24.0
+    vram_effective_gb: 24.0
+    eta_parallel: 1.0
+    power_idle_w: 50
+    power_load_w: 350        # typical for 24 GB consumer class
+    capex_eur: 1500
+    expected_lifetime_months: 48
+    maintenance_risk: 0.20
+    software_maturity: 0.85
+    embodied_co2_kg: null    # proxy fallback: 0.5 * 350 = 175 kg
+    embodied_co2_source: proxy_tdp
+    notes: "Suitable for 30B Q4/Q5 models. 70B requires multi-GPU."
+
+  - id: HW-CFG-T3-48GB
+    label: "Tier 3 — 48 GB VRAM (workstation single)"
+    gpu_type: "Generic 48 GB Workstation GPU"
+    gpu_count: 1
+    vram_per_gpu_gb: 48.0
+    vram_effective_gb: 48.0
+    eta_parallel: 1.0
+    power_idle_w: 60
+    power_load_w: 300        # typical for 48 GB professional workstation class
+    capex_eur: 5000
+    expected_lifetime_months: 60
+    maintenance_risk: 0.10
+    software_maturity: 0.95
+    embodied_co2_kg: null    # proxy fallback: 0.5 * 300 = 150 kg
+    embodied_co2_source: proxy_tdp
+    notes: "Handles 70B Q4/Q5. ECC typically available at this tier."
+
+  - id: HW-CFG-T4-96GB
+    label: "Tier 4 — 96 GB VRAM (workstation single, high capacity)"
+    gpu_type: "Generic 96 GB Workstation GPU"
+    gpu_count: 1
+    vram_per_gpu_gb: 96.0
+    vram_effective_gb: 96.0
+    eta_parallel: 1.0
+    power_idle_w: 80
+    power_load_w: 300        # high-capacity professional GPUs often stay at 300 W TDP
+    capex_eur: 11000
+    expected_lifetime_months: 72
+    maintenance_risk: 0.08
+    software_maturity: 0.95
+    embodied_co2_kg: null    # proxy fallback: 0.5 * 300 = 150 kg
+    embodied_co2_source: proxy_tdp
+    notes: "Single-GPU for 70B FP8 or large MoE models. No multi-GPU complexity."
+
+  # --- MULTI-GPU CLUSTER TIERS ---
+
+  - id: HW-CFG-T5-96GB-DUAL
+    label: "Tier 5 — ~91 GB effective VRAM (2× 48 GB cluster)"
+    gpu_type: "Generic 48 GB Workstation GPU (×2)"
+    gpu_count: 2
+    vram_per_gpu_gb: 48.0
+    vram_effective_gb: 91.2  # 96 GB × η_parallel=0.95
+    eta_parallel: 0.95
+    power_idle_w: 120
+    power_load_w: 600
+    capex_eur: 10000
+    expected_lifetime_months: 60
+    maintenance_risk: 0.15
+    software_maturity: 0.90
+    embodied_co2_kg: null    # proxy fallback: 2 × 150 kg = 300 kg
+    embodied_co2_source: proxy_tdp
+    notes: "Dual-GPU cluster via tensor parallelism (vLLM/llama.cpp). Verify PCIe bandwidth."
+
+  - id: HW-CFG-T6-115GB-QUAD
+    label: "Tier 6 — ~115 GB effective VRAM (4× 32 GB cluster)"
+    gpu_type: "Generic 32 GB Workstation GPU (×4)"
+    gpu_count: 4
+    vram_per_gpu_gb: 32.0
+    vram_effective_gb: 115.2  # 128 GB × η_parallel=0.90
+    eta_parallel: 0.90
+    power_idle_w: 160
+    power_load_w: 800
+    capex_eur: 13000
+    expected_lifetime_months: 60
+    maintenance_risk: 0.20
+    software_maturity: 0.90
+    embodied_co2_kg: null    # proxy fallback: 4 × 80 kg = 320 kg (0.5 × 160 W each)
+    embodied_co2_source: proxy_tdp
+    notes: "4-GPU cluster. Good VRAM/W ratio. Requires PCIe topology verification."
+
+  # --- CLOUD REFERENCE BASELINE ---
+
+  - id: HW-CFG-REF-CLOUD
+    label: "Cloud Reference — 80 GB HPC GPU (reserved, 1-year)"
+    gpu_type: "Generic Cloud HPC GPU 80 GB"
+    gpu_count: 1
+    vram_per_gpu_gb: 80.0
+    vram_effective_gb: 80.0
+    eta_parallel: 1.0
+    power_idle_w: 0          # included in cloud pricing; not directly metered
+    power_load_w: 400        # representative TDP for cloud HPC GPUs
+    capex_eur: 0             # OPEX only; replace with 0 for cloud
+    opex_eur_per_month: 2500  # replace with actual reserved-instance cost
+    expected_lifetime_months: 12
+    maintenance_risk: 0.05
+    software_maturity: 1.0
+    embodied_co2_kg: null    # provider-reported scope 3; not directly available
+    embodied_co2_source: cloud_provider_scope3
+    exclude_from_ranking: true  # Reference baseline only — capex=0 distorts EfficiencyScore
+    notes: >
+      CAPEX vs OPEX reference. Embodied CO2 is provider scope 3 — use provider
+      sustainability reports or SPECpower_ssj data as proxy.
+
+
+# EfficiencyScore formula weights (used by hardware_model.py::efficiency_score())
+# Adjust weights to reflect your organisation's priorities.
+# Sum of absolute values should equal 1.0 for interpretable scores.
+efficiency_score_weights:
+  vram_per_eur: 0.25        # VRAM capacity per annual cost (higher = better value)
+  vram_per_watt: 0.15       # VRAM per TDP watt (higher = more efficient)
+  throughput_per_watt: 0.15  # Throughput proxy (VRAM/W) per watt
+  software_maturity: 0.15   # CUDA/ROCm tooling maturity (0.0–1.0)
+  reliability: 0.10         # = 1 - maintenance_risk
+  upgrade_path: 0.10        # Scalability: single=0.5, dual=0.7, quad=0.6
+  maintenance_risk: -0.05   # Penalises high-risk configs
+  complexity_penalty: -0.05  # Penalises multi-GPU operational overhead
+
+
+# Workload capacity reference map — minimum effective VRAM per model class.
+# Source: GSF SCI Spec + published quantization benchmarks (Llama, Mistral families).
+# These are approximate lower bounds; actual requirements depend on context length and batch size.
+workload_capacity_map:
+  - label: "7B–14B (INT4/Q4)"
+    min_vram_gb: 8
+    notes: "Runs on consumer 16 GB; minimal overhead"
+  - label: "30B–34B (Q4/Q5)"
+    min_vram_gb: 24
+    notes: "Needs 24–48 GB VRAM"
+  - label: "70B (Q4/Q5)"
+    min_vram_gb: 48
+    notes: "Minimum viable: 48 GB; comfortable: 64 GB"
+  - label: "70B (FP16)"
+    min_vram_gb: 140
+    notes: "Multi-GPU mandatory; typically 2× 80 GB or 4× 48 GB"
+  - label: "100 GB model / large MoE / long context"
+    min_vram_gb: 120
+    notes: "2× 48 GB or 1× 96 GB needed"
+  - label: "405B (INT4)"
+    min_vram_gb: 220
+    notes: "Requires dedicated multi-GPU cluster; not viable on single workstation"

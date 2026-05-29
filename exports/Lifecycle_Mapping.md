@@ -34,3 +34,5 @@
 | MAP-015 | GOV-001 | Monitor | Plan | indirect | DOCX section 8.6; DOCX table 9 |
 | MAP-016 | GOV-002 | Monitor | Plan | indirect | DOCX section 8.6; DOCX section 9.1 |
 | MAP-017 | GOV-003 | Monitor | Plan; Operate | indirect | DOCX section 8.5; DOCX section 9.3 |
+| MAP-018 | HW-001 | Deploy | Plan | indirect | phase2_rdc_gap_analysis |
+| MAP-019 | HW-002 | Plan | Operate | indirect | phase2_rdc_gap_analysis |

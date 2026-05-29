@@ -752,3 +752,83 @@ kpis:
     unknowns:
       - Approved allocation-policy registry is TBD.
       - Evidence requirements for allocation-key validity are TBD.
+  - id: HW-001
+    phase: hardware
+    group: "Hardware & Embodied"
+    component: "Embodied"
+    name: Embodied carbon per request
+    description: Candidate KPI for hardware embodied carbon amortized to run-phase requests. Captures the M term of the SCI formula at per-request granularity.
+    formula: "M / R"
+    unit: gCO2e/request
+    functional_unit: "R2: 1 service request (Phase 1 decision)"
+    lifecycle_steps:
+      - Plan
+      - Deploy
+    emission_type: indirect
+    data_sources:
+      - Hardware inventory (vendor PCF datasheet preferred; fallback Ecoinvent or proxy 0.5 kg CO2e/W TDP)
+      - Asset lifetime records (TBD asset management system)
+      - Request volume (TBD monitoring system)
+    authoritative_system: "Hardware inventory + asset management + request monitoring (temporary placeholders)"
+    provisional_owner: "Infrastructure KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "estimated amortized embodied emissions per request"
+    granularity: "per service request"
+    accounting_boundary: "Hardware embodied CO2 linearly amortized over expected lifetime, divided by cumulative request count. Multi-GPU clusters summed; η_parallel efficiency correction applied to effective VRAM and output capacity."
+    representation_risk: "Proxy use; inventory source uncertainty (±50% without vendor PCF); amortization period uncertainty; η_parallel is empirical; request count binding TBD; ISO mapping incomplete."
+    data_coverage: "partial"
+    feedback_latency: "TBD until hardware inventory source and request monitoring binding are fixed."
+    decision_lever: "Hardware selection (vendor PCF availability), cluster configuration, refresh policy, workload routing."
+    proxy_refs:
+      - PRX-003
+      - PRX-004
+    gap_refs:
+      - GAP-003
+      - GAP-004
+    iso_refs:
+      - "TBD"
+    source_refs:
+      - phase2_rdc_gap_analysis
+      - "GSF SCI Spec v1.1.0"
+    status: candidate
+    unknowns:
+      - Vendor PCF datasheet availability per hardware asset is TBD.
+      - η_parallel correction factor requires empirical benchmark validation.
+      - Request count binding and monitoring system are TBD.
+  - id: HW-002
+    phase: hardware
+    group: "Hardware & Embodied"
+    component: "Cost"
+    name: CAPEX amortized per request
+    description: Candidate KPI for hardware acquisition cost amortized to run-phase requests. Supporting decision metric for CostUsefulOutcome and cloud vs. on-prem trade-off analysis.
+    formula: "(CAPEX_ann + OpEx_monthly) / R_monthly"
+    unit: EUR/request
+    functional_unit: "R2: 1 service request (Phase 1 decision)"
+    lifecycle_steps:
+      - Plan
+      - Operate
+    emission_type: indirect
+    data_sources:
+      - Hardware procurement records (TBD finance system)
+      - Asset lifetime records (TBD asset management system)
+      - Request volume (TBD monitoring system)
+    authoritative_system: "Finance system + asset management + request monitoring (temporary placeholders)"
+    provisional_owner: "Infrastructure KPI workstream owner (temporary via PRX-004)"
+    measurement_mode: "derived cost metric from procurement and request telemetry"
+    granularity: "per service request"
+    accounting_boundary: "Hardware CAPEX linearly amortized over expected lifetime, divided by monthly request count. Cloud OPEX used directly when no on-prem CAPEX. Maintenance cost estimated as 10% of monthly amortization."
+    representation_risk: "Finance data access TBD; amortization period uncertainty; CAPEX vs. OPEX boundary for hybrid or cloud scenarios TBD; no direct ISO CO2 normative reference (cost metric)."
+    data_coverage: "partial"
+    feedback_latency: "TBD until finance system and request monitoring binding are fixed."
+    decision_lever: "Hardware procurement decision, lifetime extension, cloud vs. on-prem routing, workload consolidation."
+    proxy_refs:
+      - PRX-004
+    gap_refs:
+      - GAP-004
+    iso_refs:
+      - "N/A (cost metric, no ISO CO2 normative reference)"
+    source_refs:
+      - phase2_rdc_gap_analysis
+    status: candidate
+    unknowns:
+      - Finance system data access and procurement record format are TBD.
+      - CAPEX vs. OPEX boundary for hybrid and cloud scenarios is TBD.

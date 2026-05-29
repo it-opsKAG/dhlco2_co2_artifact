@@ -184,3 +184,19 @@ kpi_mappings:
     source_refs:
       - "DOCX section 8.5"
       - "DOCX section 9.3"
+  - id: MAP-018
+    kpi_id: HW-001
+    primary_step: Deploy
+    secondary_steps:
+      - Plan
+    direct_or_indirect: indirect
+    source_refs:
+      - phase2_rdc_gap_analysis
+  - id: MAP-019
+    kpi_id: HW-002
+    primary_step: Plan
+    secondary_steps:
+      - Operate
+    direct_or_indirect: indirect
+    source_refs:
+      - phase2_rdc_gap_analysis

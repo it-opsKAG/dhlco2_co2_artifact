@@ -17,7 +17,7 @@ def _load_yaml(path: Path) -> Dict[str, Any]:
 
 
 def _sort_by_id(items: Sequence[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    prefix_order = {"SCI": 0, "BLD": 1, "RUN": 2, "INF": 3, "GOV": 4}
+    prefix_order = {"SCI": 0, "BLD": 1, "RUN": 2, "INF": 3, "GOV": 4, "HW": 5}
 
     def sort_key(record: Dict[str, Any]) -> Tuple[int, str]:
         item_id = str(record.get("id", ""))
@@ -475,6 +475,14 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
         export_dir / "Gap_Report.md",
         _render_gap_md(gaps=gaps, proxies=proxies, tbd_hits=tbd_hits_sorted),
     )
+
+    try:
+        import sys as _sys
+        _sys.path.insert(0, str(Path(__file__).parent))
+        from hardware_model import render_hardware_catalog_md
+        _write_text(export_dir / "Hardware_Model_Report.md", render_hardware_catalog_md())
+    except Exception as exc:  # pragma: no cover
+        raise RuntimeError(f"Hardware model report failed: {exc}") from exc
 
 
 def main() -> None:
