@@ -1,6 +1,19 @@
 # Kauffman Integration Roadmap
 **KRS: 52/100 | Priority: Mittel | Stand: 2026-06-21**
 
+## KRS-Ziele
+| Dimension | Aktuell | Nächstes Ziel | Delta | Aktion |
+|---|---|---|---|---|
+| D2 Constraint Closure | 7/10 | 8/10 | +1 | GreenGateDecision als CI-Blocker: gate_failed → Pipeline-Stop |
+| D1 Self-Organization | 3/10 | 5/10 | +2 | Agent-driven NK-Landscape Search ersetzt kartesischen Sweep |
+| D3 Autocatalytic Pot. | 5/10 | 7/10 | +2 | simulation_runner.py als adaptive_agent_os Tool-Wrapper exportieren |
+| D4 Adjacent Possible | 5/10 | 6/10 | +1 | EmissionFactorProfile als erweiterbare Provider-Schnittstelle dokumentieren |
+| D5 NK-Complexity | 6/10 | 7/10 | +1 | exports/ aus .gitignore entfernen; Artefakte automatisch verfügbar machen |
+| D6 Energy Efficiency | 6/10 | 8/10 | +2 | Electricity Maps API ersetzt statischen UBA-Emissionsfaktor |
+| D7 Phase Transitions | 5/10 | 7/10 | +2 | OTel/APScheduler für maschinell erzwingbare Phasenübergänge integrieren |
+
+**KRS aktuell: 52 | Nächstes Ziel: 61 | Ceiling: 70**
+
 ## Kauffman-These
 DHLCO2 operationalisiert Constraint Closure auf Messpunkt-Ebene: SCI-Formel, Green-Gate-Policy und `rdc_rank()`-Budget-Filter bilden eine geschlossene Constraint-Topologie — KRS niedrig by design, deterministisches Beratungsartefakt, keine Selbstorganisation vorgesehen.
 
