@@ -90,3 +90,9 @@ dhlco2_co2_artifact/
 │   └── slr/phase1_initial/              # Standards-Mapping, SLR
 └── exports/                   # Generiert — nicht committen
 ```
+
+## Kauffman Context
+KRS: 52/100 (intentionally low — deterministic consulting artifact).
+Highest Kauffman dimension: Constraint Closure (D2: 7/10) via SCI formula, Green-Gate policy, JSON schema strict validation.
+Adjacent Possible: this artifact can pivot to a live CO2 telemetry feed for the adaptive_* ecosystem.
+See [KAUFFMAN_ROADMAP.md](KAUFFMAN_ROADMAP.md) for integration proposals.
