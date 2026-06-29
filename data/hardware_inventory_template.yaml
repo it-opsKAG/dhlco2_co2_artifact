@@ -1,0 +1,29 @@
+schema_version: dhlco2.hardware_inventory_template.v1
+status: template
+required_fields:
+  - asset_id
+  - hardware_type
+  - vendor
+  - model
+  - tdp_w
+  - embodied_co2_kg
+  - pcf_source
+  - lifetime_months
+  - request_allocation_basis
+records:
+  - asset_id: DHL-PILOT-ASSET-001
+    hardware_type: server_or_gpu
+    vendor: TBD
+    model: TBD
+    tdp_w: null
+    embodied_co2_kg: null
+    pcf_source: vendor_pcf_preferred
+    lifetime_months: 60
+    request_allocation_basis: request_count_or_service_share
+    data_quality: missing_dhl_input
+    notes: "Replace this placeholder with DHL asset export data."
+quality_rules:
+  preferred: "Vendor product carbon footprint or supplier EPD"
+  acceptable: "Public LCA database or documented manufacturer sustainability value"
+  fallback: "TDP proxy from assumptions_proxies.yaml PRX-003"
+  fallback_uncertainty: "+/-50 percent unless calibrated with asset-specific data"

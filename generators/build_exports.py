@@ -427,10 +427,55 @@ def _render_gap_md(
     return "\n".join(lines)
 
 
+def _render_carbon_benchmarks_md(doc: Dict[str, Any]) -> str:
+    lines = [
+        "# Carbon Benchmarks",
+        "",
+        f"Generated: `{_md_escape(doc.get('generated_at', 'unknown'))}`",
+        "",
+        _md_escape(doc.get("purpose", "")),
+        "",
+        "## Sources",
+        "",
+        "| ID | Name | Status | Quality | Unit / Values | Source |",
+        "| --- | --- | --- | --- | --- | --- |",
+    ]
+    for source in doc.get("sources", []):
+        values = source.get("values", {})
+        if isinstance(values, dict) and source.get("id") == "UBA-DE-STROMMIX-2024":
+            de_values = values.get("DE", {})
+            value_text = (
+                f"2024 direct Strommix {de_values.get('direct_co2_strommix_gco2_per_kwh')} gCO2/kWh; "
+                f"consumption {de_values.get('direct_co2_consumption_gco2_per_kwh')} gCO2/kWh; "
+                f"GHG incl. upstream {de_values.get('ghg_with_upstream_gco2e_per_kwh')} gCO2e/kWh"
+            )
+        elif isinstance(values, dict):
+            value_text = json.dumps(values, ensure_ascii=False, sort_keys=True)
+        else:
+            value_text = str(values)
+        source_label = source.get("source_url") or source.get("source") or ""
+        lines.append(
+            "| {id} | {name} | {status} | {quality} | {values} | {source} |".format(
+                id=_md_escape(source.get("id", "")),
+                name=_md_escape(source.get("name", "")),
+                status=_md_escape(source.get("status", "")),
+                quality=_md_escape(source.get("quality", "")),
+                values=_md_escape(value_text),
+                source=_md_escape(source_label),
+            )
+        )
+
+    lines.extend(["", "## Usage Rules", ""])
+    for rule in doc.get("usage_rules", []):
+        lines.append(f"- {_md_escape(rule)}")
+    return "\n".join(lines)
+
+
 def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     kpis_doc = _load_yaml(data_dir / "kpis.yaml")
     lifecycle_doc = _load_yaml(data_dir / "lifecycle_mapping.yaml")
     assumptions_doc = _load_yaml(data_dir / "assumptions_proxies.yaml")
+    carbon_benchmarks_doc = _load_yaml(data_dir / "carbon_benchmarks.yaml")
     decisions_doc = _load_yaml(
         data_dir.parent / "docs" / "decision_packs" / "phase1_initial" / "decisions.yaml"
     )
@@ -474,6 +519,10 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     _write_text(
         export_dir / "Gap_Report.md",
         _render_gap_md(gaps=gaps, proxies=proxies, tbd_hits=tbd_hits_sorted),
+    )
+    _write_text(
+        export_dir / "Carbon_Benchmarks.md",
+        _render_carbon_benchmarks_md(carbon_benchmarks_doc),
     )
 
     try:

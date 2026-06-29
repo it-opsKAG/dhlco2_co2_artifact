@@ -1,0 +1,61 @@
+schema_version: dhlco2.phase2_pilot_defaults.v1
+status: default_profile_until_dhl_confirmation
+last_updated: 2026-06-29
+purpose: >
+  Default pilot profile for Tier-0 planning. Values are replaceable once DHL
+  confirms concrete systems, owners, regions and monitoring tools.
+
+pilot_a_build:
+  label: "Pilot A - CI/CD Build"
+  default_system: "Generic CI/CD pipeline"
+  platform_candidates:
+    - GitHub Actions
+    - GitLab CI
+    - Azure DevOps
+  primary_kpis:
+    - BLD-001
+    - BLD-003
+  measurement_tool_default: Eco-CI
+  required_dhl_input:
+    - repository_or_pipeline_name
+    - ci_platform
+    - runner_type
+    - cloud_or_runner_billing_scope
+
+pilot_b_run:
+  label: "Pilot B - Run Service"
+  default_system: "Generic Kubernetes/OpenTelemetry service"
+  platform_candidates:
+    - Kubernetes
+    - OpenTelemetry
+    - Datadog APM
+    - Dynatrace
+  primary_kpis:
+    - RUN-001
+    - RUN-002
+    - RUN-004
+    - HW-001
+  measurement_tool_default: "Kepler for Kubernetes; Scaphandre for bare metal"
+  required_dhl_input:
+    - service_name
+    - runtime_platform
+    - apm_or_observability_stack
+    - request_counter_metric
+
+region_and_carbon_intensity:
+  default_region: "DE"
+  default_location_basis: "Germany national average until region/facility is confirmed"
+  default_source_ref: UBA-DE-STROMMIX-2024
+  target_source: "Provider-, region- or facility-specific carbon-intensity feed"
+  required_dhl_input:
+    - cloud_region_or_datacenter
+    - location_based_or_provider_specific_policy
+
+governance_placeholders:
+  kpi_owner: "TBD by DHL"
+  data_steward: "TBD by DHL"
+  boundary_curator: "TBD by DHL"
+  data_quality_owner: "TBD by DHL"
+  release_approver: "TBD by DHL"
+  audit_liaison: "TBD by DHL"
+  asset_owner_default: "Boundary Curator placeholder"

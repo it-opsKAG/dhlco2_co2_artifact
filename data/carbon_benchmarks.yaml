@@ -1,0 +1,73 @@
+schema_version: dhlco2.carbon_benchmarks.v1
+generated_at: '2026-06-29'
+purpose: External calibration context for PRX-001 carbon-intensity assumptions. These values do not replace
+  DHL-specific metering.
+sources:
+- id: UBA-DE-STROMMIX-2024
+  name: German electricity mix emission factors
+  status: documented_reference
+  source: Umweltbundesamt, Entwicklung der spezifischen Treibhausgas-Emissionen des deutschen Strommix
+    in den Jahren 1990-2024, Climate Change 13/2025
+  source_url: https://www.umweltbundesamt.de/publikationen/entwicklung-der-spezifischen-treibhausgas-11
+  quality: national_official_reference
+  values:
+    DE:
+      year: 2024
+      direct_co2_strommix_gco2_per_kwh: 363
+      direct_co2_consumption_gco2_per_kwh: 353
+      ghg_without_upstream_gco2e_per_kwh: 372
+      ghg_with_upstream_gco2e_per_kwh: 427
+  note: Use the direct CO2 Strommix value for location-based baseline scenarios. Use the GHG values when
+    CH4/N2O and upstream chains are in scope.
+- id: WB-CO2-PC-LEGACY
+  indicator: EN.ATM.CO2E.PC
+  name: CO2 emissions per capita (legacy WDI indicator)
+  unit: tCO2/capita
+  status: fallback_or_unavailable
+  source_url: https://api.worldbank.org/v2/country/DEU;FRA;NLD;POL;USA/indicator/EN.ATM.CO2E.PC?format=json&per_page=200
+  quality: unavailable
+  note: 'World Bank API unavailable or malformed: [{''id'': ''175'', ''key'': ''Invalid format'', ''value'':
+    ''The indicator was not found. It may have been deleted or archived.''}]'
+  values: {}
+- id: WB-CO2-PC-EDGAR
+  indicator: EN.GHG.CO2.PC.CE.AR5
+  name: Carbon dioxide emissions excluding LULUCF per capita
+  unit: tCO2/capita
+  status: live
+  source_url: https://api.worldbank.org/v2/country/DEU;FRA;NLD;POL;USA/indicator/EN.GHG.CO2.PC.CE.AR5?format=json&per_page=200
+  quality: contextual_high
+  note: Latest non-null value per country from World Bank API.
+  values:
+    DEU:
+      year: 2024
+      value_tco2_per_capita: 6.944
+    FRA:
+      year: 2024
+      value_tco2_per_capita: 4.0036
+    NLD:
+      year: 2024
+      value_tco2_per_capita: 6.6019
+    POL:
+      year: 2024
+      value_tco2_per_capita: 7.5511
+- id: EUROSTAT-NRG-IND-REN
+  indicator: nrg_ind_ren
+  name: Share of energy from renewable sources
+  unit: percent
+  status: live
+  source_url: https://ec.europa.eu/eurostat/api/dissemination/statistics/1.0/data/nrg_ind_ren?geo=DE&geo=EU27_2020&time=2022&time=2023&time=2024&unit=PC&nrg_bal=REN
+  quality: contextual_medium
+  note: Renewable-energy-share context from Eurostat nrg_ind_ren.
+  values:
+    EU27_2020:
+      '2022': 23.003
+      '2023': 24.579
+      '2024': 25.241
+    DE:
+      '2022': 20.829
+      '2023': 21.512
+      '2024': 22.474
+usage_rules:
+- Treat national and macroeconomic values as calibration context, not as service-level measurements.
+- Prefer DHL region/facility/provider carbon-intensity data once available.
+- Mark any scenario using these values as proxy- or benchmark-based.

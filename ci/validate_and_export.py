@@ -18,6 +18,7 @@ def main() -> None:
         root / "exports" / "Measurement_Matrix.md",
         root / "exports" / "Lifecycle_Mapping.md",
         root / "exports" / "Gap_Report.md",
+        root / "exports" / "Carbon_Benchmarks.md",
         root / "exports" / "Hardware_Model_Report.md",
     ]
     missing = [str(path) for path in required if not path.exists()]
