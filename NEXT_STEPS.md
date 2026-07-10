@@ -1,15 +1,32 @@
 # Next Steps — DHLCO2 CO₂-Artefakt
 
-**Letzte Aktualisierung:** 2026-05-29  
-**Phase:** 2 (In Bearbeitung, ~60%)  
-**Vollständige Roadmap:** `ROADMAP.md`
+**Letzte Aktualisierung:** 2026-07-10  
+**Phase:** 2 (In Bearbeitung, ~60%); Phase-3-Vorstufe (Pareto/Sensitivität) zusätzlich gestartet, siehe TASK-08  
+**Vollständige Roadmap:** `ROADMAP.md` · **Cross-Repo-Vorhaben:** `docs/enterprise_simulation_roadmap.md`
 
 Dieses Dokument ist der Einstiegspunkt für die nächste Arbeitssitzung.  
 Kein Kontextwissen nötig — alles Nötige steht hier oder ist verlinkt.
 
 ---
 
+## Erledigt (nicht mehr TODO, hier als Kontext für den nächsten Schritt)
+
+### TASK-08 · RDC-Pareto-Optimierung (D3-06-Vorstufe) `Done 2026-07-10`
+**Dateien:** `generators/rdc_pareto.py`, `tests/test_rdc_pareto.py`, `pyproject.toml` (neu)  
+**Was:** `rdc_rank()` sortierte bisher nur nach einer einzigen Dimension (EfficiencyScore).
+`rdc_pareto.py` baut daraus eine echte Pareto-Frontier über CO2/Request, EUR/Request und
+EfficiencyScore, plus Sensitivitätsanalyse (Δco2/ΔStellvariable), aufbauend auf der neuen,
+domänenneutralen `adaptive_decision_kernel.optimization`-Bibliothek. `rdc_rank()` selbst bleibt
+unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_simulation_roadmap.md`.
+
 ## Sofort umsetzbar — keine DHL-Abstimmung nötig
+
+### TASK-09 · Volle Phase-3-SimulationEngine `Enhancement, Nachfolger von TASK-08`
+**Datei:** `generators/rdc_pareto.py` erweitern oder neues `simulation/engine.py`  
+**Was:** WorkloadProfiler und CapacityCheck als eigene, komponierbare Stages statt Teil von
+`rdc_rank()`; `DeploymentRecommendation`-Objekt als strukturierter Output statt Pareto-Liste.
+**Grundlage:** `docs/phase3_simulation_concept.md` §3 (Datenflussbild), TASK-08.  
+**Aufwand:** ~1 Tag
 
 ### TASK-01 · Prozessintegrationsmodell (D2-01) `Phase 2 Deliverable`
 **Datei:** `docs/phase2_process_integration.md` (noch nicht vorhanden)  
@@ -104,19 +121,33 @@ Phase 2 ist abgeschlossen, wenn:
 
 ## Technische Kurzreferenz
 
+Seit 2026-07-10 gibt es eine `pyproject.toml` (uv-verwaltet, additiv). Erststart:
+`uv sync --extra dev`. Die bisherigen direkten Skriptaufrufe funktionieren unverändert weiter,
+sofern `pyyaml`/`jsonschema` anderweitig verfügbar sind — empfohlen ist aber `uv run`:
+
 ```bash
+# Einmalig: venv + Dependencies (inkl. adaptive_decision_kernel als editable Dependency)
+uv sync --extra dev
+
+# Tests
+uv run pytest tests/ -q
+
 # Validierung + alle Exports neu erzeugen
-PYTHONUTF8=1 python ci/validate_and_export.py
+PYTHONUTF8=1 uv run python ci/validate_and_export.py
 
 # Simulation: 192 Szenarien × 6 Infrastruktur-Tiers (816 Zeilen)
-PYTHONUTF8=1 python generators/simulation_runner.py
+PYTHONUTF8=1 uv run python generators/simulation_runner.py
 
 # Hardware-Modell direkt testen
-PYTHONUTF8=1 python generators/hardware_model.py
+PYTHONUTF8=1 uv run python generators/hardware_model.py
+
+# Pareto-Frontier + Sensitivität (neu, TASK-08)
+PYTHONUTF8=1 uv run python generators/rdc_pareto.py
 ```
 
 **Wichtig:** `exports/` ist gitignored. Exports immer lokal regenerieren, nie committen.  
-**Python-Version:** 3.10+ empfohlen. Dependencies: `pyyaml`, `jsonschema` (siehe `ci/validate_and_export.py`).
+**Python-Version:** 3.12+ (siehe `pyproject.toml`). Dependencies: `pyyaml`, `jsonschema`,
+`adaptive-decision-kernel` (editable, Pfad `../adaptive_decision_kernel`).
 
 ---
 
@@ -132,5 +163,6 @@ PYTHONUTF8=1 python generators/hardware_model.py
 | Gap-Analyse RDC | `docs/phase2_rdc_gap_analysis.md` |
 | Instrumentation Backlog | `docs/phase2_instrumentation_backlog.md` |
 | Simulation Konzept Phase 3 | `docs/phase3_simulation_concept.md` |
+| Pareto/Sensitivität (TASK-08) + Cross-Repo-Vorhaben | `docs/enterprise_simulation_roadmap.md` |
 | Phase-1-Entscheidungen | `docs/decision_packs/phase1_initial/decisions.yaml` |
 | Projektangebote | `OneDrive 00_Projektmanagement/03_Projektangebote/` |

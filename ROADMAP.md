@@ -110,6 +110,21 @@ Was Phase 1 geliefert hat:
 | **M3-C: Dashboard v1** | Alle 3 Views befüllt, intern reviewt |
 | **M3-D: Phase 3 abgenommen** | Stakeholder-Review, Audit-Readiness GOV-002 ≥ M2 |
 
+### Infrastruktur-Fortschritt, unabhängig vom Pilot-Scope-Blocker (2026-07-10)
+
+D3-06 (Simulation Live-Feed) braucht als Vorstufe eine echte Multi-Objective-Optimierung statt
+der reinen Single-Score-Sortierung in `rdc_rank()`. Diese Vorstufe ist jetzt gebaut, unabhängig
+von OC-01 bis OC-05 (Pilot-Scope-Klärung mit DHL bleibt weiterhin blockierend für D3-01 bis D3-05):
+
+- `generators/rdc_pareto.py` (neu): echte Pareto-Frontier über CO2/Request, EUR/Request und
+  EfficiencyScore + Sensitivitätsanalyse (Δco2/ΔStellvariable), aufbauend auf der generischen
+  `adaptive_decision_kernel.optimization`-Bibliothek statt einer DHL-lokalen Implementierung.
+- Repo ist jetzt `uv`-verwaltbar (`pyproject.toml` neu, additiv — bestehende
+  `ci/validate_and_export.py`-Pipeline unverändert).
+- Vollständiger Kontext, offene Folge-Runs und die Cross-Repo-Einordnung (dieses Vorhaben ist
+  Teil eines größeren Enterprise-Simulation-Vorhabens über mehrere Repos):
+  `docs/enterprise_simulation_roadmap.md`.
+
 ---
 
 ## Phase 4 — Skalierung & Echtzeit 🔲
