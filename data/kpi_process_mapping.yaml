@@ -1,0 +1,182 @@
+# KPI-to-Process-Mapping — machine-readable counterpart to docs/phase2_kpi_to_process_mapping.md
+#
+# PURPOSE: Phase-2 deliverable D2-03. Binds each of the 19 KPI candidates to a process
+# anchor, a Green-Gate decision location, an owner role, and the concrete decision the
+# role takes at that point. Complements data/lifecycle_mapping.yaml (which maps KPIs to
+# the 8 generic lifecycle steps) by adding the governance/decision layer on top.
+#
+# Source: docs/phase2_kpi_to_process_mapping.md (prose version, same content).
+# ID schema: MAP-P-001 .. MAP-P-019 (P = process, distinct from MAP-001..019 in lifecycle_mapping.yaml)
+
+kpi_process_mappings:
+  - id: MAP-P-001
+    kpi_id: SCI-001
+    process_anchor: "Monitor"
+    green_gate_location: "Portfolio-/Service-Review"
+    owner_role: "KPI Owner"
+    decision_point: "SCI-Rate gegen Zielkorridor prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-002
+    kpi_id: SCI-002
+    process_anchor: "Monitor"
+    green_gate_location: "Reporting-Freigabe"
+    owner_role: "Audit Liaison"
+    decision_point: "Kompatible Perioden- und Boundary-Versionen aggregieren"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-003
+    kpi_id: BLD-001
+    process_anchor: "Build"
+    green_gate_location: "Release"
+    owner_role: "Release Approver"
+    decision_point: "Pipeline-Lauf akzeptieren, beobachten oder eskalieren"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-004
+    kpi_id: BLD-002
+    process_anchor: "Test"
+    green_gate_location: "Testabschluss"
+    owner_role: "Data Quality Owner"
+    decision_point: "Testumgebung verkleinern, abschalten oder weiterlaufen lassen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-005
+    kpi_id: BLD-003
+    process_anchor: "Build/Release"
+    green_gate_location: "Release"
+    owner_role: "Release Approver"
+    decision_point: "Build-Dauer und Artefaktfrequenz prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-006
+    kpi_id: BLD-004
+    process_anchor: "Build/Test"
+    green_gate_location: "Modell- oder Trainingsfreigabe"
+    owner_role: "KPI Owner"
+    decision_point: "Trainingslauf begründen oder verschieben"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-007
+    kpi_id: BLD-005
+    process_anchor: "Plan/Build"
+    green_gate_location: "Planungsreview"
+    owner_role: "Boundary Curator"
+    decision_point: "Hardwareanteil auf Planungseinheit allokieren"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-008
+    kpi_id: RUN-001
+    process_anchor: "Operate/Monitor"
+    green_gate_location: "Service-Review"
+    owner_role: "KPI Owner"
+    decision_point: "Emissionen pro Request/Transaktion bewerten"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-009
+    kpi_id: RUN-002
+    process_anchor: "Operate"
+    green_gate_location: "Service-Review"
+    owner_role: "Data Steward"
+    decision_point: "Energie pro Request gegen Zielwert prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-010
+    kpi_id: RUN-003
+    process_anchor: "Deploy/Operate"
+    green_gate_location: "Architekturreview"
+    owner_role: "KPI Owner"
+    decision_point: "Datenübertragung, Routing oder Caching anpassen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-011
+    kpi_id: RUN-004
+    process_anchor: "Monitor/Operate"
+    green_gate_location: "Kapazitätsreview"
+    owner_role: "Data Quality Owner"
+    decision_point: "Auslastung und Energieproportionalität bewerten"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-012
+    kpi_id: INF-001
+    process_anchor: "Operate/Monitor"
+    green_gate_location: "Plattformreview"
+    owner_role: "Boundary Curator"
+    decision_point: "PUE als Kontextfaktor anwenden"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-013
+    kpi_id: INF-002
+    process_anchor: "Operate/Monitor"
+    green_gate_location: "Plattformreview"
+    owner_role: "KPI Owner"
+    decision_point: "CUE und regionale Platzierung bewerten"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-014
+    kpi_id: INF-003
+    process_anchor: "Monitor/Operate"
+    green_gate_location: "Kapazitätsreview"
+    owner_role: "Data Steward"
+    decision_point: "Auslastung, Autoscaling und Idle-Kapazität prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-015
+    kpi_id: GOV-001
+    process_anchor: "Monitor/Plan"
+    green_gate_location: "Reporting-Freigabe"
+    owner_role: "Data Quality Owner"
+    decision_point: "Vollständigkeit für Veröffentlichung prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-016
+    kpi_id: GOV-002
+    process_anchor: "Monitor/Plan"
+    green_gate_location: "Jede KPI-Freigabe"
+    owner_role: "Data Quality Owner"
+    decision_point: "Maturity-Level vergeben"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-017
+    kpi_id: GOV-003
+    process_anchor: "Monitor/Plan/Operate"
+    green_gate_location: "Audit-Review"
+    owner_role: "Audit Liaison"
+    decision_point: "Allokationsregel und Doppelzählung prüfen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-018
+    kpi_id: HW-001
+    process_anchor: "Deploy/Plan"
+    green_gate_location: "Infrastrukturreview"
+    owner_role: "Boundary Curator"
+    decision_point: "Embodied Carbon pro Request bewerten"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md
+  - id: MAP-P-019
+    kpi_id: HW-002
+    process_anchor: "Plan/Operate"
+    green_gate_location: "Beschaffungsreview"
+    owner_role: "KPI Owner"
+    decision_point: "CAPEX/OPEX pro Request vergleichen"
+    source_refs:
+      - data/lifecycle_mapping.yaml
+      - docs/phase2_kpi_to_process_mapping.md

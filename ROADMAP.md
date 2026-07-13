@@ -22,7 +22,7 @@ Ein **wissenschaftlich belastbares, reproduzierbares CO₂-Mess- und Steuerungss
 
 ```
 Phase 1  ████████████████████  ✅ Abgeschlossen (2026-05-13)
-Phase 2  █████████░░░░░░░░░░░  🔄 In Bearbeitung (~60%)
+Phase 2  █████████████████░░░  🔄 In Bearbeitung (~85%, alle 6 Dokument-Deliverables fertig; offen: DHL-Review + Pilot-Scope)
 Phase 3  ░░░░░░░░░░░░░░░░░░░░  🔲 Geplant
 Phase 4  ░░░░░░░░░░░░░░░░░░░░  🔲 Langfrist
 ```
@@ -57,10 +57,10 @@ Was Phase 1 geliefert hat:
 
 | # | Deliverable | Datei | Status |
 |---|---|---|---|
-| D2-01 | Prozessintegrationsmodell | `docs/phase2_process_integration.md` | ❌ offen |
-| D2-02 | Design Principles + Green Gates | `data/green_gates.yaml` | ✅ Green Gates YAML done; Principles-Dok fehlt |
-| D2-03 | KPI-to-Process-Mapping | `data/kpi_process_mapping.yaml` | ❌ offen |
-| D2-04 | Best Practices | `docs/phase2_best_practices.md` | ❌ offen |
+| D2-01 | Prozessintegrationsmodell | `docs/phase2_process_integration_model.md` | ✅ done (2026-06-29) |
+| D2-02 | Design Principles + Green Gates | `data/green_gates.yaml` + `docs/phase2_design_principles.md` | ✅ done (2026-07-14) |
+| D2-03 | KPI-to-Process-Mapping | `docs/phase2_kpi_to_process_mapping.md` + `data/kpi_process_mapping.yaml` | ✅ done (2026-07-14) |
+| D2-04 | Best Practices | `docs/phase2_best_practices.md` | ✅ done (2026-07-14) |
 | D2-05 | Instrumentation Backlog Tier 0/1/2 | `docs/phase2_instrumentation_backlog.md` | ✅ done |
 | D2-06 | Aktualisierte Gap-Analyse | `docs/phase2_rdc_gap_analysis.md` | ✅ done (GAP-003 closed) |
 
@@ -78,9 +78,9 @@ Was Phase 1 geliefert hat:
 
 | Milestone | Bedingung | Zieldatum |
 |---|---|---|
-| **M2-A: Deliverables vollständig** | D2-01, D2-03, D2-04 fertig | Nach Stakeholder-Workshop |
+| **M2-A: Deliverables vollständig** | D2-01, D2-03, D2-04 fertig | ✅ erreicht 2026-07-14 (unabhängig vom Stakeholder-Workshop) |
 | **M2-B: Pilot-Scope entschieden** | OC-01 bis OC-05 geklärt | Stakeholder-Workshop |
-| **M2-C: Phase 2 abgenommen** | Alle 6 Deliverables, Stakeholder-Review done | TBD |
+| **M2-C: Phase 2 abgenommen** | Alle 6 Deliverables, Stakeholder-Review done | TBD — Deliverables fertig, Review von DHL ausstehend |
 
 ---
 
@@ -149,7 +149,7 @@ von OC-01 bis OC-05 (Pilot-Scope-Klärung mit DHL bleibt weiterhin blockierend f
 | TD-02 | GAP-004 (Data Ownership) noch offen — keine RACI-Besetzung | Hoch (Blocker Phase 3) |
 | TD-03 | GAP-005 (ISO-Mapping) noch offen — KPI-Level-ISO-Refs sind TBD | Mittel |
 | TD-04 | Simulation nutzt noch keine echten Telemetriedaten | Mittel (Phase 3) |
-| TD-05 | `simulation_runner.py` schreibt in `exports/` (gitignored) — kein Artifact-Store | Niedrig |
+| TD-05 | `simulation_runner.py` schreibt in `exports/` (gitignored) — kein Artifact-Store | ✅ geschlossen 2026-07-14: `generators/evidence_ledger.py` stempelt jeden Lauf mit RUN-ID, Git-Commit und SHA-256-Hashes der Outputs in `evidence/` (committed, klein) — CSV/MD bleiben gitignored und reproduzierbar, aber der Lauf selbst ist jetzt zitierbar |
 
 ---
 

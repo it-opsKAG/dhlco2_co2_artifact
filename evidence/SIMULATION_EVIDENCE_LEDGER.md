@@ -1,0 +1,11 @@
+# Simulation Evidence Ledger
+
+Append-only record of simulation runs. Each row is independently reproducible: check out the referenced git commit, re-run `generators/evidence_ledger.py`, and confirm the output hashes match. This ledger backs the scenario/row-count figures quoted in customer-facing materials with a concrete, auditable artifact instead of a bare number.
+
+| Run ID | Created (UTC) | Git Commit | Dirty | Scenarios | Rows | HW Configs | CSV SHA-256 (short) |
+|---|---|---|---|---|---|---|---|
+| RUN-20260713T221421Z-SIM-fullsweep | 2026-07-13T22:14:21+00:00 | `a670b049dfc4` | True | 192 | 816 | 6 | `a26ca6080896` |
+
+## Full manifests
+
+See `evidence/simulation_runs.jsonl` (one JSON manifest per line) for the complete record per run, including the exact scenario-axis parameters and full SHA-256 hashes.

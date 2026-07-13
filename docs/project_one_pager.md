@@ -32,10 +32,11 @@ Supporting drafts:
 4. Data sources and measurement logic are consolidated in `Measurement_Matrix.md`.
 5. The framework value statement is surfaced here instead of being scattered across status reports.
 
-## Current status (as of 2026-05-13)
+## Current status (as of 2026-07-14)
 
 - Canonical data model and exports exist and validate.
-- The KPI catalog now contains 17 candidates: 2 Core SCI, 5 Build, 4 Run, 3 Infrastructure Context, and 3 Data Quality/Governance.
+- The KPI catalog now contains 19 candidates across six groups: 2 Core SCI, 5 Build, 4 Run, 3 Infrastructure Context, 3 Data Quality/Governance, and 2 Hardware & Embodied (`HW-001` embodied CO2/request, `HW-002` CAPEX amortized/request — added in Phase 2 to close GAP-003 with a concrete amortization method).
+- All six Phase-2 document deliverables (D2-01 through D2-06) are complete; the remaining blockers are DHL-side inputs (pilot scope OC-01..OC-05) and stakeholder review, not open drafting work.
 - The remaining blockers are explicit and narrow enough to drive focused review instead of broad rework.
 
 ## Open decisions / blockers (explicit)

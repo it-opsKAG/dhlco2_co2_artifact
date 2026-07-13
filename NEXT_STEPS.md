@@ -1,7 +1,7 @@
 # Next Steps — DHLCO2 CO₂-Artefakt
 
-**Letzte Aktualisierung:** 2026-07-10  
-**Phase:** 2 (In Bearbeitung, ~60%); Phase-3-Vorstufe (Pareto/Sensitivität) zusätzlich gestartet, siehe TASK-08  
+**Letzte Aktualisierung:** 2026-07-14  
+**Phase:** 2 (In Bearbeitung, ~85%; alle 6 Dokument-Deliverables D2-01 bis D2-06 fertig, offen: DHL-Review + Pilot-Scope OC-01..05); Phase-3-Vorstufe (Pareto/Sensitivität) zusätzlich gestartet, siehe TASK-08  
 **Vollständige Roadmap:** `ROADMAP.md` · **Cross-Repo-Vorhaben:** `docs/enterprise_simulation_roadmap.md`
 
 Dieses Dokument ist der Einstiegspunkt für die nächste Arbeitssitzung.  
@@ -10,6 +10,26 @@ Kein Kontextwissen nötig — alles Nötige steht hier oder ist verlinkt.
 ---
 
 ## Erledigt (nicht mehr TODO, hier als Kontext für den nächsten Schritt)
+
+### TASK-01 · Prozessintegrationsmodell (D2-01) `Done — bereits 2026-06-29 vorhanden`
+**Datei:** `docs/phase2_process_integration_model.md` (bestehend, Statustabelle in `ROADMAP.md` war veraltet und wurde 2026-07-14 korrigiert). Inhalt erfüllt den TASK-01-Zweck vollständig (Lifecycle-Schritte × KPI-Gruppen, Integrationsprinzipien, Rollen).
+
+### TASK-02 · KPI-to-Process-Mapping YAML (D2-03) `Done 2026-07-14`
+**Dateien:** `data/kpi_process_mapping.yaml` (neu, MAP-P-001..019, aus der bestehenden Prosa-Tabelle `docs/phase2_kpi_to_process_mapping.md` transkribiert), `generators/build_exports.py` (Export `KPI_Process_Mapping.md` ergänzt, siehe TASK-06).
+
+### TASK-03 · Best Practices Dokument (D2-04) `Done 2026-07-14`
+**Datei:** `docs/phase2_best_practices.md` (neu) — Erfolgsfaktoren, Barrieren, Mindest-Voraussetzungen (Tier-0-Checkliste), übertragbare Lektionen.
+
+### TASK-04 · Design Principles Dokument (D2-02 ergänzt) `Done 2026-07-14`
+**Datei:** `docs/phase2_design_principles.md` (neu) — 7 Prinzipien inkl. EfficiencyScore-Gewichtstabelle und Zusammenspiel mit Green Gates.
+
+### TASK-06 · `build_exports.py` um KPI-Process-Mapping-Export erweitert `Done 2026-07-14`
+**Datei:** `generators/build_exports.py` — rendert `exports/KPI_Process_Mapping.md`, wenn `data/kpi_process_mapping.yaml` existiert. Zusätzlich: `_group_counts_summary()` um Gruppe „Hardware & Embodied" ergänzt (fehlte bisher in der Gruppen-Reihenfolge von `Framework_Overview.md`).
+
+### TASK-10 · Evidence Ledger für Simulationsläufe (TD-05 schließen) `Done 2026-07-14`
+**Dateien:** `generators/evidence_ledger.py` (neu), `evidence/simulation_runs.jsonl` + `evidence/SIMULATION_EVIDENCE_LEDGER.md` (neu, committed).
+**Was:** Jeder Simulationslauf bekommt eine RUN-ID (`RUN-{YYYYMMDD}T{HHMMSS}Z-SIM-fullsweep`, gleiches Schema wie die Dissertations-Validation-Matrix), den Git-Commit-Hash und SHA-256-Hashes der Output-Dateien. Erster echter Lauf: `RUN-20260713T221421Z-SIM-fullsweep` — bestätigt 192 Szenarien / 816 Zeilen exakt wie im Statusupdate-Deck behauptet.
+**Live-Grid-Carbon (zusätzlich, kein NEXT_STEPS-Task, siehe `generators/live_grid_carbon.py`):** Live-Abruf des echten deutschen Netz-Emissionsfaktors über die tokenlose energy-charts.info-API (Fraunhofer ISE) — ergänzt den bisher rein statischen UBA-2024-Wert um einen echten Live-Datenpunkt für Demos.
 
 ### TASK-08 · RDC-Pareto-Optimierung (D3-06-Vorstufe) `Done 2026-07-10`
 **Dateien:** `generators/rdc_pareto.py`, `tests/test_rdc_pareto.py`, `pyproject.toml` (neu)  
@@ -28,44 +48,11 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 **Grundlage:** `docs/phase3_simulation_concept.md` §3 (Datenflussbild), TASK-08.  
 **Aufwand:** ~1 Tag
 
-### TASK-01 · Prozessintegrationsmodell (D2-01) `Phase 2 Deliverable`
-**Datei:** `docs/phase2_process_integration.md` (noch nicht vorhanden)  
-**Was:** Beschreibt, wie CO₂-KPIs in den Software-Lifecycle integriert werden — welcher KPI an welchem Prozessschritt greift, welche Rolle verantwortlich ist, welche Entscheidungspunkte es gibt.  
-**Grundlage:** `data/lifecycle_mapping.yaml` (19 KPI-Mappings), `data/green_gates.yaml` (Gates je KPI), Vorgehensvorschlag §4.2  
-**Aufwand:** ~1 Tag  
-**Output:** Markdown-Dokument, exportierbar über `build_exports.py`
-
-### TASK-02 · KPI-to-Process-Mapping YAML (D2-03) `Phase 2 Deliverable`
-**Datei:** `data/kpi_process_mapping.yaml` (noch nicht vorhanden)  
-**Was:** Strukturiertes Datenmodell: welcher KPI ist an welchem Prozessschritt aktiv, welche Rolle ist owner, welcher Green Gate greift.  
-**Grundlage:** `data/kpis.yaml`, `data/lifecycle_mapping.yaml`, `data/green_gates.yaml`  
-**Format:** YAML analog zu `lifecycle_mapping.yaml`; ID-Schema: `MAP-P-001` etc.  
-**Aufwand:** ~0.5 Tage  
-**Output:** Neues YAML, Export über `build_exports.py` erweitern
-
-### TASK-03 · Best Practices Dokument (D2-04) `Phase 2 Deliverable`
-**Datei:** `docs/phase2_best_practices.md` (noch nicht vorhanden)  
-**Was:** Erfolgsfaktoren, Barrieren, Mindest-Voraussetzungen für CO₂-KPI-Integration; strukturiert nach Erfahrungen aus Phase 1+2.  
-**Grundlage:** `docs/phase2_instrumentation_backlog.md` (Klärungspunkte OC-01 bis OC-05), Gap-Analyse  
-**Aufwand:** ~0.5 Tage  
-**Output:** Markdown-Dokument
-
-### TASK-04 · Design Principles Dokument (D2-02 ergänzen) `Phase 2 Deliverable`
-**Datei:** `docs/phase2_design_principles.md` (noch nicht vorhanden)  
-**Was:** Schriftliche Design-Prinzipien für Green / Sustainable DevOps — basierend auf dem EfficiencyScore-Modell und den Green Gates. Standalone-Dokument für DHL-Stakeholder.  
-**Grundlage:** `data/green_gates.yaml`, `data/hardware_configs.yaml` (EfficiencyScore-Gewichte), `docs/phase3_simulation_concept.md`  
-**Aufwand:** ~0.5 Tage
-
 ### TASK-05 · Simulation erweitern: mehr Stellvariablen `Enhancement`
 **Datei:** `generators/simulation_runner.py`  
 **Was:** `SCENARIO_AXES` um `avg_latency_s` und `quality_score` erweitern; optional: Sensitivitätsplot als ASCII-Tabelle.  
 **Aufwand:** ~0.5 Tage  
 **Wie:** `SCENARIO_AXES["avg_latency_s"] = [1.0, 5.0, 30.0]` eintragen und Kommentar aktualisieren.
-
-### TASK-06 · `build_exports.py` um KPI-Process-Mapping-Export erweitern `Enhancement`
-**Datei:** `generators/build_exports.py`  
-**Was:** Wenn `data/kpi_process_mapping.yaml` (TASK-02) existiert, als Export `KPI_Process_Mapping.md` erzeugen.  
-**Aufwand:** ~0.5 Tage
 
 ### TASK-07 · `embodied_co2_kg` befüllen `Data Quality`
 **Datei:** `data/hardware_configs.yaml`  

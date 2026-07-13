@@ -98,6 +98,7 @@ def _group_counts_summary(kpis: Sequence[Dict[str, Any]]) -> str:
         "Run Phase",
         "Infrastructure Context",
         "Data Quality & Governance",
+        "Hardware & Embodied",
     ]
     group_counts: Dict[str, int] = {}
     for kpi in kpis:
@@ -373,6 +374,32 @@ def _render_lifecycle_md(
     return "\n".join(lines)
 
 
+def _render_kpi_process_mapping_md(mappings: Sequence[Dict[str, Any]]) -> str:
+    lines = [
+        "# KPI Process Mapping",
+        "",
+        "Phase-2 deliverable D2-03: binds each KPI to a process anchor, its Green-Gate decision",
+        "location, the owner role, and the concrete decision taken at that point. Prose",
+        "counterpart: `docs/phase2_kpi_to_process_mapping.md`.",
+        "",
+        "| ID | KPI ID | Process Anchor | Green Gate Location | Owner Role | Decision Point | Source Refs |",
+        "| --- | --- | --- | --- | --- | --- | --- |",
+    ]
+    for mapping in mappings:
+        lines.append(
+            "| {id} | {kpi_id} | {process_anchor} | {green_gate_location} | {owner_role} | {decision_point} | {source_refs} |".format(
+                id=_md_escape(mapping["id"]),
+                kpi_id=_md_escape(mapping["kpi_id"]),
+                process_anchor=_md_escape(mapping["process_anchor"]),
+                green_gate_location=_md_escape(mapping["green_gate_location"]),
+                owner_role=_md_escape(mapping["owner_role"]),
+                decision_point=_md_escape(mapping["decision_point"]),
+                source_refs=_md_escape(_csv_join(mapping["source_refs"])),
+            )
+        )
+    return "\n".join(lines)
+
+
 def _render_gap_md(
     gaps: Sequence[Dict[str, Any]],
     proxies: Sequence[Dict[str, Any]],
@@ -479,6 +506,10 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     decisions_doc = _load_yaml(
         data_dir.parent / "docs" / "decision_packs" / "phase1_initial" / "decisions.yaml"
     )
+    kpi_process_mapping_path = data_dir / "kpi_process_mapping.yaml"
+    kpi_process_mapping_doc = (
+        _load_yaml(kpi_process_mapping_path) if kpi_process_mapping_path.exists() else None
+    )
 
     _validate_kpis_schema(kpis_doc, schema_path)
 
@@ -494,6 +525,13 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
     _require_unique_ids(mappings, "kpi_mappings")
     _require_unique_ids(gaps, "gaps")
     _require_unique_ids(proxies, "proxies")
+    kpi_process_mappings = (
+        _sort_by_id(list(kpi_process_mapping_doc.get("kpi_process_mappings", [])))
+        if kpi_process_mapping_doc is not None
+        else []
+    )
+    if kpi_process_mappings:
+        _require_unique_ids(kpi_process_mappings, "kpi_process_mappings")
 
     tbd_hits: List[Tuple[str, str]] = []
     _collect_tbd(kpis_doc, "kpis_doc", tbd_hits)
@@ -520,6 +558,11 @@ def build_exports(data_dir: Path, schema_path: Path, export_dir: Path) -> None:
         export_dir / "Gap_Report.md",
         _render_gap_md(gaps=gaps, proxies=proxies, tbd_hits=tbd_hits_sorted),
     )
+    if kpi_process_mappings:
+        _write_text(
+            export_dir / "KPI_Process_Mapping.md",
+            _render_kpi_process_mapping_md(kpi_process_mappings),
+        )
     _write_text(
         export_dir / "Carbon_Benchmarks.md",
         _render_carbon_benchmarks_md(carbon_benchmarks_doc),

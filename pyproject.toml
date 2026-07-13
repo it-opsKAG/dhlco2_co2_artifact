@@ -23,3 +23,7 @@ adaptive-decision-kernel = { path = "../adaptive_decision_kernel", editable = tr
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = [
+    "live: requires real network access (e.g. energy-charts.info); excluded by default",
+]
+addopts = "-m \"not live\""
