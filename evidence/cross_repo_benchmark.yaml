@@ -77,39 +77,44 @@ entries:
   - repo: kserve-llm-blueprint
     repo_url: https://github.com/emanuelkag/kserve-llm-blueprint
     workflow: ci.yaml (test job)
-    status: deferred_to_next_session
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.011470
+    total_energy_joules: 61.37
+    avg_cpu_utilization_pct: 47.60
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
     notes: >
-      Two pre-existing bugs found and fixed 2026-07-15 (broken trivy-action
-      version pin, non-existent kubeconform-binary PyPI package -- commits
-      bea5035, 543e202). Pipeline now reaches its lint step for the first time
-      and surfaces 199 pre-existing ruff violations (177 line-too-long) --
-      real lint debt, not something to fix inline. Full diagnosis and options
-      handed off in docs/2026-07-15_ci_lint_debt.md for a dedicated session.
+      Three pre-existing bugs found and fixed 2026-07-14/15 across two
+      handoff sessions (broken trivy-action version pin, non-existent
+      kubeconform-binary PyPI package, 199 ruff violations resolved via
+      line-length 100->120 + ruff format -- commits bea5035, 543e202, fea9ed9,
+      f59ee95, 0789c19). Run 29366405851 is the first fully green run ever,
+      including the kind cluster, SBOM, and Trivy steps that were previously
+      never reached. Second-heaviest pipeline of the seven after the fixes,
+      consistent with its scope (K8s schema validation, SBOM, security scan).
 
   - repo: workspace-system
     repo_url: https://github.com/emanuelkag/system
     workflow: findability_benchmark.yml (benchmark job)
-    status: deferred_to_next_session
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.004510
+    total_energy_joules: 25.67
+    avg_cpu_utilization_pct: 71.28
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
     notes: >
-      Two pre-existing bugs found and fixed 2026-07-15: a stale __Staging
-      checkout (repo intentionally dropped from the workspace layout, workflow
-      files hadn't been updated -- commit 05f595e) and a duplicated ws/ path
-      prefix (commit e976eac). The benchmark now runs end to end for the first
-      time, but its own quality gate fails: bm25.recall@3=0.444 < 0.600. Root
-      cause found -- the CI case-set still has domain:staging test cases
-      expecting files that no longer exist post-removal, not a real quality
-      regression. Full diagnosis and next steps handed off in
-      docs/2026-07-15_findability_benchmark_staging_regression.md for a
-      dedicated session. Local folder name differs from the GitHub repo name
-      (system).
+      Two pre-existing bugs found and fixed 2026-07-15 across a handoff
+      session: a stale __Staging checkout (repo intentionally dropped from
+      the workspace layout, workflow files hadn't been updated -- commit
+      05f595e) and a duplicated ws/ path prefix (commit e976eac). A third
+      issue then surfaced -- the CI case-set had domain:staging test cases
+      expecting files that no longer exist post-removal, failing the
+      bm25.recall@3 quality gate. Fixed by replacing them with equivalent
+      domain:system cases (commit a3087aa); quality gate now passes
+      (bm25.recall@3=0.667 > 0.600). Run 29365993002 is green. Local folder
+      name differs from the GitHub repo name (system).
 
   - repo: writing_system
     repo_url: https://github.com/emanuelkag/writing_system

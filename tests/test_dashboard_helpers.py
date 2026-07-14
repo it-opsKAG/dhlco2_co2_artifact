@@ -129,7 +129,7 @@ def test_load_cross_repo_benchmark_rows_has_dhlco2_measured_entry():
 def test_load_cross_repo_benchmark_rows_unmeasured_entries_have_no_fabricated_values():
     rows = load_cross_repo_benchmark_rows()
     unmeasured = [r for r in rows if r["Status"] != "measured"]
-    assert len(unmeasured) >= 3  # 2 failed_needs_diagnosis + 1 deferred, as of 2026-07-15
+    assert len(unmeasured) >= 1  # Extract_Information, deferred_needs_decision, as of 2026-07-15
     for row in unmeasured:
         assert row["SCI gCO2eq/Lauf"] is None
 
