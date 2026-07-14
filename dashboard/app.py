@@ -35,6 +35,7 @@ from data_helpers import (
     build_sensitivity_rows,
     gate_zone,
     has_defined_gate,
+    load_cross_repo_benchmark_rows,
     load_evidence_ledger_rows,
     load_green_gates,
     load_kpi_catalog,
@@ -98,7 +99,7 @@ workload = WorkloadProfile(
 )
 ef = EmissionFactorProfile(grid_ef_gco2e_per_kwh=grid_ef, pv_share=pv_share)
 
-tab_kpi, tab_hw, tab_pareto, tab_sim, tab_live, tab_audit = st.tabs(
+tab_kpi, tab_hw, tab_pareto, tab_sim, tab_live, tab_audit, tab_cross_repo = st.tabs(
     [
         "KPI-Katalog & Green Gates",
         "Hardware-Vergleich",
@@ -106,6 +107,7 @@ tab_kpi, tab_hw, tab_pareto, tab_sim, tab_live, tab_audit = st.tabs(
         "Sensitivität",
         "Live-Kontext",
         "Auditability",
+        "Cross-Repo-Benchmark",
     ]
 )
 
@@ -292,4 +294,37 @@ with tab_audit:
             "Jeder Lauf ist mit RUN-ID, Git-Commit und SHA-256-Hash der Output-Dateien "
             "versehen — reproduzierbar und auditierbar im technischen, nicht nur im "
             "behaupteten Sinn. Siehe `evidence/SIMULATION_EVIDENCE_LEDGER.md`."
+        )
+
+# ---------------------------------------------------------------------------
+# Tab 7 — Cross-repo energy benchmark
+# ---------------------------------------------------------------------------
+with tab_cross_repo:
+    st.subheader("Cross-Repo Energy Benchmark")
+    st.caption(
+        "Zeigt, dass die SCI-Methodik technologieunabhängig ist — nicht auf das "
+        "DHLCO2-Repo zugeschnitten, sondern auf beliebige Software-Projekte "
+        "anwendbar. Portfolio-Inventur 2026-07-15: 51 eigene Repos gescannt, 9 "
+        "hatten bereits GitHub-Actions-CI; 7 kundenneutrale davon wurden für "
+        "dieses Benchmark ausgewählt (2 gehören zu einem anderen Kundenprojekt "
+        "und wurden bewusst ausgeklammert)."
+    )
+    cross_repo_rows = load_cross_repo_benchmark_rows()
+    if not cross_repo_rows:
+        st.info("Noch keine Cross-Repo-Daten gefunden.")
+    else:
+        cross_repo_df = pd.DataFrame(cross_repo_rows)
+        measured_df = cross_repo_df[cross_repo_df["Status"] == "measured"]
+        if not measured_df.empty:
+            st.caption("Gemessene Werte (real, aus einem tatsächlichen CI-Lauf):")
+            st.bar_chart(measured_df.set_index("Repo")["SCI gCO2eq/Lauf"])
+        st.dataframe(cross_repo_df, use_container_width=True, hide_index=True)
+        n_measured = int((cross_repo_df["Status"] == "measured").sum())
+        n_pending = int((cross_repo_df["Status"] == "awaiting_verification").sum())
+        n_deferred = int((cross_repo_df["Status"] == "deferred_needs_decision").sum())
+        st.caption(
+            f"Status: {n_measured} gemessen, {n_pending} Workflow gepusht/wartet auf "
+            f"Verifikation, {n_deferred} zurückgestellt (siehe Notiz). Werte werden "
+            "nur eingetragen, wenn sie aus einem echten, geprüften CI-Lauf stammen — "
+            "siehe `evidence/cross_repo_benchmark.yaml`."
         )

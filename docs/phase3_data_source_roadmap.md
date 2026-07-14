@@ -68,6 +68,30 @@ Hinweis: nur "setup-python" und "install-dependencies" erscheinen als Einzelzeil
 
 ---
 
+### 1a. Cross-Repo-Rollout — Nachweis der Technologieunabhängigkeit ✅ Rollout gestartet 2026-07-15
+
+**Zweck:** Das DHL-Framework ist explizit als technologie-/projektunabhängige, wissenschaftlich belastbare Methodik konzipiert — nicht als Einzellösung für ein Repo. Der stärkste Beleg dafür ist, sie tatsächlich über mehrere, strukturell unterschiedliche eigene Software-Projekte laufen zu lassen, nicht nur über DHLCO2 selbst.
+
+**Portfolio-Inventur (2026-07-15):** alle 51 Ordner unter dem eigenen Projekt-Workspace systematisch gescannt (git-Repo? Tests vorhanden? CI vorhanden?):
+
+| Kategorie | Anzahl |
+|---|---|
+| Hatten bereits GitHub-Actions-CI | 9 |
+| Davon kundenneutral (Krallmann-intern/eigen) | 7 → für Benchmark gewählt |
+| Davon einem anderen Kundenprojekt zugehörig | 2 → bewusst ausgeklammert |
+| Tests vorhanden, aber noch keine CI | ~18 |
+| Kein erkennbares automatisiertes Test-Setup | ~24 |
+
+**Ausgewählt für den ersten Rollout (7 Repos, davon 6 sofort umgesetzt):** `adaptive_agent_os`, `platform_core`, `sunbrain`, `kserve-llm-blueprint`, `workspace-system`, `writing_system` — strukturell divers (KI-Agent-Orchestrierung, Infrastruktur-Plattform, Energie-Monitoring, Cloud-Blueprint, Workspace-Tooling, Content-Pipeline). Jeweils ein Eco-CI-Messschritt in die **bestehende** CI-Pipeline ergänzt (kein Neubau nötig), gepusht und Live-Lauf ausgelöst.
+
+**Zurückgestellt:** `Extract_Information` — beide vorhandenen Workflows deployen bei jedem Push auf den Hauptbranch ohne Pfad-Filter direkt auf einen produktiven GKE-Cluster. Jede Änderung, auch eine unrelated, würde ein echtes Produktions-Redeploy auslösen. Braucht eine explizite Entscheidung, bevor hier etwas ergänzt wird.
+
+**Ergebnisdaten:** `evidence/cross_repo_benchmark.yaml` im DHLCO2-Repo, sichtbar im Dashboard-Tab "Cross-Repo-Benchmark". Nur real gemessene, geprüfte Werte werden eingetragen — Platzhalter bleiben explizit `null`, nie geschätzt.
+
+**Nicht in diesem Rollout:** die ~18 Repos mit Tests aber ohne CI und die ~24 ohne erkennbares Setup — als systematischer Phase-4-Punkt "Org-weite Ausrollung" dokumentiert, nicht als Freitags-Aufgabe.
+
+---
+
 ### 3. Cloud-Provider-Carbon-Tools (AWS Customer Carbon Footprint Tool, Google Cloud Carbon Footprint Export, Microsoft Emissions Impact Dashboard / Azure Carbon Optimizer)
 
 **Zweck:** Sobald Pilot A/B auf einer konkreten Cloud-Plattform läuft, liefern die Cloud-Anbieter selbst Emissionsdaten aus den eigenen Abrechnungsdaten — die methodisch sauberste Quelle für RUN-Phase-KPIs, weil sie direkt an der tatsächlichen Ressourcennutzung hängt.

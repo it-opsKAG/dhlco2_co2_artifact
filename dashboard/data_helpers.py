@@ -31,6 +31,7 @@ from rdc_pareto import (  # noqa: E402
 
 DATA_DIR = ROOT / "data"
 EVIDENCE_LEDGER_JSONL = ROOT / "evidence" / "simulation_runs.jsonl"
+CROSS_REPO_BENCHMARK_YAML = ROOT / "evidence" / "cross_repo_benchmark.yaml"
 
 
 def load_kpi_catalog() -> list[dict[str, Any]]:
@@ -164,6 +165,31 @@ def load_evidence_ledger_rows() -> list[dict[str, Any]]:
                 "CSV SHA-256 (kurz)": entry.get("outputs", {})
                 .get("simulation_results.csv", {})
                 .get("sha256", "")[:16],
+            }
+        )
+    return rows
+
+
+def load_cross_repo_benchmark_rows() -> list[dict[str, Any]]:
+    """Cross-repo Eco-CI benchmark entries — real measured values only.
+
+    See evidence/cross_repo_benchmark.yaml for provenance and the ground rule
+    that "measured" rows must come from an actual checked GitHub Actions run,
+    never an invented number.
+    """
+    if not CROSS_REPO_BENCHMARK_YAML.exists():
+        return []
+    doc = yaml.safe_load(CROSS_REPO_BENCHMARK_YAML.read_text(encoding="utf-8"))
+    rows = []
+    for entry in doc.get("entries", []):
+        rows.append(
+            {
+                "Repo": entry.get("repo"),
+                "Status": entry.get("status"),
+                "SCI gCO2eq/Lauf": entry.get("sci_gco2eq_per_run"),
+                "Energie (Joule)": entry.get("total_energy_joules"),
+                "Ø CPU %": entry.get("avg_cpu_utilization_pct"),
+                "Notiz": entry.get("notes"),
             }
         )
     return rows

@@ -1,0 +1,113 @@
+# Cross-Repo Energy Benchmark — evidence ledger
+#
+# PURPOSE: Demonstrates that the SCI-based measurement methodology built for the
+# DHLCO2 pilot is technology-independent and portable, not a one-off built around
+# one project. Each entry is either a real, verified GitHub Actions Eco-CI result
+# (status: measured) or a repo where the workflow was added and pushed but the run
+# result hasn't been confirmed yet (status: awaiting_verification).
+#
+# NEVER invent numbers here. A "measured" entry must have a real captured value
+# from an actual Eco-CI job summary. Update status + values by hand once each
+# repo's Actions run is checked (see repo_url for where to look).
+#
+# Portfolio inventory (2026-07-15): scanned all folders under Projects/ (51 total).
+# 9 already had GitHub Actions CI; of those, 7 are Krallmann/personal (not another
+# client's repo) and were chosen for this benchmark. Two of the 9 (gv-* prefixed)
+# belong to a different client engagement and were deliberately excluded. One more
+# (Extract_Information) was deferred: its only CI workflows deploy directly to a
+# live GKE cluster on every push to its default branch with no path filter, so
+# adding a measurement step there risks triggering a real production deployment
+# as a side effect — needs an explicit decision before touching it.
+
+entries:
+  - repo: dhlco2_co2_artifact
+    repo_url: https://github.com/it-opsKAG/dhlco2_co2_artifact
+    workflow: energy-ci.yml
+    status: measured
+    verified_at: "2026-07-14"
+    sci_gco2eq_per_run: 0.006042
+    total_energy_joules: 29.83
+    avg_cpu_utilization_pct: 21.82
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
+    notes: First real (not simulated) measurement in the project. Only setup-python
+      and install-dependencies appear as separate rows; faster steps (checkout,
+      pytest, export validation) likely fell under Eco-CI's measurable resolution.
+
+  - repo: adaptive_agent_os
+    repo_url: https://github.com/emanuelkag/adaptive_agent_os
+    workflow: ci.yml (validation job)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit 939e7c1). Check the Actions tab and
+      fill in real values once the run completes.
+
+  - repo: platform_core
+    repo_url: https://github.com/emanuelkag/platform_core
+    workflow: ci.yml (test-and-build job, matrix 3.12/3.13)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit c83998c). Runs twice (matrix) — record
+      both or an average once confirmed.
+
+  - repo: sunbrain
+    repo_url: https://github.com/emanuelkag/sunbrain
+    workflow: ci.yml (test job)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit f7f13a8, branch master).
+
+  - repo: kserve-llm-blueprint
+    repo_url: https://github.com/emanuelkag/kserve-llm-blueprint
+    workflow: ci.yaml (test job)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit aa18151, branch master). Heaviest
+      pipeline of the six (kind cluster, kubectl, Trivy/Syft scans) — expect the
+      highest energy figure, useful as the upper end of the benchmark range.
+
+  - repo: workspace-system
+    repo_url: https://github.com/emanuelkag/system
+    workflow: findability_benchmark.yml (benchmark job)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit 548872e, branch master). Local folder
+      name differs from the GitHub repo name (system).
+
+  - repo: writing_system
+    repo_url: https://github.com/emanuelkag/writing_system
+    workflow: ci.yml (test job)
+    status: awaiting_verification
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Workflow pushed 2026-07-15 (commit 751e0e3, branch master).
+
+  - repo: Extract_Information
+    repo_url: https://github.com/it-opsKAG/Extract_Information
+    workflow: null
+    status: deferred_needs_decision
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: Both existing workflows (deploy-celery.yaml, deploy-fastapi.yaml) deploy
+      to a live GKE cluster on any push to develop/master with no path filter — any
+      commit, even an unrelated one, would trigger a real production redeploy.
+      Needs an explicit go/no-go before adding anything here.

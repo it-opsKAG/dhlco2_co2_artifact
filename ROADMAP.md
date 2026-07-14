@@ -135,7 +135,7 @@ von OC-01 bis OC-05 (Pilot-Scope-Klärung mit DHL bleibt weiterhin blockierend f
 |---|---|
 | Electricity Maps API | Stündlicher, regionaler Carbon-Intensity-Feed (ersetzt UBA-Proxy) |
 | DCGM-Exporter | GPU-VRAM/Power live aus Cluster (HW-001 live statt Proxy) |
-| Org-weite Ausrollung | Alle Pipelines + Services (Tier-2 Instrumentation Backlog) |
+| Org-weite Ausrollung | Alle Pipelines + Services (Tier-2 Instrumentation Backlog). Erster Schritt bereits 2026-07-15 gemacht: Eco-CI-Energiemessung auf 6 von 51 eigenen Repos ausgerollt (Portfolio-Inventur + Auswahlkriterien: `docs/phase3_data_source_roadmap.md` §1a) — Nachweis, dass die Methodik technologieunabhängig portierbar ist. |
 | Allocation Policy Registry | GOV-003 auf M3 (audit-capable) |
 | ISO-14064-1 Audit | Formale Auditierung des Frameworks |
 

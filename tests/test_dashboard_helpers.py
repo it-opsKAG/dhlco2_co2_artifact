@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
 
+import pytest
+
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "dashboard"))
 
 from data_helpers import (
@@ -9,6 +11,7 @@ from data_helpers import (
     build_sensitivity_rows,
     gate_zone,
     has_defined_gate,
+    load_cross_repo_benchmark_rows,
     load_evidence_ledger_rows,
     load_green_gates,
     load_kpi_catalog,
@@ -113,3 +116,19 @@ def test_build_sensitivity_rows_matches_request_volume_count():
 def test_load_evidence_ledger_rows_returns_list():
     rows = load_evidence_ledger_rows()
     assert isinstance(rows, list)
+
+
+def test_load_cross_repo_benchmark_rows_has_dhlco2_measured_entry():
+    rows = load_cross_repo_benchmark_rows()
+    assert len(rows) >= 7
+    dhlco2_row = next(r for r in rows if r["Repo"] == "dhlco2_co2_artifact")
+    assert dhlco2_row["Status"] == "measured"
+    assert dhlco2_row["SCI gCO2eq/Lauf"] == pytest.approx(0.006042)
+
+
+def test_load_cross_repo_benchmark_rows_pending_entries_have_no_fabricated_values():
+    rows = load_cross_repo_benchmark_rows()
+    pending = [r for r in rows if r["Status"] == "awaiting_verification"]
+    assert len(pending) >= 5
+    for row in pending:
+        assert row["SCI gCO2eq/Lauf"] is None
