@@ -68,10 +68,10 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 **Blocker:** Security-Token von ENTSO-E (E-Mail-Freigabe beantragt 2026-07-15, Registrierung bereits erledigt). Connector-Code + Tests gegen dokumentiertes XML-Format sind vorbereitbar, Live-Verifikation erst nach Token-Erhalt.
 **Aufwand:** ~0.5 Tag Code (vorbereitet), Rest hängt vom Token-Zeitpunkt ab.
 
-### TASK-13 · Eco-CI GitHub-Actions-Workflow (echte CI-Energiemessung) `In Arbeit 2026-07-15`
-**Datei:** `.github/workflows/energy-ci.yml` (neu — erste GitHub Actions CI für dieses Repo). Details: `docs/phase3_data_source_roadmap.md` §2.
+### TASK-13 · Eco-CI GitHub-Actions-Workflow (echte CI-Energiemessung) `Done + live verifiziert 2026-07-14`
+**Datei:** `.github/workflows/energy-ci.yml` (neu — erste GitHub Actions CI für dieses Repo). Details + echte Messwerte: `docs/phase3_data_source_roadmap.md` §2.
 **Was:** Misst echten Energieverbrauch (Joule, CPU-Auslastung, Watt) für den bestehenden `pytest`-Lauf via `green-coding-solutions/eco-ci-energy-estimation`. Kein Token nötig (globaler Default-CO2-Wert ohne Electricity-Maps-Key).
-**Aufwand:** ~0.5 Tag.
+**Ergebnis erster echter Lauf:** SCI = 0.006042 gCO2eq/Pipeline-Lauf, 29.83 Joule, 21.82% Ø CPU — erster real gemessener (nicht simulierter) BLD-001-Wert des Projekts.
 
 ### TASK-14 · Cloud-Provider-Carbon-Tools anbinden `Offener Punkt, kein Code-Task`
 **Details:** `docs/phase3_data_source_roadmap.md` §3. AWS Customer Carbon Footprint Tool / Google Cloud Carbon Footprint Export / Microsoft Azure Carbon Optimizer — sobald Cloud-Anbieter des Piloten bekannt ist (OC-01/OC-04), reine Zugriffsfrage (Lesezugriff Billing-Konto), kein Entwicklungsaufwand auf unserer Seite. Für Freitag als "nächster Schritt, sobald ihr uns Zugriff gebt" positioniert.

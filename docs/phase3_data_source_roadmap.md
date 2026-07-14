@@ -36,9 +36,24 @@
 
 ---
 
-### 2. Eco-CI (GitHub Action, green-coding-solutions, MIT-Lizenz)
+### 2. Eco-CI (GitHub Action, green-coding-solutions, MIT-Lizenz) ✅ verifiziert 2026-07-14
 
 **Zweck:** Liefert eine **echte gemessene** (nicht extern geschätzte) Energiezahl für einen echten CI/CD-Lauf — direkt einschlägig für BLD-001 (CI/CD-Pipeline-Emissionen pro Lauf).
+
+**Erster echter Lauf (`.github/workflows/energy-ci.yml`, Run #1, 14.07.2026):**
+
+| Kennzahl | Wert |
+|---|---|
+| Total Energy | 29.83 Joule |
+| Ø CPU-Auslastung | 21.82 % |
+| Ø Leistung | 3.99 W |
+| Laufzeit | 7.47 s |
+| CO2 aus Energie | 0.003910992 g |
+| CO2 aus Herstellung (embodied, Runner-Anteil) | 0.002131294 g |
+| Carbon Intensity (Standort) | 472 gCO2eq/kWh (globaler Default, kein Standort-Token gesetzt) |
+| **SCI** | **0.006042 gCO2eq / Pipeline-Lauf** |
+
+Hinweis: nur "setup-python" und "install-dependencies" erscheinen als Einzelzeilen in der Ergebnistabelle — die übrigen Schritte (Checkout, Tests, Export-Validierung) liefen vermutlich zu schnell (lokal: 23 Tests in 1.84s) für die Messauflösung von Eco-CI und wurden herausgefiltert. Der Gesamtwert (SCI, Total Energy) bleibt davon unberührt.
 
 **Zugriff/Voraussetzungen:** Kein Token nötig (nutzt ohne API-Key einen globalen Standard-CO2-Wert von 472 gCO2/kWh). Läuft nur auf Linux-Runnern (GitHub-Actions-Standard `ubuntu-latest`).
 
