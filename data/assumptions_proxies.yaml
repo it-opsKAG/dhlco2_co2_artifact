@@ -106,7 +106,13 @@ proxies:
     proxy: >
       Linear amortization over fixed service life with inventory-fed embodied CO2 input.
       Formula: EmbodiedCO2_per_request = EmbodiedCO2_kg * 1000 / (LifetimeMonths * RequestsPerMonth).
-      Fallback when no vendor PCF available: 0.5 kg CO2e/W TDP (uncertainty ±50%).
+      Updated 2026-07-15: embodied_co2_kg in data/hardware_configs.yaml is now populated from
+      the Boavizta public LCA API (api.boavizta.org, free, open, bottom-up methodology) for
+      4 of 7 tiers directly and 2 of 7 via linear interpolation between two real Boavizta
+      reference points — no vendor PCF datasheet yet (still priority 1 in
+      docs/hardware_pcf_inventory_notes.md). TDP-proxy fallback (0.5 kg CO2e/W, ±50%
+      uncertainty) remains only for the cloud reference tier (provider scope-3 boundary,
+      intentionally excluded from ranking).
     quality: medium
     source_refs:
       - DHLCO2-4

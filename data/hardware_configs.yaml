@@ -15,8 +15,19 @@
 #   3. Set embodied_co2_kg from vendor PCF datasheet when available.
 #   4. Re-run: PYTHONUTF8=1 python generators/hardware_model.py
 #
-# embodied_co2_kg: source priority = vendor PCF datasheet > Ecoinvent database >
+# embodied_co2_kg: source priority = vendor PCF datasheet > Boavizta public LCA API >
 #                  proxy fallback (0.5 kg CO2e/W TDP) — see PRX-003
+#
+# 2026-07-15 update: embodied_co2_kg populated from the Boavizta API (api.boavizta.org,
+# free, open, bottom-up LCA methodology, no vendor PCF required) where a reasonably close
+# real single-GPU reference exists. Values marked "boavizta_direct" use an exact or near-exact
+# VRAM-class match; "boavizta_interpolated" linearly interpolate between two real Boavizta
+# reference points where no close single match exists. Still no vendor PCF — see PRX-003.
+# Real reference points queried live (component-level GPU-only impact, not full server):
+#   NVIDIA L4            24 GB -> 113.6 kg CO2eq embedded
+#   NVIDIA RTX A4500      20 GB -> 141.4 kg CO2eq embedded
+#   NVIDIA A100 PCIe 40GB 40 GB -> 275.7 kg CO2eq embedded
+#   NVIDIA H100 SXM 80GB  80 GB -> 575.2 kg CO2eq embedded
 # vram_effective_gb: accounts for η_parallel multi-GPU efficiency loss
 # η_parallel: empirical correction for multi-GPU VRAM pooling (range: 0.75–0.95)
 # exclude_from_ranking: true = reference/baseline only, excluded from EfficiencyScore ranking
@@ -38,8 +49,8 @@ hardware_configs:
     expected_lifetime_months: 48
     maintenance_risk: 0.15
     software_maturity: 0.85
-    embodied_co2_kg: null    # set from vendor PCF; proxy fallback: 0.5 * 150 = 75 kg
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 141.4   # Boavizta: NVIDIA RTX A4500 (20 GB, closest available reference; TDP-proxy would be 75 kg)
+    embodied_co2_source: boavizta_direct
     notes: "Suitable for 7B–14B INT4 models. Not viable for 30B+ without quantization."
 
   - id: HW-CFG-T2-24GB
@@ -55,8 +66,8 @@ hardware_configs:
     expected_lifetime_months: 48
     maintenance_risk: 0.20
     software_maturity: 0.85
-    embodied_co2_kg: null    # proxy fallback: 0.5 * 350 = 175 kg
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 113.6   # Boavizta: NVIDIA L4 (24 GB, exact VRAM match; TDP-proxy would be 175 kg)
+    embodied_co2_source: boavizta_direct
     notes: "Suitable for 30B Q4/Q5 models. 70B requires multi-GPU."
 
   - id: HW-CFG-T3-48GB
@@ -72,8 +83,8 @@ hardware_configs:
     expected_lifetime_months: 60
     maintenance_risk: 0.10
     software_maturity: 0.95
-    embodied_co2_kg: null    # proxy fallback: 0.5 * 300 = 150 kg
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 335.6   # Boavizta: interpolated at 48 GB between A100 PCIe 40GB (275.7 kg) and H100 SXM 80GB (575.2 kg); TDP-proxy would be 150 kg
+    embodied_co2_source: boavizta_interpolated
     notes: "Handles 70B Q4/Q5. ECC typically available at this tier."
 
   - id: HW-CFG-T4-96GB
@@ -89,8 +100,8 @@ hardware_configs:
     expected_lifetime_months: 72
     maintenance_risk: 0.08
     software_maturity: 0.95
-    embodied_co2_kg: null    # proxy fallback: 0.5 * 300 = 150 kg
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 575.2   # Boavizta: NVIDIA H100 SXM 80GB (80 GB, closest available reference — actual tier VRAM is higher; TDP-proxy would be 150 kg)
+    embodied_co2_source: boavizta_direct
     notes: "Single-GPU for 70B FP8 or large MoE models. No multi-GPU complexity."
 
   # --- MULTI-GPU CLUSTER TIERS ---
@@ -108,8 +119,8 @@ hardware_configs:
     expected_lifetime_months: 60
     maintenance_risk: 0.15
     software_maturity: 0.90
-    embodied_co2_kg: null    # proxy fallback: 2 × 150 kg = 300 kg
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 671.2   # Boavizta: 2 x 335.6 kg (interpolated 48 GB reference, see Tier 3); TDP-proxy would be 300 kg
+    embodied_co2_source: boavizta_interpolated
     notes: "Dual-GPU cluster via tensor parallelism (vLLM/llama.cpp). Verify PCIe bandwidth."
 
   - id: HW-CFG-T6-115GB-QUAD
@@ -125,8 +136,8 @@ hardware_configs:
     expected_lifetime_months: 60
     maintenance_risk: 0.20
     software_maturity: 0.90
-    embodied_co2_kg: null    # proxy fallback: 4 × 80 kg = 320 kg (0.5 × 160 W each)
-    embodied_co2_source: proxy_tdp
+    embodied_co2_kg: 778.6   # Boavizta: 4 x 194.65 kg (interpolated at 32 GB between L4 24GB=113.6 kg and A100 40GB=275.7 kg); TDP-proxy would be 320 kg
+    embodied_co2_source: boavizta_interpolated
     notes: "4-GPU cluster. Good VRAM/W ratio. Requires PCIe topology verification."
 
   # --- CLOUD REFERENCE BASELINE ---

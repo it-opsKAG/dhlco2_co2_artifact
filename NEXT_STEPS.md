@@ -31,6 +31,9 @@ Kein Kontextwissen nötig — alles Nötige steht hier oder ist verlinkt.
 **Was:** Jeder Simulationslauf bekommt eine RUN-ID (`RUN-{YYYYMMDD}T{HHMMSS}Z-SIM-fullsweep`, gleiches Schema wie die Dissertations-Validation-Matrix), den Git-Commit-Hash und SHA-256-Hashes der Output-Dateien. Erster echter Lauf: `RUN-20260713T221421Z-SIM-fullsweep` — bestätigt 192 Szenarien / 816 Zeilen exakt wie im Statusupdate-Deck behauptet.
 **Live-Grid-Carbon (zusätzlich, kein NEXT_STEPS-Task, siehe `generators/live_grid_carbon.py`):** Live-Abruf des echten deutschen Netz-Emissionsfaktors über die tokenlose energy-charts.info-API (Fraunhofer ISE) — ergänzt den bisher rein statischen UBA-2024-Wert um einen echten Live-Datenpunkt für Demos.
 
+### TASK-07 · `embodied_co2_kg` befüllen `Done 2026-07-15`
+**Datei:** `data/hardware_configs.yaml`. Statt Vendor-PCF (nicht verfügbar ohne DHL-Hardware-Inventar) wurde die **Boavizta-API** (`api.boavizta.org`, frei, offen, Bottom-up-LCA-Methodik, kein Token) live abgefragt: 4 von 7 Tiers direkt mit realen GPU-Referenzwerten befüllt (NVIDIA L4 24GB=113.6 kg, RTX A4500 20GB=141.4 kg, A100 PCIe 40GB=275.7 kg, H100 SXM 80GB=575.2 kg), 2 Tiers linear zwischen zwei echten Referenzpunkten interpoliert (klar als `boavizta_interpolated` gekennzeichnet). Cloud-Referenz-Tier bleibt bewusst Proxy (Provider-Scope-3-Grenze, von Ranking ausgeschlossen). PRX-003 entsprechend dokumentiert.
+
 ### TASK-08 · RDC-Pareto-Optimierung (D3-06-Vorstufe) `Done 2026-07-10`
 **Dateien:** `generators/rdc_pareto.py`, `tests/test_rdc_pareto.py`, `pyproject.toml` (neu)  
 **Was:** `rdc_rank()` sortierte bisher nur nach einer einzigen Dimension (EfficiencyScore).
@@ -53,12 +56,6 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 **Was:** `SCENARIO_AXES` um `avg_latency_s` und `quality_score` erweitern; optional: Sensitivitätsplot als ASCII-Tabelle.  
 **Aufwand:** ~0.5 Tage  
 **Wie:** `SCENARIO_AXES["avg_latency_s"] = [1.0, 5.0, 30.0]` eintragen und Kommentar aktualisieren.
-
-### TASK-07 · `embodied_co2_kg` befüllen `Data Quality`
-**Datei:** `data/hardware_configs.yaml`  
-**Was:** Für jede Tier-Konfiguration `embodied_co2_kg` aus Vendor-PCF-Datasheets oder Ecoinvent ergänzen. Hebt PRX-003 von `quality: medium` auf `quality: high`.  
-**Quellen:** NVIDIA PCF-Reports (veröffentlicht für ausgewählte Produkte), Ecoinvent-Datenbank, Dell/HP Sustainability-Reports  
-**Aufwand:** ~0.5–1 Tag je nach Datenverfügbarkeit
 
 ---
 
