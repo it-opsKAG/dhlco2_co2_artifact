@@ -1,7 +1,7 @@
 # Next Steps — DHLCO2 CO₂-Artefakt
 
-**Letzte Aktualisierung:** 2026-07-14  
-**Phase:** 2 (In Bearbeitung, ~85%; alle 6 Dokument-Deliverables D2-01 bis D2-06 fertig, offen: DHL-Review + Pilot-Scope OC-01..05); Phase-3-Vorstufe (Pareto/Sensitivität) zusätzlich gestartet, siehe TASK-08  
+**Letzte Aktualisierung:** 2026-07-15  
+**Phase:** 2 (In Bearbeitung, ~85%; alle 6 Dokument-Deliverables D2-01 bis D2-06 fertig, offen: DHL-Review + Pilot-Scope OC-01..05); Phase-3-Vorstufe (Pareto/Sensitivität, interaktives Dashboard) zusätzlich gestartet, siehe TASK-08 und TASK-11  
 **Vollständige Roadmap:** `ROADMAP.md` · **Cross-Repo-Vorhaben:** `docs/enterprise_simulation_roadmap.md`
 
 Dieses Dokument ist der Einstiegspunkt für die nächste Arbeitssitzung.  
@@ -30,6 +30,11 @@ Kein Kontextwissen nötig — alles Nötige steht hier oder ist verlinkt.
 **Dateien:** `generators/evidence_ledger.py` (neu), `evidence/simulation_runs.jsonl` + `evidence/SIMULATION_EVIDENCE_LEDGER.md` (neu, committed).
 **Was:** Jeder Simulationslauf bekommt eine RUN-ID (`RUN-{YYYYMMDD}T{HHMMSS}Z-SIM-fullsweep`, gleiches Schema wie die Dissertations-Validation-Matrix), den Git-Commit-Hash und SHA-256-Hashes der Output-Dateien. Erster echter Lauf: `RUN-20260713T221421Z-SIM-fullsweep` — bestätigt 192 Szenarien / 816 Zeilen exakt wie im Statusupdate-Deck behauptet.
 **Live-Grid-Carbon (zusätzlich, kein NEXT_STEPS-Task, siehe `generators/live_grid_carbon.py`):** Live-Abruf des echten deutschen Netz-Emissionsfaktors über die tokenlose energy-charts.info-API (Fraunhofer ISE) — ergänzt den bisher rein statischen UBA-2024-Wert um einen echten Live-Datenpunkt für Demos.
+
+### TASK-11 · Interaktives Streamlit-Dashboard `Done 2026-07-15`
+**Dateien:** `dashboard/app.py`, `dashboard/data_helpers.py`, `dashboard/README.md` (neu).
+**Was:** Lokale Demo-App (6 Tabs: KPI-Katalog & Green Gates, Hardware-Vergleich, Pareto-Frontier, Sensitivität, Live-Kontext, Auditability) — läuft auf dem bestehenden, getesteten Modell (`hardware_model.py`, `rdc_pareto.py`, `live_grid_carbon.py`, `evidence_ledger.py`), keine Mock-Daten. Start: `uv sync --extra dashboard && uv run streamlit run dashboard/app.py`.
+**Gefundener Nebenbefund:** `data/green_gates.yaml` hat kein Gate für SCI-001/SCI-002 (aggregierte Kennzahlen ohne universellen Schwellenwert) — bewusst nicht nachgerüstet, im Dashboard transparent als "kein Gate" markiert statt einen falschen Präzisionsanschein zu erzeugen.
 
 ### TASK-07 · `embodied_co2_kg` befüllen `Done 2026-07-15`
 **Datei:** `data/hardware_configs.yaml`. Statt Vendor-PCF (nicht verfügbar ohne DHL-Hardware-Inventar) wurde die **Boavizta-API** (`api.boavizta.org`, frei, offen, Bottom-up-LCA-Methodik, kein Token) live abgefragt: 4 von 7 Tiers direkt mit realen GPU-Referenzwerten befüllt (NVIDIA L4 24GB=113.6 kg, RTX A4500 20GB=141.4 kg, A100 PCIe 40GB=275.7 kg, H100 SXM 80GB=575.2 kg), 2 Tiers linear zwischen zwei echten Referenzpunkten interpoliert (klar als `boavizta_interpolated` gekennzeichnet). Cloud-Referenz-Tier bleibt bewusst Proxy (Provider-Scope-3-Grenze, von Ranking ausgeschlossen). PRX-003 entsprechend dokumentiert.
