@@ -62,6 +62,20 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 **Aufwand:** ~0.5 Tage  
 **Wie:** `SCENARIO_AXES["avg_latency_s"] = [1.0, 5.0, 30.0]` eintragen und Kommentar aktualisieren.
 
+### TASK-12 · ENTSO-E-Connector (echte EU-Netzdaten) `In Arbeit 2026-07-15`
+**Datei:** `generators/entsoe_grid_carbon.py` (neu). Details, Zugriffsablauf und Mehrwert: `docs/phase3_data_source_roadmap.md` §1.
+**Was:** Erzeugung nach Energieträger (documentType A75) von der offiziellen ENTSO-E Transparency Platform abrufen, per eigener Emissionsfaktor-Tabelle in einen CO2-Faktor umrechnen — ersetzt/ergänzt energy-charts.info um eine regulatorisch-autoritative, EU-weite Quelle.
+**Blocker:** Security-Token von ENTSO-E (E-Mail-Freigabe beantragt 2026-07-15, Registrierung bereits erledigt). Connector-Code + Tests gegen dokumentiertes XML-Format sind vorbereitbar, Live-Verifikation erst nach Token-Erhalt.
+**Aufwand:** ~0.5 Tag Code (vorbereitet), Rest hängt vom Token-Zeitpunkt ab.
+
+### TASK-13 · Eco-CI GitHub-Actions-Workflow (echte CI-Energiemessung) `In Arbeit 2026-07-15`
+**Datei:** `.github/workflows/energy-ci.yml` (neu — erste GitHub Actions CI für dieses Repo). Details: `docs/phase3_data_source_roadmap.md` §2.
+**Was:** Misst echten Energieverbrauch (Joule, CPU-Auslastung, Watt) für den bestehenden `pytest`-Lauf via `green-coding-solutions/eco-ci-energy-estimation`. Kein Token nötig (globaler Default-CO2-Wert ohne Electricity-Maps-Key).
+**Aufwand:** ~0.5 Tag.
+
+### TASK-14 · Cloud-Provider-Carbon-Tools anbinden `Offener Punkt, kein Code-Task`
+**Details:** `docs/phase3_data_source_roadmap.md` §3. AWS Customer Carbon Footprint Tool / Google Cloud Carbon Footprint Export / Microsoft Azure Carbon Optimizer — sobald Cloud-Anbieter des Piloten bekannt ist (OC-01/OC-04), reine Zugriffsfrage (Lesezugriff Billing-Konto), kein Entwicklungsaufwand auf unserer Seite. Für Freitag als "nächster Schritt, sobald ihr uns Zugriff gebt" positioniert.
+
 ---
 
 ## Wartet auf DHL-Input — geblockt
@@ -153,5 +167,7 @@ PYTHONUTF8=1 uv run python generators/rdc_pareto.py
 | Instrumentation Backlog | `docs/phase2_instrumentation_backlog.md` |
 | Simulation Konzept Phase 3 | `docs/phase3_simulation_concept.md` |
 | Pareto/Sensitivität (TASK-08) + Cross-Repo-Vorhaben | `docs/enterprise_simulation_roadmap.md` |
+| Datenquellen-Roadmap (TASK-12/13/14) | `docs/phase3_data_source_roadmap.md` |
+| Interaktives Dashboard (TASK-11) | `dashboard/README.md` |
 | Phase-1-Entscheidungen | `docs/decision_packs/phase1_initial/decisions.yaml` |
 | Projektangebote | `OneDrive 00_Projektmanagement/03_Projektangebote/` |

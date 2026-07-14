@@ -1,0 +1,92 @@
+name: Energy-measured CI (Eco-CI)
+
+# First GitHub Actions workflow for this repo (previously local-CI-only, see
+# ci/ci.local.yaml). Wraps the existing test suite with green-coding-solutions'
+# Eco-CI action to get a real, *measured* (not externally estimated) energy
+# number for a real pipeline run — directly relevant to BLD-001 (CI/CD pipeline
+# emissions per run), demonstrated on our own pipeline rather than DHL's.
+#
+# No token required: without a co2-grid-intensity-api-token, Eco-CI uses a
+# constant global-average CO2 intensity (472 gCO2/kWh) instead of a
+# region-specific one — the energy measurement itself (Joules, watts, CPU%) is
+# real either way. See docs/phase3_data_source_roadmap.md #2.
+#
+# Scope note: `adaptive-decision-kernel` (a required dependency in pyproject.toml)
+# is an editable *local path* dependency (../adaptive_decision_kernel) pointing at
+# a private repo in a different GitHub account (emanuelkag, not this repo's
+# it-opsKAG org) — `uv sync` cannot resolve it on a fresh Actions checkout without
+# extra cross-org checkout/PAT setup. This workflow therefore installs only the
+# packages needed for the kernel-independent subset (pyyaml, jsonschema, pytest)
+# via pip instead of `uv sync`, and excludes tests/test_rdc_pareto.py and the
+# dashboard tests (both import the kernel via generators/rdc_pareto.py). Everything
+# it does run — schema validation, exports, evidence ledger, live-data connectors —
+# is unaffected by that exclusion.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start Energy Measurement
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: start-measurement
+
+      - uses: actions/checkout@v4
+
+      - name: Checkpoint after checkout
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: "checkout"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Checkpoint after Python setup
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: "setup-python"
+
+      - name: Install dependencies (kernel-independent subset)
+        run: pip install pyyaml jsonschema pytest
+
+      - name: Checkpoint after dependency install
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: "install-dependencies"
+
+      - name: Run test suite (excluding adaptive-decision-kernel-dependent tests)
+        run: >
+          pytest tests/ -q -m "not live"
+          --ignore=tests/test_rdc_pareto.py
+          --ignore=tests/test_dashboard_app.py
+          --ignore=tests/test_dashboard_helpers.py
+
+      - name: Checkpoint after test suite
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: "pytest-run"
+
+      - name: Regenerate and validate exports
+        run: PYTHONUTF8=1 python ci/validate_and_export.py
+
+      - name: Checkpoint after export validation
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: get-measurement
+          label: "validate-and-export"
+
+      - name: Display Energy Results
+        uses: green-coding-solutions/eco-ci-energy-estimation@v5
+        with:
+          task: display-results
