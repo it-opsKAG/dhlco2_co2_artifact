@@ -319,16 +319,20 @@ with tab_cross_repo:
             st.caption("Gemessene Werte (real, aus einem tatsächlichen CI-Lauf):")
             st.bar_chart(measured_df.set_index("Repo")["SCI gCO2eq/Lauf"])
         st.dataframe(cross_repo_df, use_container_width=True, hide_index=True)
-        n_measured = int((cross_repo_df["Status"] == "measured").sum())
-        n_pending = int((cross_repo_df["Status"] == "awaiting_verification").sum())
-        n_failed = int((cross_repo_df["Status"] == "failed_needs_diagnosis").sum())
-        n_blocked = int((cross_repo_df["Status"] == "blocked_pre_existing_infra_issue").sum())
-        n_deferred = int((cross_repo_df["Status"] == "deferred_needs_decision").sum())
+        status_counts = cross_repo_df["Status"].value_counts().to_dict()
+        status_labels = {
+            "measured": "gemessen",
+            "awaiting_verification": "wartet auf Verifikation",
+            "failed_needs_diagnosis": "fehlgeschlagen (Diagnose offen)",
+            "blocked_pre_existing_infra_issue": "blockiert (vorbestehendes Infra-Problem)",
+            "deferred_to_next_session": "auf nächste Session vertagt (Diagnose-Doc im Repo)",
+            "deferred_needs_decision": "zurückgestellt (Entscheidung offen)",
+        }
+        status_summary = ", ".join(
+            f"{count} {status_labels.get(status, status)}" for status, count in status_counts.items()
+        )
         st.caption(
-            f"Status: {n_measured} gemessen, {n_pending} Workflow gepusht/wartet auf "
-            f"Verifikation, {n_failed} fehlgeschlagen (Diagnose offen), "
-            f"{n_blocked} blockiert (vorbestehendes Infra-Problem, unabhängig von "
-            f"diesem Benchmark), {n_deferred} zurückgestellt (siehe Notiz). Werte werden "
+            f"Status: {status_summary}. Werte werden "
             "nur eingetragen, wenn sie aus einem echten, geprüften CI-Lauf stammen — "
             "siehe `evidence/cross_repo_benchmark.yaml`."
         )

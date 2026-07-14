@@ -77,37 +77,39 @@ entries:
   - repo: kserve-llm-blueprint
     repo_url: https://github.com/emanuelkag/kserve-llm-blueprint
     workflow: ci.yaml (test job)
-    status: awaiting_verification
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
-    notes: Root cause diagnosed 2026-07-15 -- pre-existing pinned action
-      `aquasecurity/trivy-action@0.33.1` doesn't resolve (missing v-prefix; the
-      real tags are v0.33.1, v0.36.0, ...), failing the whole job at "Set up job"
-      before any step ran. Confirmed unrelated to the Eco-CI addition (two earlier
-      runs from 2026-07-13 failed the same way). Fixed in commit bea5035 (bumped
-      to v0.36.0); new run pending verification.
-
-  - repo: workspace-system
-    repo_url: https://github.com/emanuelkag/system
-    workflow: findability_benchmark.yml (benchmark job)
-    status: awaiting_verification
+    status: deferred_to_next_session
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
     notes: >
-      Root cause diagnosed 2026-07-15 -- both findability_benchmark.yml and
-      the unrelated negative_space_gate.yml checked out a second repo
-      (emanuelkag/__Staging) that returns "Not Found" from the GitHub API.
-      Confirmed pre-existing and unrelated to the Eco-CI addition -- the same
-      error occurred in scheduled run 144 from 2026-07-15 07:13, hours before
-      this benchmark's push. Owner confirmed __Staging was deliberately dropped
-      from the local workspace layout; the workflow files just hadn't been
-      updated to match. Fixed by removing the stale checkout step from both
-      workflows (commit 05f595e); new run pending verification. Local folder
-      name differs from the GitHub repo name (system).
+      Two pre-existing bugs found and fixed 2026-07-15 (broken trivy-action
+      version pin, non-existent kubeconform-binary PyPI package -- commits
+      bea5035, 543e202). Pipeline now reaches its lint step for the first time
+      and surfaces 199 pre-existing ruff violations (177 line-too-long) --
+      real lint debt, not something to fix inline. Full diagnosis and options
+      handed off in docs/2026-07-15_ci_lint_debt.md for a dedicated session.
+
+  - repo: workspace-system
+    repo_url: https://github.com/emanuelkag/system
+    workflow: findability_benchmark.yml (benchmark job)
+    status: deferred_to_next_session
+    sci_gco2eq_per_run: null
+    total_energy_joules: null
+    avg_cpu_utilization_pct: null
+    carbon_intensity_gco2e_per_kwh: null
+    notes: >
+      Two pre-existing bugs found and fixed 2026-07-15: a stale __Staging
+      checkout (repo intentionally dropped from the workspace layout, workflow
+      files hadn't been updated -- commit 05f595e) and a duplicated ws/ path
+      prefix (commit e976eac). The benchmark now runs end to end for the first
+      time, but its own quality gate fails: bm25.recall@3=0.444 < 0.600. Root
+      cause found -- the CI case-set still has domain:staging test cases
+      expecting files that no longer exist post-removal, not a real quality
+      regression. Full diagnosis and next steps handed off in
+      docs/2026-07-15_findability_benchmark_staging_regression.md for a
+      dedicated session. Local folder name differs from the GitHub repo name
+      (system).
 
   - repo: writing_system
     repo_url: https://github.com/emanuelkag/writing_system
