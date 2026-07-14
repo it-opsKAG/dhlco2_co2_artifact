@@ -92,21 +92,22 @@ entries:
   - repo: workspace-system
     repo_url: https://github.com/emanuelkag/system
     workflow: findability_benchmark.yml (benchmark job)
-    status: blocked_pre_existing_infra_issue
+    status: awaiting_verification
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
     notes: >
       Root cause diagnosed 2026-07-15 -- both findability_benchmark.yml and
-      the unrelated negative_space_gate.yml check out a second repo
-      (emanuelkag/__Staging) that returns "Not Found" from the GitHub API (deleted,
-      renamed, or inaccessible). Confirmed pre-existing and unrelated to the Eco-CI
-      addition -- the same error occurred in scheduled run 144 from
-      2026-07-15 07:13, hours before this benchmark's push. Needs an owner
-      decision (fix __Staging access, or drop this repo from the benchmark) before
-      a real measurement is possible here. Local folder name differs from the
-      GitHub repo name (system).
+      the unrelated negative_space_gate.yml checked out a second repo
+      (emanuelkag/__Staging) that returns "Not Found" from the GitHub API.
+      Confirmed pre-existing and unrelated to the Eco-CI addition -- the same
+      error occurred in scheduled run 144 from 2026-07-15 07:13, hours before
+      this benchmark's push. Owner confirmed __Staging was deliberately dropped
+      from the local workspace layout; the workflow files just hadn't been
+      updated to match. Fixed by removing the stale checkout step from both
+      workflows (commit 05f595e); new run pending verification. Local folder
+      name differs from the GitHub repo name (system).
 
   - repo: writing_system
     repo_url: https://github.com/emanuelkag/writing_system
