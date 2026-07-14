@@ -82,7 +82,21 @@ Hinweis: nur "setup-python" und "install-dependencies" erscheinen als Einzelzeil
 | Tests vorhanden, aber noch keine CI | ~18 |
 | Kein erkennbares automatisiertes Test-Setup | ~24 |
 
-**Ausgewählt für den ersten Rollout (7 Repos, davon 6 sofort umgesetzt):** `adaptive_agent_os`, `platform_core`, `sunbrain`, `kserve-llm-blueprint`, `workspace-system`, `writing_system` — strukturell divers (KI-Agent-Orchestrierung, Infrastruktur-Plattform, Energie-Monitoring, Cloud-Blueprint, Workspace-Tooling, Content-Pipeline). Jeweils ein Eco-CI-Messschritt in die **bestehende** CI-Pipeline ergänzt (kein Neubau nötig), gepusht und Live-Lauf ausgelöst.
+**Ausgewählt für den ersten Rollout (7 Repos, 6 davon vollständig verifiziert):** `adaptive_agent_os`, `platform_core`, `sunbrain`, `kserve-llm-blueprint`, `workspace-system`, `writing_system` — strukturell divers (KI-Agent-Orchestrierung, Infrastruktur-Plattform, Energie-Monitoring, Cloud-Blueprint, Workspace-Tooling, Content-Pipeline). Jeweils ein Eco-CI-Messschritt in die **bestehende** CI-Pipeline ergänzt (kein Neubau nötig).
+
+**Ergebnis (Stand 2026-07-15, alle 6 real gemessen und grün):**
+
+| Repo | SCI (gCO2eq/Lauf) |
+|---|---|
+| kserve-llm-blueprint | 0,011470 (aufwendigste Pipeline: Kind-Cluster, SBOM, Trivy) |
+| adaptive_agent_os | 0,035361 |
+| writing_system | 0,008901 |
+| dhlco2_co2_artifact | 0,006042 |
+| platform_core | 0,005817 |
+| workspace-system | 0,004510 |
+| sunbrain | 0,004918 |
+
+Beim Rollout wurden **fünf voneinander unabhängige, vorbestehende CI-Bugs** in drei Repos gefunden und gefixt (kaputte Action-Versionspins, nicht existierende PyPI-Pakete, ein doppelter Pfad-Präfix, ein Test-Case-Set, das auf absichtlich entfernte Dateien zeigte, 199 Lint-Verstöße) — alle nachweislich unabhängig vom Eco-CI-Zusatz selbst, jeweils dokumentiert und in eigenen Sessions behoben.
 
 **Zurückgestellt:** `Extract_Information` — beide vorhandenen Workflows deployen bei jedem Push auf den Hauptbranch ohne Pfad-Filter direkt auf einen produktiven GKE-Cluster. Jede Änderung, auch eine unrelated, würde ein echtes Produktions-Redeploy auslösen. Braucht eine explizite Entscheidung, bevor hier etwas ergänzt wird.
 
@@ -112,6 +126,21 @@ Hinweis: nur "setup-python" und "install-dependencies" erscheinen als Einzelzeil
 
 ---
 
+### 4. Ephemeraler GKE-Pilot für echte RUN-Phase-Messung — vorbereitet, nicht ausgeführt
+
+**Zweck:** Alle bisherigen echten Datenpunkte (Boavizta, energy-charts.info, Eco-CI) betreffen die Build-Phase oder Kontextdaten — RUN-001/002 (Emissionen/Energie pro Request) sind weiterhin zu 100% Proxy, weil keine echte laufende Instanz gemessen wird. Ein kontrolliert deployter, gemessener und wieder vollständig zurückgebauter Referenz-Workload (z. B. ein offenes LLM) auf GKE würde den **ersten echten RUN-Messwert** des gesamten Projekts liefern.
+
+**Voraussetzungen, die bereits vorhanden sind:** `kserve-llm-blueprint` (eigenes Repo) hat bereits Ende-zu-Ende-Automatisierung für genau diesen Ablauf — Cluster-Erstellung, Deployment, Messung, vollständiger Teardown, inklusive hinterlegter Billing-Informationen für Kostenkontrolle.
+
+**Warum nicht diese Woche umgesetzt:**
+1. Echte GPU-Node-Kosten plus Teardown-Risiko (verwaiste Ressourcen sind ein bekanntes reales Risiko bei Cloud-Testclustern) — will ich nicht unter Zeitdruck vor Freitag verantworten, ohne es in Ruhe zu verifizieren.
+2. Googles eigenes Carbon-Footprint-Tool hat Abrechnungsverzug (Wochen bis Monate) — eine offizielle Google-Zahl käme so oder so nicht rechtzeitig. Nur eine selbst gemessene Zahl (Kepler/DCGM) wäre schnell verfügbar, ist aber ein eigenständiges Vorhaben.
+3. Mit Eco-CI (6 Repos) und Boavizta stehen für Freitag bereits zwei belastbare "echte Messung"-Geschichten — eine dritte, teurere, riskantere kurz vor der Deadline ist ein schlechtes Risiko-Ertrags-Verhältnis.
+
+**Status:** dokumentiert, nicht ausgeführt. Guter Kandidat für ein "nächster Schritt, sobald Scope/Budget freigegeben sind"-Statement im Gespräch — zeigt Kompetenz und Vorsicht gleichzeitig.
+
+---
+
 ## Geprüft und bewusst zurückgestellt
 
 | Quelle | Grund |
@@ -122,4 +151,4 @@ Hinweis: nur "setup-python" und "install-dependencies" erscheinen als Einzelzeil
 
 ## Für die Präsentation — Kernaussage
 
-Wir sind nicht auf DHL-Input angewiesen, um an Realitätsnähe zu gewinnen: Boavizta, energy-charts.info, ENTSO-E und Eco-CI liefern bereits heute oder in den nächsten Tagen echte externe Daten, ohne dass DHL etwas liefern muss. Nur der letzte, wertvollste Schritt — echte Emissionsdaten aus DHLs eigener Cloud-Nutzung — braucht Zugriff, den nur DHL freigeben kann (deckt sich mit OC-01/OC-04).
+Wir sind nicht auf DHL-Input angewiesen, um an Realitätsnähe zu gewinnen: Boavizta, energy-charts.info, ENTSO-E und Eco-CI liefern bereits heute oder in den nächsten Tagen echte externe Daten, ohne dass DHL etwas liefern muss. Der Eco-CI-Rollout über 6 strukturell unterschiedliche eigene Software-Projekte belegt das bereits konkret: die Methodik ist nachweislich nicht auf ein Repo zugeschnitten. Nur der letzte, wertvollste Schritt — echte Emissionsdaten aus DHLs eigener Cloud-Nutzung — braucht Zugriff, den nur DHL freigeben kann (deckt sich mit OC-01/OC-04).
