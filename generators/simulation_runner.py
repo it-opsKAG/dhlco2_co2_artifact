@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from hardware_model import (
     EmissionFactorProfile,
     WorkloadProfile,
+    cost_useful_outcome,
     hw001_embodied_co2_per_request,
     hw002_capex_per_request,
     run_co2_per_request,
@@ -52,11 +53,18 @@ SCENARIO_AXES: dict[str, list[Any]] = {
     # Emission factor: grid emission factor (gCO2e/kWh)
     # DE avg 2024 = 485; EU avg ≈ 295; green-energy target ≈ 50
     "grid_ef_gco2e_per_kwh": [485, 295, 100],
+
+    # Workload: average inference/request latency (seconds) — drives RUN CO2
+    # (energy = power_load_w * avg_latency_s), TASK-05
+    "avg_latency_s": [1.0, 5.0, 30.0],
+
+    # Workload: output quality weight (0.0-1.0) — drives cost_useful_outcome,
+    # TASK-05. Business value score stays fixed (see _BUSINESS_VALUE_SCORE);
+    # only quality is swept to keep the scenario count manageable.
+    "quality_score": [0.7, 0.85, 1.0],
 }
 
 # Fixed parameters (not swept) — change here or pass programmatically
-_AVG_LATENCY_S: float = 5.0        # seconds per request
-_QUALITY_SCORE: float = 1.0        # output quality weight (0.0–1.0)
 _BUSINESS_VALUE_SCORE: float = 1.0  # business value weight (0.0–1.0)
 
 
@@ -85,13 +93,14 @@ def run_simulation(output_dir: Path | None = None) -> list[dict[str, Any]]:
             quantization="generic",
             min_vram_gb=sc["min_vram_gb"],
             requests_per_month=sc["requests_per_month"],
-            quality_score=_QUALITY_SCORE,
+            quality_score=sc["quality_score"],
             business_value_score=_BUSINESS_VALUE_SCORE,
         )
         ef = EmissionFactorProfile(
             pv_share=sc["pv_share"],
             grid_ef_gco2e_per_kwh=sc["grid_ef_gco2e_per_kwh"],
         )
+        avg_latency_s = sc["avg_latency_s"]
 
         for cfg in configs:
             if cfg.exclude_from_ranking:
@@ -100,11 +109,12 @@ def run_simulation(output_dir: Path | None = None) -> list[dict[str, Any]]:
                 continue
 
             embodied = hw001_embodied_co2_per_request(cfg, workload)
-            run_co2 = run_co2_per_request(cfg, workload, ef, _AVG_LATENCY_S)
+            run_co2 = run_co2_per_request(cfg, workload, ef, avg_latency_s)
             total_co2 = embodied + run_co2
             capex_per_req = hw002_capex_per_request(cfg, workload)
             eff_score = efficiency_score(cfg, weights)
             ef_blend = ef.effective_ef()
+            cost_per_useful_output = cost_useful_outcome(cfg, workload, ef, avg_latency_s)
 
             rows.append({
                 # Scenario axes
@@ -112,6 +122,8 @@ def run_simulation(output_dir: Path | None = None) -> list[dict[str, Any]]:
                 "sc_requests_per_month": sc["requests_per_month"],
                 "sc_pv_share": sc["pv_share"],
                 "sc_grid_ef_gco2e_per_kwh": sc["grid_ef_gco2e_per_kwh"],
+                "sc_avg_latency_s": avg_latency_s,
+                "sc_quality_score": sc["quality_score"],
                 "sc_blended_ef_gco2e_per_kwh": round(ef_blend, 2),
                 # Hardware config
                 "hw_id": cfg.id,
@@ -128,6 +140,7 @@ def run_simulation(output_dir: Path | None = None) -> list[dict[str, Any]]:
                 "total_co2_gco2e_per_req": round(total_co2, 6),
                 "hw002_capex_eur_per_req": round(capex_per_req, 6),
                 "efficiency_score": round(eff_score, 4),
+                "cost_useful_outcome_eur": round(cost_per_useful_output, 6),
             })
 
     if output_dir is not None:

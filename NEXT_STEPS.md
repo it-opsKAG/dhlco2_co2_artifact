@@ -56,11 +56,8 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 **Grundlage:** `docs/phase3_simulation_concept.md` §3 (Datenflussbild), TASK-08.  
 **Aufwand:** ~1 Tag
 
-### TASK-05 · Simulation erweitern: mehr Stellvariablen `Enhancement`
-**Datei:** `generators/simulation_runner.py`  
-**Was:** `SCENARIO_AXES` um `avg_latency_s` und `quality_score` erweitern; optional: Sensitivitätsplot als ASCII-Tabelle.  
-**Aufwand:** ~0.5 Tage  
-**Wie:** `SCENARIO_AXES["avg_latency_s"] = [1.0, 5.0, 30.0]` eintragen und Kommentar aktualisieren.
+### TASK-05 · Simulation erweitern: mehr Stellvariablen `Done 2026-07-15`
+**Datei:** `generators/simulation_runner.py`. `SCENARIO_AXES` um `avg_latency_s` ([1.0, 5.0, 30.0] s) und `quality_score` ([0.7, 0.85, 1.0]) erweitert — beide fließen jetzt tatsächlich in die Berechnung ein (vorher als Modul-Konstanten fixiert): `avg_latency_s` treibt `run_co2_per_request`, `quality_score` treibt neu ergänztes `cost_useful_outcome_eur` je Zeile. Szenarienzahl: 192 → 1728 (×9), Ergebniszeilen: 816 → 7344. Neuer Evidence-Ledger-Lauf: `RUN-20260714T210542Z-SIM-task05-more-stellvariablen`.
 
 ### TASK-12 · ENTSO-E-Connector (echte EU-Netzdaten) `In Arbeit 2026-07-15`
 **Datei:** `generators/entsoe_grid_carbon.py` (neu). Details, Zugriffsablauf und Mehrwert: `docs/phase3_data_source_roadmap.md` §1.
@@ -138,7 +135,7 @@ uv run pytest tests/ -q
 # Validierung + alle Exports neu erzeugen
 PYTHONUTF8=1 uv run python ci/validate_and_export.py
 
-# Simulation: 192 Szenarien × 6 Infrastruktur-Tiers (816 Zeilen)
+# Simulation: 1728 Szenarien × bis zu 6 Infrastruktur-Tiers (7344 Zeilen, seit TASK-05)
 PYTHONUTF8=1 uv run python generators/simulation_runner.py
 
 # Hardware-Modell direkt testen

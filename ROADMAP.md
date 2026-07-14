@@ -42,7 +42,7 @@ Was Phase 1 geliefert hat:
 - Deterministischer Export-Generator (kpis.yaml → 7 Exportartefakte)
 - GAP-003 (Embodied Carbon Methode) definiert, PRX-003 auf medium gehoben
 - Hardware-CO₂-Modell: `generators/hardware_model.py` (EfficiencyScore, RDC-Stub)
-- Simulation-Runner: `generators/simulation_runner.py` (192 Szenarien, Stellvariablen)
+- Simulation-Runner: `generators/simulation_runner.py` (192 Szenarien bei Phase-1-Abschluss, Stellvariablen; seit TASK-05 [2026-07-15]: 1728 Szenarien / 7344 Zeilen)
 - Green Gates: `data/green_gates.yaml` (alle 19 KPIs, grün/amber/rot)
 - Instrumentation Backlog: `docs/phase2_instrumentation_backlog.md` (Tier 0/1/2)
 

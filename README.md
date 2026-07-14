@@ -25,7 +25,7 @@ Keine Produktionssoftware — ein Entscheidungs- und Planungsinstrument:
 # Exports regenerieren + Schema validieren
 PYTHONUTF8=1 python ci/validate_and_export.py
 
-# Infrastruktur-Simulation (192 Szenarien)
+# Infrastruktur-Simulation (1728 Szenarien seit TASK-05, davor 192)
 PYTHONUTF8=1 python generators/simulation_runner.py
 
 # Hardware-Modell direkt
