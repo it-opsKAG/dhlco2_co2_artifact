@@ -321,10 +321,12 @@ with tab_cross_repo:
         st.dataframe(cross_repo_df, use_container_width=True, hide_index=True)
         n_measured = int((cross_repo_df["Status"] == "measured").sum())
         n_pending = int((cross_repo_df["Status"] == "awaiting_verification").sum())
+        n_failed = int((cross_repo_df["Status"] == "failed_needs_diagnosis").sum())
         n_deferred = int((cross_repo_df["Status"] == "deferred_needs_decision").sum())
         st.caption(
             f"Status: {n_measured} gemessen, {n_pending} Workflow gepusht/wartet auf "
-            f"Verifikation, {n_deferred} zurückgestellt (siehe Notiz). Werte werden "
+            f"Verifikation, {n_failed} fehlgeschlagen (Diagnose offen), "
+            f"{n_deferred} zurückgestellt (siehe Notiz). Werte werden "
             "nur eingetragen, wenn sie aus einem echten, geprüften CI-Lauf stammen — "
             "siehe `evidence/cross_repo_benchmark.yaml`."
         )

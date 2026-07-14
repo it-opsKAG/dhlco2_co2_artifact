@@ -126,9 +126,17 @@ def test_load_cross_repo_benchmark_rows_has_dhlco2_measured_entry():
     assert dhlco2_row["SCI gCO2eq/Lauf"] == pytest.approx(0.006042)
 
 
-def test_load_cross_repo_benchmark_rows_pending_entries_have_no_fabricated_values():
+def test_load_cross_repo_benchmark_rows_unmeasured_entries_have_no_fabricated_values():
     rows = load_cross_repo_benchmark_rows()
-    pending = [r for r in rows if r["Status"] == "awaiting_verification"]
-    assert len(pending) >= 5
-    for row in pending:
+    unmeasured = [r for r in rows if r["Status"] != "measured"]
+    assert len(unmeasured) >= 3  # 2 failed_needs_diagnosis + 1 deferred, as of 2026-07-15
+    for row in unmeasured:
         assert row["SCI gCO2eq/Lauf"] is None
+
+
+def test_load_cross_repo_benchmark_rows_has_multiple_measured_entries():
+    rows = load_cross_repo_benchmark_rows()
+    measured = [r for r in rows if r["Status"] == "measured"]
+    assert len(measured) >= 5  # dhlco2 + 4 confirmed cross-repo runs, as of 2026-07-15
+    for row in measured:
+        assert isinstance(row["SCI gCO2eq/Lauf"], float)

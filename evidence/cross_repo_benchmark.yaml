@@ -37,67 +37,81 @@ entries:
   - repo: adaptive_agent_os
     repo_url: https://github.com/emanuelkag/adaptive_agent_os
     workflow: ci.yml (validation job)
-    status: awaiting_verification
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit 939e7c1). Check the Actions tab and
-      fill in real values once the run completes.
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.035361
+    total_energy_joules: 195.39
+    avg_cpu_utilization_pct: 59.62
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
+    notes: Run 111, commit 939e7c1. Highest SCI of the four confirmed so far --
+      consistent with running `make ci-check` (broader validation than a bare
+      pytest call).
 
   - repo: platform_core
     repo_url: https://github.com/emanuelkag/platform_core
     workflow: ci.yml (test-and-build job, matrix 3.12/3.13)
-    status: awaiting_verification
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit c83998c). Runs twice (matrix) — record
-      both or an average once confirmed.
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.005817
+    total_energy_joules: 32.33
+    avg_cpu_utilization_pct: 62.24
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
+    notes: Run 12, commit c83998c. Matrix job ran twice (Python 3.12 and 3.13);
+      value above is the 3.12 leg. 3.13 leg was very similar (SCI 0.005521,
+      29.77 J, 48.14% CPU).
 
   - repo: sunbrain
     repo_url: https://github.com/emanuelkag/sunbrain
     workflow: ci.yml (test job)
-    status: awaiting_verification
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit f7f13a8, branch master).
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.004918
+    total_energy_joules: 25.91
+    avg_cpu_utilization_pct: 40.39
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
+    notes: Run 15, commit f7f13a8. Lowest SCI of the four confirmed so far.
 
   - repo: kserve-llm-blueprint
     repo_url: https://github.com/emanuelkag/kserve-llm-blueprint
     workflow: ci.yaml (test job)
-    status: awaiting_verification
+    status: failed_needs_diagnosis
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit aa18151, branch master). Heaviest
-      pipeline of the six (kind cluster, kubectl, Trivy/Syft scans) — expect the
-      highest energy figure, useful as the upper end of the benchmark range.
+    notes: Run failed 2026-07-15 (commit aa18151). Cause not yet diagnosed --
+      heaviest pipeline of the six (kind cluster, kubectl, Trivy/Syft scans), could
+      be pre-existing flakiness unrelated to the Eco-CI addition. Needs the failed
+      step's log before a fix can be made.
 
   - repo: workspace-system
     repo_url: https://github.com/emanuelkag/system
     workflow: findability_benchmark.yml (benchmark job)
-    status: awaiting_verification
+    status: failed_needs_diagnosis
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit 548872e, branch master). Local folder
-      name differs from the GitHub repo name (system).
+    notes: Run failed 2026-07-15 (commit 548872e). Cause not yet diagnosed -- this
+      job checks out a second private repo (emanuelkag/__Staging), a pre-existing
+      dependency unrelated to the Eco-CI addition; could be a permissions issue
+      there rather than something introduced now. Needs the failed step's log.
+      Local folder name differs from the GitHub repo name (system).
 
   - repo: writing_system
     repo_url: https://github.com/emanuelkag/writing_system
     workflow: ci.yml (test job)
-    status: awaiting_verification
-    sci_gco2eq_per_run: null
-    total_energy_joules: null
-    avg_cpu_utilization_pct: null
-    carbon_intensity_gco2e_per_kwh: null
-    notes: Workflow pushed 2026-07-15 (commit 751e0e3, branch master).
+    status: measured
+    verified_at: "2026-07-15"
+    sci_gco2eq_per_run: 0.008901
+    total_energy_joules: 48.85
+    avg_cpu_utilization_pct: 56.54
+    carbon_intensity_gco2e_per_kwh: 472.0
+    carbon_intensity_source: eco_ci_global_default
+    notes: Run 16, commit 751e0e3.
 
   - repo: Extract_Information
     repo_url: https://github.com/it-opsKAG/Extract_Information
