@@ -77,29 +77,36 @@ entries:
   - repo: kserve-llm-blueprint
     repo_url: https://github.com/emanuelkag/kserve-llm-blueprint
     workflow: ci.yaml (test job)
-    status: failed_needs_diagnosis
+    status: awaiting_verification
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
-    notes: Run failed 2026-07-15 (commit aa18151). Cause not yet diagnosed --
-      heaviest pipeline of the six (kind cluster, kubectl, Trivy/Syft scans), could
-      be pre-existing flakiness unrelated to the Eco-CI addition. Needs the failed
-      step's log before a fix can be made.
+    notes: Root cause diagnosed 2026-07-15 -- pre-existing pinned action
+      `aquasecurity/trivy-action@0.33.1` doesn't resolve (missing v-prefix; the
+      real tags are v0.33.1, v0.36.0, ...), failing the whole job at "Set up job"
+      before any step ran. Confirmed unrelated to the Eco-CI addition (two earlier
+      runs from 2026-07-13 failed the same way). Fixed in commit bea5035 (bumped
+      to v0.36.0); new run pending verification.
 
   - repo: workspace-system
     repo_url: https://github.com/emanuelkag/system
     workflow: findability_benchmark.yml (benchmark job)
-    status: failed_needs_diagnosis
+    status: blocked_pre_existing_infra_issue
     sci_gco2eq_per_run: null
     total_energy_joules: null
     avg_cpu_utilization_pct: null
     carbon_intensity_gco2e_per_kwh: null
-    notes: Run failed 2026-07-15 (commit 548872e). Cause not yet diagnosed -- this
-      job checks out a second private repo (emanuelkag/__Staging), a pre-existing
-      dependency unrelated to the Eco-CI addition; could be a permissions issue
-      there rather than something introduced now. Needs the failed step's log.
-      Local folder name differs from the GitHub repo name (system).
+    notes: >
+      Root cause diagnosed 2026-07-15 -- both findability_benchmark.yml and
+      the unrelated negative_space_gate.yml check out a second repo
+      (emanuelkag/__Staging) that returns "Not Found" from the GitHub API (deleted,
+      renamed, or inaccessible). Confirmed pre-existing and unrelated to the Eco-CI
+      addition -- the same error occurred in scheduled run 144 from
+      2026-07-15 07:13, hours before this benchmark's push. Needs an owner
+      decision (fix __Staging access, or drop this repo from the benchmark) before
+      a real measurement is possible here. Local folder name differs from the
+      GitHub repo name (system).
 
   - repo: writing_system
     repo_url: https://github.com/emanuelkag/writing_system
