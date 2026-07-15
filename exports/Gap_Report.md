@@ -16,7 +16,7 @@
 | --- | --- | --- | --- | --- |
 | PRX-001 | GAP-001 | Use region-level average grid intensity feed until source is fixed. | low | DHLCO2-11 |
 | PRX-002 | GAP-002 | Use request count as temporary denominator for RUN-001 to RUN-004. | low | DHLCO2-8; DHLCO2-11 |
-| PRX-003 | GAP-003 | Linear amortization over fixed service life with inventory-fed embodied CO2 input. Formula: EmbodiedCO2_per_request = EmbodiedCO2_kg * 1000 / (LifetimeMonths * RequestsPerMonth). Fallback when no vendor PCF available: 0.5 kg CO2e/W TDP (uncertainty ±50%). | medium | DHLCO2-4; DHLCO2-10; phase2_rdc_gap_analysis |
+| PRX-003 | GAP-003 | Linear amortization over fixed service life with inventory-fed embodied CO2 input. Formula: EmbodiedCO2_per_request = EmbodiedCO2_kg * 1000 / (LifetimeMonths * RequestsPerMonth). Updated 2026-07-15: embodied_co2_kg in data/hardware_configs.yaml is now populated from the Boavizta public LCA API (api.boavizta.org, free, open, bottom-up methodology) for 4 of 7 tiers directly and 2 of 7 via linear interpolation between two real Boavizta reference points — no vendor PCF datasheet yet (still priority 1 in docs/hardware_pcf_inventory_notes.md). TDP-proxy fallback (0.5 kg CO2e/W, ±50% uncertainty) remains only for the cloud reference tier (provider scope-3 boundary, intentionally excluded from ranking). | medium | DHLCO2-4; DHLCO2-10; phase2_rdc_gap_analysis |
 | PRX-004 | GAP-004 | Use ticket assignee as temporary owner until RACI is defined. | low | DHLCO2-6 |
 
 ## Derived TBD Entries
