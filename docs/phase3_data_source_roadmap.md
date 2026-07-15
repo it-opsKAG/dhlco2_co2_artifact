@@ -14,7 +14,7 @@
 
 ## Kandidaten für die nächsten Schritte
 
-### 1. ENTSO-E Transparency Platform — offizielle EU-Netzdaten
+### 1. ENTSO-E Transparency Platform — offizielle EU-Netzdaten ✅ live verifiziert 2026-07-15
 
 **Zweck:** Ersetzt den energy-charts.info-Convenience-Wert (und den statischen UBA-2024-Jahresdurchschnitt) durch die **offizielle, regulatorisch vorgeschriebene EU-Transparenzplattform** für Stromerzeugung, -last und -handel — Betreiber ist der Verband der europäischen Übertragungsnetzbetreiber selbst.
 
@@ -32,7 +32,29 @@
 
 **Benötigte Daten für vollen Einsatz:** nur der Security-Token; Bidding-Zone-Code ist bereits bekannt (`10Y1001A1001A83F` für DE_LU), weitere Zonen sind analog abrufbar.
 
-**Aufwand/Status:** Connector (XML-Parsing + Emissionsfaktor-Tabelle) wird vorbereitet, Test gegen dokumentiertes Antwortformat — Live-Verifikation folgt, sobald der Token vorliegt.
+**Erster echter Lauf** (`generators/entsoe_grid_carbon.py`, direkt ausgeführt, 15.07.2026 ~14:30 UTC):
+
+| Kennzahl | Wert |
+|---|---|
+| Bidding-Zone | DE_LU (`10Y1001A1001A83F`) |
+| Zeitraum | 2026-07-15T12:30 .. 14:30 UTC (Standard-2h-Fenster) |
+| Gewichteter CO2-Faktor (ENTSO-E, selbst berechnet) | **169–172 gCO2e/kWh** |
+| Unmapped PSR-Codes | keine — alle 16 im Fenster aufgetretenen Energieträger-Codes sind in `PSR_EMISSION_FACTORS_GCO2E_PER_KWH` abgedeckt |
+| Dominante Energieträger im Fenster | Solar (B16, ~41.8 GW), Wind Onshore (B19, ~6.8 GW), Braunkohle (B02, ~6.0 GW), Pumpspeicher (B10, ~5.1 GW) |
+
+**Drei-Wege-Vergleich (gleicher Moment, 15.07.2026 ~14:30 UTC, DE/DE_LU):**
+
+| Quelle | Wert (gCO2e/kWh) | Charakter |
+|---|---|---|
+| ENTSO-E (neu, selbst berechnet aus Erzeugungsmix) | 169–172 | live, auditierbar je Energieträger |
+| energy-charts.info (bestehend, Fraunhofer ISE) | 197.5 (Stand 13:00 UTC) | live, Black-Box-Wert |
+| Statischer UBA-2024-Jahresdurchschnitt | 485 | statisch, Jahresmittel |
+
+Beide Live-Quellen liegen deutlich unter dem statischen Jahresdurchschnitt (erwartbar: Mittagszeit im Juli, hoher Solaranteil) und sind untereinander plausibel konsistent (~15 % Differenz, erklärbar durch unterschiedliche Zeitfenster/Methodik — ENTSO-E mittelt über die letzten 2h aus dem Erzeugungsmix, energy-charts.info liefert einen einzelnen 15-Min-Wert von 13:00 UTC).
+
+**Aufwand/Status:** Connector live verifiziert (`tests/test_entsoe_grid_carbon.py::test_fetch_generation_mix_smoke` grün gegen die echte API). Aktuell als zweites Live-Kontext-Signal im Dashboard vorgesehen (neben energy-charts.info) — noch nicht in die Kern-KPI-Berechnung verdrahtet (siehe GAP-001, `docs/phase2_rdc_gap_analysis.md`).
+
+**Weitere Bidding-Zonen (15.07.2026):** `BIDDING_ZONES` in `generators/entsoe_grid_carbon.py` um 10 zusätzliche EU-Zonen erweitert (AT, BE, NL, FR, PL, CH, IT_NORD, ES, CZ, DK_1), Codes gegen die community-gepflegte `entsoe-py`-Referenzmappe abgeglichen und **jede einzeln live gegen die echte A75-API verifiziert** (keine unmapped PSR-Codes, plausible Werte — z. B. FR 28.5 wegen hohem Atomstromanteil, PL 429.1 wegen hohem Kohleanteil). Hinweis: der bestehende `DE_LU`-Code (`10Y1001A1001A83F`) trägt in manchen Referenzen (u. a. `entsoe-py`) das generische Label "DE" statt "DE_LU" (die dortige DE_LU-Zone nach dem Bidding-Zone-Split 2018 hätte den Code `10Y1001A1001A82H`) — bewusst nicht geändert, da live-verifiziert und funktionierend; die A75-Erzeugungsabfrage scheint über Control-Area- statt Bidding-Zone-Domains zu laufen. Dashboard-Button bleibt vorerst auf DE_LU fixiert (Zonenauswahl in der UI wäre ein separater Schritt, sobald Pilot B geklärt ist).
 
 ---
 

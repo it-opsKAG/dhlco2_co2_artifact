@@ -17,6 +17,7 @@ on top of the methodology, not live DHL telemetry.
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 
@@ -40,6 +41,7 @@ from data_helpers import (
     load_green_gates,
     load_kpi_catalog,
 )
+from entsoe_grid_carbon import BIDDING_ZONES, fetch_generation_mix
 from hardware_model import EmissionFactorProfile, WorkloadProfile, rdc_rank
 from live_grid_carbon import STATIC_FALLBACK_GCO2E_PER_KWH, fetch_live_grid_carbon_intensity
 
@@ -270,6 +272,36 @@ with tab_live:
     st.caption(
         f"Statischer Vergleichswert (UBA 2024): {STATIC_FALLBACK_GCO2E_PER_KWH:.0f} gCO2e/kWh. "
         "Tokenlos, kostenlos, keine Registrierung nötig."
+    )
+
+    st.divider()
+    st.markdown("**EU-Netz-CO2-Faktor (ENTSO-E Transparency Platform)**")
+    if st.button("Jetzt live abrufen (ENTSO-E, DE_LU)"):
+        token = os.getenv("ENTSOE_SECURITY_TOKEN")
+        if not token:
+            st.warning(
+                "ENTSOE_SECURITY_TOKEN nicht gesetzt — siehe "
+                "`docs/phase3_data_source_roadmap.md` §1 für den Zugriffsablauf."
+            )
+        else:
+            try:
+                snapshot = fetch_generation_mix(
+                    security_token=token, zone_eic=BIDDING_ZONES["DE_LU"]
+                )
+                st.success(
+                    f"{snapshot.weighted_carbon_intensity_gco2e_per_kwh:.1f} gCO2e/kWh — "
+                    f"Zone DE_LU, Zeitraum {snapshot.period_start} .. {snapshot.period_end} (UTC)"
+                )
+                if snapshot.unmapped_psr_types:
+                    st.caption(
+                        f"Achtung, unbekannte PSR-Typen (Fallback verwendet): "
+                        f"{snapshot.unmapped_psr_types}"
+                    )
+            except Exception as exc:  # noqa: BLE001
+                st.error(f"Live-Abruf fehlgeschlagen: {type(exc).__name__}: {exc}")
+    st.caption(
+        "Regulatorisch-autoritative EU-Quelle, eigener CO2-Faktor je Energieträger "
+        "(nicht Black-Box wie energy-charts.info) — siehe `docs/phase3_data_source_roadmap.md` §1."
     )
 
     st.divider()

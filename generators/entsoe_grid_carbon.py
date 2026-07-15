@@ -22,12 +22,31 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
+from dotenv import load_dotenv
+
+load_dotenv()  # picks up ENTSOE_SECURITY_TOKEN from a local .env if present; no-op otherwise
+
 API_BASE_URL = "https://web-api.tp.entsoe.eu/api"
 DEFAULT_TIMEOUT_S = 15.0
 
-# EIC codes for relevant bidding zones (extend as needed once the pilot region is known).
+# EIC codes for relevant bidding zones. DE_LU kept as the original, live-verified code
+# (10Y1001A1001A83F) even though some references (e.g. entsoe-py) label this generic code
+# "DE" and list a separate post-2018-split DE_LU code (10Y1001A1001A82H) — both this code
+# and every zone added below were confirmed 2026-07-15 against the real A75 (actual
+# generation per type) endpoint, which appears to key off control-area domains rather than
+# day-ahead bidding-zone domains.
 BIDDING_ZONES = {
     "DE_LU": "10Y1001A1001A83F",
+    "AT": "10YAT-APG------L",
+    "BE": "10YBE----------2",
+    "NL": "10YNL----------L",
+    "FR": "10YFR-RTE------C",
+    "PL": "10YPL-AREA-----S",
+    "CH": "10YCH-SWISSGRIDZ",
+    "IT_NORD": "10Y1001A1001A73I",
+    "ES": "10YES-REE------0",
+    "CZ": "10YCZ-CEPS-----N",
+    "DK_1": "10YDK-1--------W",
 }
 
 # Life-cycle GHG emission factors per ENTSO-E PSR (Power System Resource) type,

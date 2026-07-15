@@ -59,11 +59,11 @@ unverändert (additive Erweiterung, kein Rewrite). Details: `docs/enterprise_sim
 ### TASK-05 · Simulation erweitern: mehr Stellvariablen `Done 2026-07-15`
 **Datei:** `generators/simulation_runner.py`. `SCENARIO_AXES` um `avg_latency_s` ([1.0, 5.0, 30.0] s) und `quality_score` ([0.7, 0.85, 1.0]) erweitert — beide fließen jetzt tatsächlich in die Berechnung ein (vorher als Modul-Konstanten fixiert): `avg_latency_s` treibt `run_co2_per_request`, `quality_score` treibt neu ergänztes `cost_useful_outcome_eur` je Zeile. Szenarienzahl: 192 → 1728 (×9), Ergebniszeilen: 816 → 7344. Neuer Evidence-Ledger-Lauf: `RUN-20260714T210542Z-SIM-task05-more-stellvariablen`.
 
-### TASK-12 · ENTSO-E-Connector (echte EU-Netzdaten) `In Arbeit 2026-07-15`
+### TASK-12 · ENTSO-E-Connector (echte EU-Netzdaten) `Done + live verifiziert 2026-07-15`
 **Datei:** `generators/entsoe_grid_carbon.py` (neu). Details, Zugriffsablauf und Mehrwert: `docs/phase3_data_source_roadmap.md` §1.
 **Was:** Erzeugung nach Energieträger (documentType A75) von der offiziellen ENTSO-E Transparency Platform abrufen, per eigener Emissionsfaktor-Tabelle in einen CO2-Faktor umrechnen — ersetzt/ergänzt energy-charts.info um eine regulatorisch-autoritative, EU-weite Quelle.
-**Blocker:** Security-Token von ENTSO-E (E-Mail-Freigabe beantragt 2026-07-15, Registrierung bereits erledigt). Connector-Code + Tests gegen dokumentiertes XML-Format sind vorbereitbar, Live-Verifikation erst nach Token-Erhalt.
-**Aufwand:** ~0.5 Tag Code (vorbereitet), Rest hängt vom Token-Zeitpunkt ab.
+**Ergebnis erster echter Lauf:** DE_LU, Fenster 2026-07-15T12:30–14:30 UTC, gewichteter CO2-Faktor 169–172 gCO2e/kWh (dominant: Solar), keine unmapped PSR-Codes. Live-Unit-Test (`test_fetch_generation_mix_smoke`, `-m live`) grün gegen die echte API. Drei-Wege-Vergleich zum selben Zeitpunkt: ENTSO-E 169–172, energy-charts.info 197.5, statischer UBA-2024-Wert 485 gCO2e/kWh — beide Live-Werte plausibel konsistent und deutlich unter dem Jahresdurchschnitt (Solarspitze im Juli-Mittag). Zusätzlich 10 weitere Bidding-Zonen (AT, BE, NL, FR, PL, CH, IT_NORD, ES, CZ, DK_1) ergänzt und einzeln live verifiziert.
+**Aufwand:** ~0.5 Tag Code + Verifikation, wie geplant.
 
 ### TASK-13 · Eco-CI GitHub-Actions-Workflow (echte CI-Energiemessung) `Done + live verifiziert 2026-07-14`
 **Datei:** `.github/workflows/energy-ci.yml` (neu — erste GitHub Actions CI für dieses Repo). Details + echte Messwerte: `docs/phase3_data_source_roadmap.md` §2.
