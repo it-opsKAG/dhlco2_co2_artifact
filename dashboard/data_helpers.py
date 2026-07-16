@@ -19,6 +19,21 @@ GENERATORS_DIR = ROOT / "generators"
 if str(GENERATORS_DIR) not in sys.path:
     sys.path.insert(0, str(GENERATORS_DIR))
 
+from decision_support import (  # noqa: E402
+    AggregatedGateStatus,
+    Recommendation,
+    aggregate_gate_status,
+    rank_co2_levers,
+    rank_cost_levers,
+    recommend_tier,
+)
+from demo_scenarios import DemoScenario, list_demo_scenarios  # noqa: E402
+from green_gates import (  # noqa: E402  (re-exported for existing importers of data_helpers)
+    ZONE_EMOJI,
+    gate_zone,
+    has_defined_gate,
+    load_green_gates,
+)
 from hardware_model import (  # noqa: E402
     EmissionFactorProfile,
     WorkloadProfile,
@@ -39,63 +54,6 @@ def load_kpi_catalog() -> list[dict[str, Any]]:
     return list(doc.get("kpis", []))
 
 
-def load_green_gates() -> dict[str, dict[str, Any]]:
-    doc = yaml.safe_load((DATA_DIR / "green_gates.yaml").read_text(encoding="utf-8"))
-    return {str(gate["kpi_id"]): gate for gate in doc.get("green_gates", [])}
-
-
-def has_defined_gate(gate: dict[str, Any] | None) -> bool:
-    """True if a green_gates.yaml entry has an actual numeric threshold defined.
-
-    Used for presence-checks (e.g. the KPI catalog tab) without needing a real
-    value to classify — avoids calling gate_zone() with a meaningless placeholder.
-    """
-    if not gate:
-        return False
-    green = gate.get("thresholds", {}).get("green", {})
-    return green.get("max") is not None or green.get("min") is not None
-
-
-def gate_zone(value: float, gate: dict[str, Any] | None) -> str:
-    """Classify a numeric value into green/amber/red per a green_gates.yaml entry.
-
-    Returns "tbd" if the gate has no numeric thresholds yet (threshold_basis: tbd),
-    no gate entry exists at all (e.g. SCI-001/SCI-002 currently have no defined gate —
-    verified 2026-07-15: these two aggregate/boundary-dependent KPIs have no entry in
-    data/green_gates.yaml, likely because a universal numeric threshold doesn't make
-    sense without a fixed functional-unit scale; not treated as a bug here), or the
-    gate uses non-numeric ordinal thresholds (e.g. GOV-002's "M0".."M3" maturity
-    levels) that this function does not attempt to classify.
-    """
-    if not has_defined_gate(gate):
-        return "tbd"
-    thresholds = gate["thresholds"]
-    green = thresholds["green"]
-
-    # Non-numeric (ordinal) thresholds, e.g. GOV-002's "M0".."M3" — not handled here.
-    if not isinstance(green.get("max", green.get("min")), (int, float)):
-        return "tbd"
-
-    # "higher is better" gates use min-based green/red (e.g. RUN-004 energy proportionality)
-    if "min" in green:
-        if value >= green["min"]:
-            return "green"
-        if "min" in thresholds.get("amber", {}) and value >= thresholds["amber"]["min"]:
-            return "amber"
-        return "red"
-
-    # "lower is better" gates use max-based green/red (most KPIs)
-    if value <= green.get("max", float("inf")):
-        return "green"
-    amber_max = thresholds.get("amber", {}).get("max")
-    if amber_max is not None and value <= amber_max:
-        return "amber"
-    return "red"
-
-
-ZONE_EMOJI = {"green": "\U0001F7E2", "amber": "\U0001F7E1", "red": "\U0001F534", "tbd": "⚪"}
-
-
 def build_scenario_rows(
     workload: WorkloadProfile, ef: EmissionFactorProfile
 ) -> list[dict[str, Any]]:
@@ -103,6 +61,7 @@ def build_scenario_rows(
     ranked = rdc_rank(workload, ef)
     rows = []
     for r in ranked:
+        gate = aggregate_gate_status(r)
         rows.append(
             {
                 "Config": r["label"],
@@ -114,6 +73,7 @@ def build_scenario_rows(
                     r["hw001_embodied_gco2e_per_request"] + r["run_co2_gco2e_per_request"], 6
                 ),
                 "EUR/req": r["hw002_capex_eur_per_request"],
+                "Gate (RUN-001/002/004)": f"{ZONE_EMOJI.get(gate.overall_zone, '⚪')} {gate.overall_zone}",
             }
         )
     return rows
@@ -193,6 +153,55 @@ def load_cross_repo_benchmark_rows() -> list[dict[str, Any]]:
             }
         )
     return rows
+
+
+def build_gate_contribution_rows(gate: AggregatedGateStatus) -> list[dict[str, Any]]:
+    """Per-KPI breakdown behind an aggregated gate status, for the recommendation view."""
+    return [
+        {
+            "KPI": f"{c.kpi_id} {c.kpi_name}",
+            "Wert": round(c.value, 4),
+            "Einheit": c.unit,
+            "Zone": f"{ZONE_EMOJI.get(c.zone, '⚪')} {c.zone}",
+        }
+        for c in gate.contributions
+    ]
+
+
+def build_lever_ranking_rows(
+    workload: WorkloadProfile,
+    ef: EmissionFactorProfile,
+    config_id: str,
+    target: str = "co2",
+) -> list[dict[str, Any]]:
+    """Ranked control-variable impact rows for the "stärkster Hebel" view.
+
+    target="co2" ranks by achievable gCO2e/request reduction, "cost" by achievable
+    EUR/request (cost-per-useful-outcome) reduction — two separate rankings rather
+    than one combined score, see generators/decision_support.py for why.
+    """
+    levers = (
+        rank_co2_levers(workload, ef, config_id)
+        if target == "co2"
+        else rank_cost_levers(workload, ef, config_id)
+    )
+    unit = "gCO2e/Request" if target == "co2" else "EUR/Request"
+    return [
+        {
+            "Stellhebel": lever.axis_label,
+            "Von": lever.worse_value,
+            "Nach": lever.better_value,
+            f"Ergebnis bei 'Von' ({unit})": round(lever.worse_output, 6),
+            f"Ergebnis bei 'Nach' ({unit})": round(lever.better_output, 6),
+            f"Erreichbare Verbesserung ({unit})": round(lever.delta, 6),
+        }
+        for lever in levers
+    ]
+
+
+def build_demo_scenario_options() -> dict[str, DemoScenario]:
+    """Named scenarios keyed by a dropdown-friendly label, for the sidebar selector."""
+    return {f"{s.id} — {s.name}": s for s in list_demo_scenarios()}
 
 
 BOAVIZTA_REFERENCES = [

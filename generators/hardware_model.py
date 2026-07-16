@@ -61,6 +61,7 @@ class WorkloadProfile:
     requests_per_month: int
     quality_score: float = 1.0     # 0.0–1.0
     business_value_score: float = 1.0  # 0.0–1.0
+    avg_latency_s: float = 5.0     # average inference latency (s) — drives RUN CO2/energy
 
 
 @dataclass
@@ -168,6 +169,34 @@ def capacity_check(cfg: HardwareConfig, workload: WorkloadProfile) -> bool:
     return cfg.vram_effective_gb >= workload.min_vram_gb
 
 
+def run002_energy_wh_per_request(cfg: HardwareConfig, avg_latency_s: float) -> float:
+    """RUN-002: Energy per request (Wh/request), emission-factor-independent.
+
+    Same energy term as run_co2_per_request() but stops before applying the
+    emission factor, so it can be checked against the RUN-002 green gate
+    (data/green_gates.yaml, unit Wh/request) directly instead of being
+    back-derived from a CO2 value.
+    """
+    energy_kwh = cfg.power_load_w * avg_latency_s / 3_600_000.0
+    return energy_kwh * 1000.0
+
+
+def run004_energy_proportionality_ratio(cfg: HardwareConfig) -> float:
+    """RUN-004 proxy: 1 - (idle power / load power). Higher = better proportionality.
+
+    The real RUN-004 definition (data/green_gates.yaml) needs observed utilization
+    telemetry, which is blocked on the pilot scope (OC-01..OC-05). This is a
+    static, hardware-only proxy from the idle/load TDP figures already in
+    hardware_configs.yaml: a config that draws almost as much power idle as
+    under load is "always on, rarely proportional"; one with low idle draw
+    scales its energy use down when there's no work — the property RUN-004
+    is meant to flag. Not a substitute for measured utilization.
+    """
+    if cfg.power_load_w <= 0:
+        return 0.0
+    return 1.0 - (cfg.power_idle_w / cfg.power_load_w)
+
+
 def efficiency_score(cfg: HardwareConfig, weights: dict) -> float:
     """EfficiencyScore — weighted Pareto score for on-prem hardware selection.
 
@@ -255,7 +284,7 @@ def rdc_rank(
             continue
         total_co2 = (
             hw001_embodied_co2_per_request(cfg, workload)
-            + run_co2_per_request(cfg, workload, ef)
+            + run_co2_per_request(cfg, workload, ef, workload.avg_latency_s)
         )
         if total_co2 > co2_budget_gco2e_per_request:
             continue
@@ -270,13 +299,19 @@ def rdc_rank(
                 hw001_embodied_co2_per_request(cfg, workload), 6
             ),
             "run_co2_gco2e_per_request": round(
-                run_co2_per_request(cfg, workload, ef), 6
+                run_co2_per_request(cfg, workload, ef, workload.avg_latency_s), 6
             ),
             "hw002_capex_eur_per_request": round(
                 hw002_capex_per_request(cfg, workload), 6
             ),
             "cost_useful_outcome_eur": round(
-                cost_useful_outcome(cfg, workload, ef), 4
+                cost_useful_outcome(cfg, workload, ef, workload.avg_latency_s), 4
+            ),
+            "run002_energy_wh_per_request": round(
+                run002_energy_wh_per_request(cfg, workload.avg_latency_s), 6
+            ),
+            "run004_energy_proportionality_ratio": round(
+                run004_energy_proportionality_ratio(cfg), 4
             ),
         })
     return sorted(results, key=lambda x: x["efficiency_score"], reverse=True)

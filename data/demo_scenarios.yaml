@@ -1,0 +1,236 @@
+# Demo Scenarios — illustrative DHL-style AI workloads for the decision-support dashboard
+#
+# PURPOSE: Give the dashboard's "which infrastructure configuration is best?" question a
+# concrete, named starting point instead of raw Stellvariablen sliders, and give the
+# simulation/decision-support layer a systematic set of fixtures that exercise different
+# combinations of the data model (latency sensitivity, volume, quality bar, energy mix).
+#
+# NOT real DHL data. Every value below is an illustrative, order-of-magnitude-plausible
+# assumption for a logistics enterprise of DHL's size, built from public knowledge of
+# typical logistics AI workloads (tracking chatbots, sorting-center vision, route
+# optimization, predictive maintenance) — not measured DHL telemetry. Real DHL data
+# replaces these values field-for-field once the pilot scope (OC-01..OC-05) is resolved;
+# see docs/demo_scenario_matrix.md for the coverage rationale and generators/demo_scenarios.py
+# for the loader.
+#
+# Coverage axes (see docs/demo_scenario_matrix.md for the full matrix):
+#   function_axis: K1 Kundeninteraktion Echtzeit | K2 Bilderkennung/Sortierung Echtzeit |
+#                  K3 Batch-Analytics/Prognose | K4 Vorausschauende Wartung/Anomalieerkennung
+#   volume_axis:   V1 niedrig (~1k/mo) | V2 mittel (~10k/mo) | V3 hoch (~100k/mo) |
+#                  V4 sehr hoch (~1M+/mo)
+#
+# Workload/EF fields map 1:1 onto generators/hardware_model.py::WorkloadProfile and
+# ::EmissionFactorProfile — see docs/phase3_simulation_concept.md §4 for the value ranges
+# these are drawn from (same bounds as generators/simulation_runner.py::SCENARIO_AXES).
+
+demo_scenarios:
+
+  - id: DEMO-01
+    name: "Kundenservice-Ticket-Klassifikation"
+    function_axis: K1
+    volume_axis: V2
+    description: >
+      Automatische Vorklassifikation eingehender Kundenservice-Anfragen (E-Mail/Formular)
+      nach Dringlichkeit und Thema, Routing an die zuständige Fachabteilung.
+    workload:
+      min_vram_gb: 24
+      requests_per_month: 10000
+      avg_latency_s: 5.0
+      quality_score: 0.85
+      business_value_score: 0.80
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 295
+      pv_share: 0.30
+    notes: >
+      Kein Live-Chat, daher latenztolerant (Sekunden statt Millisekunden reichen).
+      Fehlklassifikation ist durch die Fachabteilung korrigierbar, daher moderater
+      statt maximaler Qualitäts-Score.
+
+  - id: DEMO-02
+    name: "Sendungsverfolgung-Chatbot (Regelbetrieb)"
+    function_axis: K1
+    volume_axis: V4
+    description: >
+      Self-Service-Chatbot für Sendungsstatus- und FAQ-Anfragen auf dhl.de/App im
+      alltäglichen (nicht saisonalen Peak-)Betrieb.
+    workload:
+      min_vram_gb: 24
+      requests_per_month: 1000000
+      avg_latency_s: 1.0
+      quality_score: 0.85
+      business_value_score: 0.90
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 295
+      pv_share: 0.30
+    notes: >
+      Latenzkritisch — ein Chat-Interface muss "sofort" antworten (avg_latency_s=1.0
+      statt der 5.0s-Modell-Voreinstellung). Hohes Volumen macht Embodied-CO2-Amortisierung
+      und Effizienz besonders sichtbar.
+
+  - id: DEMO-03
+    name: "Paket-Adresserkennung (OCR) am Sortierzentrum"
+    function_axis: K2
+    volume_axis: V3
+    description: >
+      Bilderkennung/OCR zur Adress- und Barcode-Erkennung am Fließband in einem
+      Paketzentrum, mehrschichtiger Betrieb.
+    workload:
+      min_vram_gb: 16
+      requests_per_month: 100000
+      avg_latency_s: 1.0
+      quality_score: 1.0
+      business_value_score: 0.95
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 485
+      pv_share: 0.70
+    notes: >
+      Fließbandgeschwindigkeit erzwingt eine harte Latenzgrenze; Fehlerkennung bedeutet
+      Fehlsortierung, daher maximaler Qualitäts-Score. PV-Anteil 70% unterstellt ein
+      modernes Hub-Dach mit Solaranlage, wie bei neueren DHL-Verteilzentren üblich.
+
+  - id: DEMO-04
+    name: "Schadenserkennung Computer Vision (Peak-Season Hub)"
+    function_axis: K2
+    volume_axis: V4
+    description: >
+      Automatisierte Beschädigungserkennung per Kamera an einem Großverteilzentrum
+      während der saisonalen Peak-Season (Weihnachtsgeschäft).
+    workload:
+      min_vram_gb: 24
+      requests_per_month: 1000000
+      avg_latency_s: 1.0
+      quality_score: 1.0
+      business_value_score: 0.90
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 485
+      pv_share: 0.30
+    notes: >
+      Gleiche Funktionsklasse wie DEMO-03, aber Peak-Volumen und Winterbetrieb (saisonal
+      geringerer PV-Ertrag, daher niedrigerer PV-Anteil als DEMO-03 trotz ähnlicher
+      Anlage). Versicherungs-/Reklamationsrelevanz rechtfertigt maximalen Qualitäts-Score.
+
+  - id: DEMO-05
+    name: "Bedarfsprognose Sendungsvolumen (national, täglich)"
+    function_axis: K3
+    volume_axis: V1
+    description: >
+      Tägliche Prognose des nationalen Sendungsvolumens je Region für die
+      Kapazitätsplanung in Hubs und auf der letzten Meile.
+    workload:
+      min_vram_gb: 48
+      requests_per_month: 1000
+      avg_latency_s: 30.0
+      quality_score: 1.0
+      business_value_score: 0.85
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 100
+      pv_share: 0.70
+    notes: >
+      Batch-Lauf (mehrere Regionen/Varianten pro Tag, nicht Live-Traffic), daher
+      latenzunkritisch (avg_latency_s=30.0). Fehlprognosen haben reale Kapazitätskosten,
+      daher maximaler Qualitäts-Score. Interne Analytics-Workloads laufen zunehmend auf
+      Rechenzentren mit Ökostrom-PPA — daher grüner Strommix als Annahme.
+
+  - id: DEMO-06
+    name: "Routenoptimierung letzte Meile (regional)"
+    function_axis: K3
+    volume_axis: V2
+    description: >
+      Mehrmals tägliche Neuberechnung optimaler Zustellrouten für ein regionales
+      Zustellgebiet.
+    workload:
+      min_vram_gb: 48
+      requests_per_month: 10000
+      avg_latency_s: 30.0
+      quality_score: 0.95
+      business_value_score: 0.90
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 100
+      pv_share: 0.70
+    notes: >
+      Optimierungslauf, keine Live-Anfrage — latenzunkritisch. Direkter Kraftstoff- und
+      Zeitkosten-Hebel, daher hoher Business-Value-Score.
+
+  - id: DEMO-07
+    name: "Predictive Maintenance Sortieranlagen"
+    function_axis: K4
+    volume_axis: V1
+    description: >
+      Auswertung von Sensordaten einer Sortieranlage zur Vorhersage von Wartungsbedarf.
+    workload:
+      min_vram_gb: 16
+      requests_per_month: 1000
+      avg_latency_s: 30.0
+      quality_score: 1.0
+      business_value_score: 0.85
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 100
+      pv_share: 0.70
+    notes: >
+      Periodische Batch-Auswertung, kein Live-Traffic. Falsche Negative bedeuten
+      ungeplanten Anlagenausfall — daher maximaler Qualitäts-Score trotz kleinem Modell.
+
+  - id: DEMO-08
+    name: "Anomalieerkennung IT-Sicherheit"
+    function_axis: K4
+    volume_axis: V2
+    description: >
+      Laufende Analyse von Log- und Netzwerkdaten auf sicherheitsrelevante Anomalien.
+    workload:
+      min_vram_gb: 24
+      requests_per_month: 10000
+      avg_latency_s: 5.0
+      quality_score: 0.95
+      business_value_score: 0.85
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 295
+      pv_share: 0.30
+    notes: >
+      Zeitnahe, aber kein Echtzeit-Chat-Anforderung (Minuten statt Millisekunden
+      akzeptabel für Security-Alerting-Pipelines).
+
+  - id: DEMO-09
+    name: "Peak-Stresstest: Chatbot × 5 Volumen"
+    function_axis: null
+    volume_axis: null
+    is_edge_case: true
+    description: >
+      Robustheits-/Grenzfall-Szenario: identische Funktion wie DEMO-02, aber mit
+      5 Mio. Requests/Monat — außerhalb des regulären SCENARIO_AXES-Bereichs
+      (max. 1 Mio., siehe generators/simulation_runner.py) — um Amortisierungseffekt
+      und Modellverhalten am oberen Rand zu prüfen.
+    workload:
+      min_vram_gb: 24
+      requests_per_month: 5000000
+      avg_latency_s: 1.0
+      quality_score: 0.85
+      business_value_score: 0.90
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 295
+      pv_share: 0.30
+    notes: >
+      Bewusst außerhalb der regulären Matrix (kein function_axis/volume_axis-Zellwert) —
+      dient der Modell-Robustheitsprüfung, nicht der Funktionsabdeckung.
+
+  - id: DEMO-10
+    name: "Worst-Case: Altbestand ohne Ökostrom"
+    function_axis: null
+    volume_axis: null
+    is_edge_case: true
+    description: >
+      Bewusst ungünstiger Fall — großes Modell, Rechenzentrum ohne PV/Ökostrom-Vertrag,
+      hohe Latenz. Zeigt, dass die Empfehlungs-Engine auch einen Rot-Gate-Fall ehrlich
+      ausweist statt nur Erfolgsszenarien zu zeigen (Governance-Glaubwürdigkeit).
+    workload:
+      min_vram_gb: 96
+      requests_per_month: 1000
+      avg_latency_s: 30.0
+      quality_score: 0.70
+      business_value_score: 0.70
+    emission_factor:
+      grid_ef_gco2e_per_kwh: 485
+      pv_share: 0.0
+    notes: >
+      Bewusst außerhalb der regulären Matrix — Governance-Testfall, kein realistischer
+      Zielzustand. Muss von der Empfehlungs-Engine als "rot"/kritisch ausgewiesen
+      werden, nicht stillschweigend als "beste verfügbare Option" schöngerechnet.

@@ -124,6 +124,13 @@ von OC-01 bis OC-05 (Pilot-Scope-Klärung mit DHL bleibt weiterhin blockierend f
 - Vollständiger Kontext, offene Folge-Runs und die Cross-Repo-Einordnung (dieses Vorhaben ist
   Teil eines größeren Enterprise-Simulation-Vorhabens über mehrere Repos):
   `docs/enterprise_simulation_roadmap.md`.
+- **2026-07-16 (TASK-15):** `generators/decision_support.py` ergänzt die letzte
+  Verdichtungsschicht auf `rdc_rank()`/`rdc_pareto_frontier()`: aggregierter Green-Gate-Status
+  (worst-of über RUN-001/002/004), Hebel-Ranking je Stellvariable (`rank_co2_levers`/
+  `rank_cost_levers`) und eine auditierbare Tier-Empfehlung (`recommend_tier`). Dazu 10 benannte
+  DHL-Beispielszenarien (`data/demo_scenarios.yaml`, Coverage-Matrix in
+  `docs/demo_scenario_matrix.md`) und ein entsprechend umgebauter Dashboard-Einstieg
+  (Entscheidungsfrage + Ergebnisbox statt KPI-Katalog zuerst). Details: `NEXT_STEPS.md` TASK-15.
 
 ---
 
