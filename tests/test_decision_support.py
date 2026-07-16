@@ -81,17 +81,47 @@ def test_rank_co2_levers_excludes_quality_score():
     assert "requests_per_month" in axes
 
 
-def test_rank_co2_levers_sorted_descending_by_absolute_impact():
+def test_rank_co2_levers_sorted_descending_by_remaining_headroom():
     workload = _demo_workload()
     ef = EmissionFactorProfile()
     config_id = rdc_rank(workload, ef)[0]["id"]
     levers = rank_co2_levers(workload, ef, config_id)
     assert levers
-    deltas = [abs(lever.delta) for lever in levers]
+    deltas = [lever.delta for lever in levers]
     assert deltas == sorted(deltas, reverse=True)
     for lever in levers:
-        # "worse" bound is defined per-axis to always yield >= CO2 than "better" bound
+        # delta is remaining improvement from the current value, clamped at 0
         assert lever.delta >= 0
+
+
+def test_rank_co2_levers_is_scenario_sensitive():
+    # Regression for the 2026-07-16 audit finding: with fixed worse->best bounds the
+    # ranking showed "requests_per_month, delta 7.98" as top lever for EVERY scenario —
+    # including ones already at 1M requests. Headroom must be measured from the
+    # scenario's CURRENT values: a scenario already at best volume and best latency has
+    # zero remaining headroom on those axes, and its top lever must be an energy-mix
+    # axis instead.
+    workload = _demo_workload(requests_per_month=1_000_000, avg_latency_s=1.0)
+    ef = EmissionFactorProfile(grid_ef_gco2e_per_kwh=295.0, pv_share=0.30)
+    config_id = rdc_rank(workload, ef)[0]["id"]
+    levers = {lever.axis: lever for lever in rank_co2_levers(workload, ef, config_id)}
+
+    assert levers["requests_per_month"].delta == 0.0
+    assert levers["avg_latency_s"].delta == 0.0
+    top_axis = max(levers.values(), key=lambda lever: lever.delta).axis
+    assert top_axis in ("pv_share", "grid_ef_gco2e_per_kwh")
+
+
+def test_rank_co2_levers_clamps_beyond_best_values_to_zero():
+    # A scenario BEYOND the model's best sweep value (e.g. 5M requests > 1M bound,
+    # 0.5s latency < 1.0s bound) must show zero remaining headroom, not a negative
+    # or fabricated positive delta.
+    workload = _demo_workload(requests_per_month=5_000_000, avg_latency_s=0.5)
+    ef = EmissionFactorProfile()
+    config_id = rdc_rank(workload, ef)[0]["id"]
+    levers = {lever.axis: lever for lever in rank_co2_levers(workload, ef, config_id)}
+    assert levers["requests_per_month"].delta == 0.0
+    assert levers["avg_latency_s"].delta == 0.0
 
 
 def test_rank_cost_levers_excludes_grid_ef_and_pv_share():

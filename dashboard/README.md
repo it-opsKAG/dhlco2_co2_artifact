@@ -30,7 +30,7 @@ best for this workload, under CO2/cost/efficiency?"), not the KPI catalog:
 
 | # | Tab | Content |
 |---|---|---|
-| 1 | **Entscheidung & Begründung** | Full rationale, Green-Gate breakdown per contributing KPI, ranked CO2/cost levers ("stärkster Hebel"), Pilotfähigkeit note |
+| 1 | **Entscheidung & Begründung** | Full rationale, Green-Gate breakdown per contributing KPI, ranked CO2/cost levers ("stärkster verbleibender Hebel" — remaining headroom from the scenario's current values, not a fixed-bounds spread), Pilotfähigkeit note |
 | 2 | **Hardware-Vergleich** | EfficiencyScore / CO2 / EUR per hardware tier, incl. per-config aggregated Gate column |
 | 3 | **Pareto-Frontier** | CO2 vs. cost vs. EfficiencyScore, highlights the Pareto-optimal subset |
 | 4 | **Sensitivität (Detail)** | CO2/request vs. request volume, grid vs. PV 70% comparison (supplementary detail to the lever ranking in tab 1) |

@@ -59,9 +59,10 @@ def build_scenario_rows(
 ) -> list[dict[str, Any]]:
     """Hardware comparison rows for the current sidebar scenario (feasible configs only)."""
     ranked = rdc_rank(workload, ef)
+    gates = load_green_gates()
     rows = []
     for r in ranked:
-        gate = aggregate_gate_status(r)
+        gate = aggregate_gate_status(r, gates)
         rows.append(
             {
                 "Config": r["label"],
@@ -174,11 +175,12 @@ def build_lever_ranking_rows(
     config_id: str,
     target: str = "co2",
 ) -> list[dict[str, Any]]:
-    """Ranked control-variable impact rows for the "stärkster Hebel" view.
+    """Ranked control-variable headroom rows for the "stärkster Hebel" view.
 
-    target="co2" ranks by achievable gCO2e/request reduction, "cost" by achievable
-    EUR/request (cost-per-useful-outcome) reduction — two separate rankings rather
-    than one combined score, see generators/decision_support.py for why.
+    target="co2" ranks by remaining gCO2e/request reduction from the scenario's
+    CURRENT values, "cost" by remaining EUR/request (cost-per-useful-outcome)
+    reduction — two separate rankings rather than one combined score, see
+    generators/decision_support.py for why.
     """
     levers = (
         rank_co2_levers(workload, ef, config_id)
@@ -189,11 +191,11 @@ def build_lever_ranking_rows(
     return [
         {
             "Stellhebel": lever.axis_label,
-            "Von": lever.worse_value,
-            "Nach": lever.better_value,
-            f"Ergebnis bei 'Von' ({unit})": round(lever.worse_output, 6),
-            f"Ergebnis bei 'Nach' ({unit})": round(lever.better_output, 6),
-            f"Erreichbare Verbesserung ({unit})": round(lever.delta, 6),
+            "Aktueller Wert": lever.current_value,
+            "Modell-Bestwert": lever.best_value,
+            f"Ergebnis aktuell ({unit})": round(lever.current_output, 6),
+            f"Ergebnis bei Bestwert ({unit})": round(lever.best_output, 6),
+            f"Verbleibendes Potenzial ({unit})": round(lever.delta, 6),
         }
         for lever in levers
     ]

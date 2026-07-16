@@ -299,29 +299,40 @@ with tab_decision:
         )
 
         st.divider()
-        st.markdown("**Stärkster Hebel zur CO2-Reduktion** (Hardware fixiert auf die Empfehlung oben):")
+        st.markdown(
+            "**Stärkster verbleibender Hebel zur CO2-Reduktion** "
+            "(ab den aktuellen Szenario-Werten, Hardware fixiert auf die Empfehlung oben):"
+        )
         co2_levers = rank_co2_levers(workload, ef, recommendation.config_id)
-        if co2_levers:
+        if co2_levers and co2_levers[0].delta > 0:
             top = co2_levers[0]
             st.info(
-                f"Stärkster Hebel: **{top.axis_label}** — erreichbare Verbesserung "
-                f"{top.delta:.4f} gCO2e/Request (von {top.worse_value} auf {top.better_value}), "
-                f"alle anderen Stellvariablen unverändert."
+                f"Stärkster verbleibender Hebel: **{top.axis_label}** — von aktuell "
+                f"{top.current_value} auf {top.best_value} (Modell-Bestwert) spart "
+                f"{top.delta:.4f} gCO2e/Request, alle anderen Stellvariablen unverändert."
             )
+        elif co2_levers:
+            st.success(
+                "Alle Stellvariablen liegen bereits an oder über den Modell-Bestwerten — "
+                "kein verbleibender CO2-Hebel innerhalb des Simulationsbereichs."
+            )
+        if co2_levers:
             st.dataframe(
                 pd.DataFrame(build_lever_ranking_rows(workload, ef, recommendation.config_id, "co2")),
                 use_container_width=True,
                 hide_index=True,
             )
-        st.markdown("**Stärkster Hebel bei den Kosten je Nutzenoutput:**")
+        st.markdown("**Verbleibende Hebel bei den Kosten je Nutzenoutput:**")
         cost_lever_rows = build_lever_ranking_rows(workload, ef, recommendation.config_id, "cost")
         if cost_lever_rows:
             st.dataframe(pd.DataFrame(cost_lever_rows), use_container_width=True, hide_index=True)
         st.caption(
-            "Qualitätsanspruch (quality_score) wirkt nur auf die Kosten-, nicht auf die "
-            "CO2-Kennzahl — Strommix/Standort (PV-Anteil, Netz-EF) wirken nur auf CO2, "
-            "nicht auf die Kosten. Beide Rankings bewusst getrennt statt zu einem "
-            "künstlichen Gesamt-Score verrechnet."
+            "„Verbleibendes Potenzial“ = Verbesserung von den aktuellen Szenario-Werten "
+            "zum jeweiligen Modell-Bestwert (0 = bereits ausgeschöpft). Qualitätsanspruch "
+            "(quality_score) wirkt nur auf die Kosten-, nicht auf die CO2-Kennzahl — "
+            "Strommix/Standort (PV-Anteil, Netz-EF) wirken nur auf CO2, nicht auf die "
+            "Kosten. Beide Rankings bewusst getrennt statt zu einem künstlichen "
+            "Gesamt-Score verrechnet."
         )
 
         with st.expander("Pilotfähigkeit: Wie wird das ein echter DHL-Pilot?"):

@@ -100,20 +100,17 @@ def aggregate_gate_status(
 # Lever ranking — "stärkster Hebel" per docs/phase3_simulation_concept.md §3
 # ---------------------------------------------------------------------------
 
-# axis -> (label, "worse" value, "better" value). "Worse"/"better" are fixed per axis
-# direction (e.g. more latency is always worse, more PV share is always better) so
-# delta = worse_output - better_output is always >= 0 and reads as "achievable
-# improvement", matching the "Stellhebel/Erkenntnis" framing already used in the
-# presentation deck (Folie 8).
-_AXIS_BOUNDS = {
-    "requests_per_month": ("Nutzungsvolumen (Requests/Monat)", 1_000, 1_000_000),
-    "pv_share": ("PV-/Ökostrom-Anteil", 0.0, 1.0),
-    "grid_ef_gco2e_per_kwh": ("Strommix/Standort (Netz-Emissionsfaktor)", 485.0, 100.0),
-    "avg_latency_s": ("Latenz/Verweildauer pro Request", 30.0, 1.0),
-    "quality_score": ("Qualitätsanspruch", 0.7, 1.0),
+# axis -> (label, model-best value). The best value per axis mirrors the documented
+# sweep bounds in generators/simulation_runner.py::SCENARIO_AXES (1M requests, 100%
+# PV, 100 gCO2e/kWh green-grid target, 1s latency, quality 1.0), so lever ranking
+# stays consistent with the batch sweep's value ranges.
+_AXIS_BEST = {
+    "requests_per_month": ("Nutzungsvolumen (Requests/Monat)", 1_000_000),
+    "pv_share": ("PV-/Ökostrom-Anteil", 1.0),
+    "grid_ef_gco2e_per_kwh": ("Strommix/Standort (Netz-Emissionsfaktor)", 100.0),
+    "avg_latency_s": ("Latenz/Verweildauer pro Request", 1.0),
+    "quality_score": ("Qualitätsanspruch", 1.0),
 }
-# Bounds mirror generators/simulation_runner.py::SCENARIO_AXES so lever ranking stays
-# consistent with the batch sweep's documented value ranges.
 
 _CO2_LEVER_AXES = ("requests_per_month", "pv_share", "grid_ef_gco2e_per_kwh", "avg_latency_s")
 # quality_score and grid_ef_gco2e_per_kwh are deliberately on only one of these two
@@ -123,16 +120,19 @@ _CO2_LEVER_AXES = ("requests_per_month", "pv_share", "grid_ef_gco2e_per_kwh", "a
 # the honest finding, not a gap to "fix" with a fabricated cross-term.
 _COST_LEVER_AXES = ("requests_per_month", "avg_latency_s", "quality_score")
 
+_WORKLOAD_AXES = ("requests_per_month", "avg_latency_s", "quality_score")
+_EF_AXES = ("pv_share", "grid_ef_gco2e_per_kwh")
+
 
 @dataclass(frozen=True)
 class LeverImpact:
     axis: str
     axis_label: str
-    worse_value: float
-    better_value: float
-    worse_output: float
-    better_output: float
-    delta: float  # worse_output - better_output; positive = achievable improvement
+    current_value: float
+    best_value: float
+    current_output: float
+    best_output: float
+    delta: float  # max(0, current_output - best_output): REMAINING improvement from here
 
 
 def _row_for(config_id: str, workload: WorkloadProfile, ef: EmissionFactorProfile) -> Optional[dict]:
@@ -146,32 +146,41 @@ def _rank_levers(
     axes: tuple[str, ...],
     output_fn,
 ) -> list[LeverImpact]:
-    """One-at-a-time sensitivity: vary one axis to its documented bounds, hold the
-    hardware config and every other axis at the scenario's actual value, rank by
-    absolute impact on output_fn(row). None of these axes affect capacity_check(), so
-    the same config_id remains feasible at both bounds."""
+    """One-at-a-time headroom analysis: move one axis from the scenario's CURRENT value
+    to the model's best sweep value, hold the hardware config and every other axis
+    fixed, rank by remaining improvement. Measuring from the current value (not between
+    fixed worse/best bounds) is what keeps the ranking scenario-sensitive — a scenario
+    already at 1M requests must NOT show volume as its strongest lever. Clamped at 0
+    when the scenario already sits at or beyond the model's best value. None of these
+    axes affect capacity_check(), so config_id stays feasible at both points."""
+    current_row = _row_for(config_id, workload, ef)
+    if current_row is None:
+        return []
+    current_output = output_fn(current_row)
+
     impacts = []
     for axis in axes:
-        label, worse, better = _AXIS_BOUNDS[axis]
-        if axis in ("pv_share", "grid_ef_gco2e_per_kwh"):
-            row_worse = _row_for(config_id, workload, replace(ef, **{axis: worse}))
-            row_better = _row_for(config_id, workload, replace(ef, **{axis: better}))
+        label, best = _AXIS_BEST[axis]
+        if axis in _EF_AXES:
+            current_value = getattr(ef, axis)
+            row_best = _row_for(config_id, workload, replace(ef, **{axis: best}))
         else:
-            row_worse = _row_for(config_id, replace(workload, **{axis: worse}), ef)
-            row_better = _row_for(config_id, replace(workload, **{axis: better}), ef)
-        if row_worse is None or row_better is None:
+            current_value = getattr(workload, axis)
+            row_best = _row_for(config_id, replace(workload, **{axis: best}), ef)
+        if row_best is None:
             continue
-        out_worse, out_better = output_fn(row_worse), output_fn(row_better)
+        best_output = output_fn(row_best)
+        delta = max(0.0, current_output - best_output)
         impacts.append(
-            LeverImpact(axis, label, worse, better, out_worse, out_better, out_worse - out_better)
+            LeverImpact(axis, label, current_value, best, current_output, best_output, delta)
         )
-    return sorted(impacts, key=lambda impact: abs(impact.delta), reverse=True)
+    return sorted(impacts, key=lambda impact: impact.delta, reverse=True)
 
 
 def rank_co2_levers(
     workload: WorkloadProfile, ef: EmissionFactorProfile, config_id: str
 ) -> list[LeverImpact]:
-    """Rank control variables by achievable CO2/request reduction, best-known config fixed."""
+    """Rank control variables by remaining CO2/request reduction, best-known config fixed."""
     return _rank_levers(
         workload, ef, config_id, _CO2_LEVER_AXES,
         lambda row: row["hw001_embodied_gco2e_per_request"] + row["run_co2_gco2e_per_request"],
@@ -181,7 +190,7 @@ def rank_co2_levers(
 def rank_cost_levers(
     workload: WorkloadProfile, ef: EmissionFactorProfile, config_id: str
 ) -> list[LeverImpact]:
-    """Rank control variables by achievable cost-per-useful-outcome reduction."""
+    """Rank control variables by remaining cost-per-useful-outcome reduction."""
     return _rank_levers(
         workload, ef, config_id, _COST_LEVER_AXES, lambda row: row["cost_useful_outcome_eur"]
     )
@@ -303,8 +312,12 @@ if __name__ == "__main__":
         levers = rank_co2_levers(workload, ef, top_config_id)
         if levers:
             top_lever = levers[0]
-            print(
-                f"  Stärkster CO2-Hebel: {top_lever.axis_label} "
-                f"(Δ {top_lever.delta:.4f} gCO2e/req erreichbar)"
-            )
+            if top_lever.delta > 0:
+                print(
+                    f"  Stärkster verbleibender CO2-Hebel: {top_lever.axis_label} "
+                    f"(von {top_lever.current_value} auf {top_lever.best_value}: "
+                    f"-{top_lever.delta:.4f} gCO2e/req)"
+                )
+            else:
+                print("  Kein verbleibender CO2-Hebel — Szenario bereits an allen Modell-Bestwerten.")
         print()
